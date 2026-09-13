@@ -1,0 +1,1334 @@
+// ─────────────────────────────────────────────────────────────────────────────
+//  PROFIT TIPS — Prisma schema
+//  Postgres 16. All money is stored as integer minor units (cents) to avoid
+//  floating point drift; all odds/factors are stored as Decimal.
+// ─────────────────────────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  ENUMS
+// ══════════════════════════════════════════════════════════════════════════════
+
+enum UserRole {
+  USER
+  MODERATOR
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  PENDING_VERIFICATION
+  ACTIVE
+  BANNED
+  DELETED
+}
+
+enum AuthProvider {
+  PASSWORD
+  GOOGLE
+  APPLE
+}
+
+enum VerificationTokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+  EMAIL_CHANGE
+}
+
+enum ProductCode {
+  FREE
+  VIP
+  EXTRA
+  COMBO
+  FIX_ODDS
+}
+
+enum EventStatus {
+  SCHEDULED
+  LIVE
+  HALFTIME
+  FINISHED
+  POSTPONED
+  CANCELLED
+  ABANDONED
+}
+
+enum MarketType {
+  MATCH_WINNER
+  DOUBLE_CHANCE
+  DRAW_NO_BET
+  OVER_UNDER
+  TEAM_TOTAL
+  ASIAN_HANDICAP
+  EUROPEAN_HANDICAP
+  BTTS
+  CORRECT_SCORE
+  HT_FT
+  HALF_OVER_UNDER
+  CORNERS
+  CARDS
+  PLAYER_PROP
+  OTHER
+}
+
+enum OddsMovement {
+  STABLE
+  UP
+  DOWN
+  SIGNIFICANT_UP
+  SIGNIFICANT_DOWN
+}
+
+/// Publication lifecycle of a tip (independent of its sporting outcome).
+enum TipStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  CANCELLED
+}
+
+/// Sporting outcome of a tip.
+enum TipOutcome {
+  PENDING
+  LIVE
+  WON
+  LOST
+  VOID
+  HALF_WON
+  HALF_LOST
+}
+
+enum ConfidenceBand {
+  LOW
+  MEDIUM
+  HIGH
+  VERY_HIGH
+}
+
+enum BillingInterval {
+  DAY
+  WEEK
+  MONTH
+  YEAR
+  ONE_TIME
+}
+
+enum PromoBadge {
+  NONE
+  MOST_POPULAR
+  LIMITED
+  SALE
+  NEW
+  BEST_VALUE
+}
+
+enum PaymentProvider {
+  STRIPE
+  APPLE
+  GOOGLE
+  MANUAL
+}
+
+enum SubscriptionStatus {
+  INCOMPLETE
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  GRACE_PERIOD
+  PAUSED
+  CANCELED
+  EXPIRED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+  DISPUTED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  OPEN
+  PAID
+  VOID
+  UNCOLLECTIBLE
+}
+
+enum EntitlementSource {
+  SUBSCRIPTION
+  ADMIN_GRANT
+  PROMOTION
+  REFERRAL_REWARD
+  TRIAL
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+enum PromotionAudience {
+  ALL
+  ANONYMOUS
+  FREE_USERS
+  SUBSCRIBERS
+  EXPIRING_SUBSCRIBERS
+  CHURNED
+}
+
+enum NotificationType {
+  NEW_TIP
+  NEW_VIP_TIP
+  NEW_COMBO
+  NEW_EXTRA
+  NEW_FIX_ODDS
+  TIP_RESULT
+  KICKOFF_REMINDER
+  SUBSCRIPTION_EXPIRING
+  SUBSCRIPTION_RENEWED
+  SUBSCRIPTION_CANCELED
+  PROMOTION
+  POLL
+  SYSTEM
+}
+
+enum NotificationStatus {
+  PENDING
+  SCHEDULED
+  SENT
+  FAILED
+  CANCELLED
+}
+
+enum DevicePlatform {
+  IOS
+  ANDROID
+  WEB
+}
+
+enum PushProvider {
+  EXPO
+  FCM
+  APNS
+  WEB_PUSH
+}
+
+enum PollStatus {
+  DRAFT
+  ACTIVE
+  CLOSED
+  ARCHIVED
+}
+
+enum PollKind {
+  MATCH_WINNER
+  GOALS
+  PLAYER_PERFORMANCE
+  LEAGUE
+  BEST_TIP
+  CUSTOM
+}
+
+enum ReferralStatus {
+  PENDING
+  QUALIFIED
+  REWARDED
+  EXPIRED
+  REJECTED
+}
+
+enum ReferralRewardType {
+  FREE_DAYS
+  CREDIT
+  DISCOUNT_COUPON
+}
+
+enum RewardStatus {
+  PENDING
+  GRANTED
+  REVOKED
+  EXPIRED
+}
+
+enum ApiProviderKind {
+  SPORTS
+  ODDS
+  PAYMENT
+  PUSH
+  EMAIL
+}
+
+enum WebhookStatus {
+  RECEIVED
+  PROCESSING
+  PROCESSED
+  FAILED
+  IGNORED
+}
+
+enum StatsWindow {
+  D7
+  D30
+  D90
+  M6
+  M12
+  ALL
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  IDENTITY
+// ══════════════════════════════════════════════════════════════════════════════
+
+model User {
+  id              String       @id @default(cuid())
+  email           String       @unique
+  emailVerifiedAt DateTime?
+  passwordHash    String?
+  username        String?      @unique
+  displayName     String?
+  avatarUrl       String?
+  role            UserRole     @default(USER)
+  status          UserStatus   @default(ACTIVE)
+  authProviders   AuthProvider[] @default([PASSWORD])
+  googleId        String?      @unique
+  appleId         String?      @unique
+
+  countryCode     String?      @db.VarChar(2)
+  language        String       @default("de") @db.VarChar(8)
+  timezone        String       @default("Europe/Berlin")
+  currency        String       @default("EUR") @db.VarChar(3)
+
+  marketingOptIn  Boolean      @default(false)
+  notificationPrefs Json       @default("{}")
+  favoriteLeagueIds String[]   @default([])
+  favoriteTeamIds   String[]   @default([])
+
+  referralCode    String       @unique
+  referredById    String?
+  referredBy      User?        @relation("UserReferrals", fields: [referredById], references: [id], onDelete: SetNull)
+  referredUsers   User[]       @relation("UserReferrals")
+
+  lastLoginAt     DateTime?
+  lastLoginIp     String?
+  bannedAt        DateTime?
+  banReason       String?
+  deletedAt       DateTime?
+
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  sessions            Session[]
+  verificationTokens  VerificationToken[]
+  subscriptions       Subscription[]
+  entitlements        Entitlement[]        @relation("UserEntitlements")
+  grantedEntitlements Entitlement[]        @relation("EntitlementGrantedBy")
+  payments            Payment[]
+  invoices            Invoice[]
+  couponRedemptions   CouponRedemption[]
+  notifications       Notification[]
+  deviceTokens        DeviceToken[]
+  pollVotes           PollVote[]
+  auditLogs           AuditLog[]
+  analyticsEvents     AnalyticsEvent[]
+  createdTips         Tip[]                @relation("TipAuthor")
+  createdCombos       Combo[]              @relation("ComboAuthor")
+  createdPolls        Poll[]               @relation("PollAuthor")
+  referralsMade       Referral[]           @relation("ReferralReferrer")
+  referralReceived    Referral?            @relation("ReferralReferee")
+  referralRewards     ReferralReward[]
+
+  @@index([status, role])
+  @@index([createdAt])
+  @@index([referredById])
+  @@map("users")
+}
+
+/// One row per refresh-token. Rotation creates a new row in the same `familyId`;
+/// re-use of a revoked token revokes the entire family (reuse detection).
+model Session {
+  id               String    @id @default(cuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  familyId         String
+  refreshTokenHash String    @unique
+  ip               String?
+  userAgent        String?
+  deviceName       String?
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  revokedReason    String?
+  replacedByHash   String?
+  lastUsedAt       DateTime  @default(now())
+  createdAt        DateTime  @default(now())
+
+  @@index([userId, revokedAt])
+  @@index([familyId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  id        String                @id @default(cuid())
+  userId    String
+  user      User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      VerificationTokenType
+  tokenHash String                @unique
+  payload   Json?
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime              @default(now())
+
+  @@index([userId, type])
+  @@map("verification_tokens")
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  SPORTS CATALOGUE
+// ══════════════════════════════════════════════════════════════════════════════
+
+model Sport {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  name      String
+  icon      String?
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  leagues League[]
+  teams   Team[]
+  events  Event[]
+  markets Market[]
+  tips    Tip[]
+
+  @@map("sports")
+}
+
+model Country {
+  id        String   @id @default(cuid())
+  code      String   @unique @db.VarChar(3)
+  name      String
+  flagEmoji String?
+  flagUrl   String?
+  createdAt DateTime @default(now())
+
+  leagues League[]
+  teams   Team[]
+  tips    Tip[]
+
+  @@map("countries")
+}
+
+model League {
+  id               String   @id @default(cuid())
+  providerLeagueId String?
+  sportId          String
+  sport            Sport    @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  countryId        String?
+  country          Country? @relation(fields: [countryId], references: [id], onDelete: SetNull)
+  key              String
+  name             String
+  shortName        String?
+  logoUrl          String?
+  tier             Int      @default(1)
+  season           String?
+  priority         Int      @default(100)
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  events Event[]
+  teams  Team[]
+  tips   Tip[]
+
+  @@unique([sportId, key])
+  @@index([providerLeagueId])
+  @@index([isActive, priority])
+  @@map("leagues")
+}
+
+model Team {
+  id             String   @id @default(cuid())
+  providerTeamId String?
+  sportId        String
+  sport          Sport    @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  countryId      String?
+  country        Country? @relation(fields: [countryId], references: [id], onDelete: SetNull)
+  leagueId       String?
+  league         League?  @relation(fields: [leagueId], references: [id], onDelete: SetNull)
+  name           String
+  shortName      String?
+  code           String?  @db.VarChar(6)
+  logoUrl        String?
+  colorPrimary   String?  @db.VarChar(9)
+  colorSecondary String?  @db.VarChar(9)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  homeEvents Event[] @relation("HomeTeam")
+  awayEvents Event[] @relation("AwayTeam")
+
+  @@unique([sportId, name])
+  @@index([providerTeamId])
+  @@index([leagueId])
+  @@map("teams")
+}
+
+model Event {
+  id              String      @id @default(cuid())
+  providerEventId String?
+  providerSlug    String?
+  sportId         String
+  sport           Sport       @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  leagueId        String
+  league          League      @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+  homeTeamId      String
+  homeTeam        Team        @relation("HomeTeam", fields: [homeTeamId], references: [id], onDelete: Cascade)
+  awayTeamId      String
+  awayTeam        Team        @relation("AwayTeam", fields: [awayTeamId], references: [id], onDelete: Cascade)
+
+  startsAt        DateTime
+  status          EventStatus @default(SCHEDULED)
+  minute          Int?
+  period          String?
+  homeScore       Int?
+  awayScore       Int?
+  htHomeScore     Int?
+  htAwayScore     Int?
+  homeRedCards    Int?
+  awayRedCards    Int?
+  homeYellowCards Int?
+  awayYellowCards Int?
+  homeCorners     Int?
+  awayCorners     Int?
+  venue           String?
+  round           String?
+  season          String?
+  statistics      Json?
+  raw             Json?
+  resultSyncedAt  DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  odds Odd[]
+  tips Tip[]
+  polls Poll[]
+
+  @@unique([providerSlug])
+  @@index([startsAt, status])
+  @@index([leagueId, startsAt])
+  @@index([status, startsAt])
+  @@index([providerEventId])
+  @@map("events")
+}
+
+model Bookmaker {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  name      String
+  logoUrl   String?
+  website   String?
+  color     String?  @db.VarChar(9)
+  priority  Int      @default(100)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  odds Odd[]
+  tips Tip[]
+
+  @@index([isActive, priority])
+  @@map("bookmakers")
+}
+
+model Market {
+  id          String     @id @default(cuid())
+  key         String     @unique
+  type        MarketType
+  name        String
+  description String?
+  sportId     String?
+  sport       Sport?     @relation(fields: [sportId], references: [id], onDelete: SetNull)
+  /// Whether this market uses a numeric line (totals, handicaps).
+  hasLine     Boolean    @default(false)
+  isActive    Boolean    @default(true)
+  sortOrder   Int        @default(0)
+  createdAt   DateTime   @default(now())
+
+  odds Odd[]
+  tips Tip[]
+
+  @@index([type])
+  @@map("markets")
+}
+
+model Odd {
+  id          String       @id @default(cuid())
+  eventId     String
+  event       Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  bookmakerId String
+  bookmaker   Bookmaker    @relation(fields: [bookmakerId], references: [id], onDelete: Cascade)
+  marketId    String
+  market      Market       @relation(fields: [marketId], references: [id], onDelete: Cascade)
+  selection   String
+  /// Numeric line for totals / handicaps. 0 when the market has no line.
+  line        Decimal      @default(0) @db.Decimal(6, 2)
+
+  price        Decimal     @db.Decimal(10, 3)
+  openingPrice Decimal     @db.Decimal(10, 3)
+  closingPrice Decimal?    @db.Decimal(10, 3)
+  movement     OddsMovement @default(STABLE)
+  isSuspended  Boolean     @default(false)
+  lastUpdate   DateTime    @default(now())
+  createdAt    DateTime    @default(now())
+
+  history OddsHistory[]
+
+  @@unique([eventId, bookmakerId, marketId, selection, line])
+  @@index([eventId, marketId])
+  @@index([lastUpdate])
+  @@map("odds")
+}
+
+model OddsHistory {
+  id         String   @id @default(cuid())
+  oddId      String
+  odd        Odd      @relation(fields: [oddId], references: [id], onDelete: Cascade)
+  price      Decimal  @db.Decimal(10, 3)
+  delta      Decimal  @db.Decimal(10, 4)
+  recordedAt DateTime @default(now())
+
+  @@index([oddId, recordedAt])
+  @@map("odds_history")
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  TIPS
+// ══════════════════════════════════════════════════════════════════════════════
+
+model Tip {
+  id          String   @id @default(cuid())
+
+  sportId     String
+  sport       Sport    @relation(fields: [sportId], references: [id], onDelete: Restrict)
+  countryId   String?
+  country     Country? @relation(fields: [countryId], references: [id], onDelete: SetNull)
+  leagueId    String
+  league      League   @relation(fields: [leagueId], references: [id], onDelete: Restrict)
+  eventId     String
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  marketId    String
+  market      Market   @relation(fields: [marketId], references: [id], onDelete: Restrict)
+  bookmakerId String?
+  bookmaker   Bookmaker? @relation(fields: [bookmakerId], references: [id], onDelete: SetNull)
+
+  marketType   MarketType
+  /// Human readable selection label shown in the UI, e.g. "MANCHESTER CITY WIN OR DRAW".
+  selectionLabel String
+  /// Machine readable selection key consumed by the settlement engine, e.g. "AWAY_OR_DRAW".
+  selectionKey String
+  line         Decimal? @db.Decimal(6, 2)
+
+  odds         Decimal  @db.Decimal(10, 3)
+  originalOdds Decimal  @db.Decimal(10, 3)
+  currentOdds  Decimal? @db.Decimal(10, 3)
+  oddsChanged  Boolean  @default(false)
+  stake        Decimal  @default(10) @db.Decimal(10, 2)
+
+  confidence     Int            @default(70)
+  confidenceBand ConfidenceBand @default(MEDIUM)
+
+  product ProductCode @default(FREE)
+  status  TipStatus   @default(DRAFT)
+  outcome TipOutcome  @default(PENDING)
+
+  isLive      Boolean @default(false)
+  /// False for selections that only exist inside a combo.
+  isStandalone Boolean @default(true)
+
+  title     String?
+  analysis  String?
+  imageUrl  String?
+  tags      String[] @default([])
+  source    String?
+
+  publishAt DateTime?
+  expiresAt DateTime?
+  settledAt DateTime?
+
+  createdById String?
+  createdBy   User?   @relation("TipAuthor", fields: [createdById], references: [id], onDelete: SetNull)
+
+  fixOddsPlanId String?
+  fixOddsPlan   FixOddsPlan? @relation(fields: [fixOddsPlanId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  result     TipResult?
+  comboItems ComboItem[]
+
+  @@index([product, status, publishAt])
+  @@index([status, outcome])
+  @@index([eventId])
+  @@index([leagueId, publishAt])
+  @@index([settledAt])
+  @@index([isLive, status])
+  @@index([createdById])
+  @@map("tips")
+}
+
+/// Immutable settlement record. `tipId` is unique, which is what makes the
+/// result engine idempotent: a second settlement attempt hits the unique index.
+model TipResult {
+  id           String     @id @default(cuid())
+  tipId        String     @unique
+  tip          Tip        @relation(fields: [tipId], references: [id], onDelete: Cascade)
+  outcome      TipOutcome
+  /// Money returned per 1 unit staked: 0 (lost), 1 (void), odds (won), … .
+  returnFactor Decimal    @db.Decimal(10, 4)
+  stake        Decimal    @db.Decimal(10, 2)
+  profit       Decimal    @db.Decimal(12, 2)
+  homeScore    Int?
+  awayScore    Int?
+  settledBy    String     @default("ENGINE")
+  note         String?
+  raw          Json?
+  settledAt    DateTime   @default(now())
+
+  @@index([outcome, settledAt])
+  @@map("tip_results")
+}
+
+model Combo {
+  id        String      @id @default(cuid())
+  title     String
+  subtitle  String?
+  product   ProductCode @default(COMBO)
+  status    TipStatus   @default(DRAFT)
+  outcome   TipOutcome  @default(PENDING)
+
+  totalOdds    Decimal  @db.Decimal(12, 3)
+  stake        Decimal  @default(10) @db.Decimal(10, 2)
+  returnFactor Decimal? @db.Decimal(12, 4)
+  profit       Decimal? @db.Decimal(12, 2)
+
+  analysis  String?
+  publishAt DateTime?
+  expiresAt DateTime?
+  settledAt DateTime?
+
+  createdById String?
+  createdBy   User?    @relation("ComboAuthor", fields: [createdById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items ComboItem[]
+
+  @@index([product, status, publishAt])
+  @@index([outcome])
+  @@map("combos")
+}
+
+model ComboItem {
+  id        String   @id @default(cuid())
+  comboId   String
+  combo     Combo    @relation(fields: [comboId], references: [id], onDelete: Cascade)
+  tipId     String
+  tip       Tip      @relation(fields: [tipId], references: [id], onDelete: Cascade)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@unique([comboId, tipId])
+  @@index([tipId])
+  @@map("combo_items")
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  COMMERCE
+// ══════════════════════════════════════════════════════════════════════════════
+
+model Product {
+  id          String      @id @default(cuid())
+  code        ProductCode @unique
+  name        String
+  tagline     String?
+  description String?
+  icon        String?
+  color       String?     @db.VarChar(9)
+  benefits    String[]    @default([])
+  sortOrder   Int         @default(0)
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("products")
+}
+
+model SubscriptionPlan {
+  id                  String          @id @default(cuid())
+  slug                String          @unique
+  name                String
+  description         String?
+  /// Products unlocked by this plan.
+  products            ProductCode[]   @default([])
+  priceCents          Int
+  compareAtPriceCents Int?
+  currency            String          @default("EUR") @db.VarChar(3)
+  interval            BillingInterval @default(MONTH)
+  intervalCount       Int             @default(1)
+  trialDays           Int             @default(0)
+  badge               PromoBadge      @default(NONE)
+  highlight           String?
+  isPopular           Boolean         @default(false)
+  isActive            Boolean         @default(true)
+  sortOrder           Int             @default(0)
+  autoRenew           Boolean         @default(true)
+
+  stripePriceId  String? @unique
+  stripeProductId String?
+  appleProductId String? @unique
+  googleProductId String? @unique
+  googleBasePlanId String?
+
+  metadata Json @default("{}")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subscriptions Subscription[]
+  promotions    Promotion[]
+
+  @@index([isActive, sortOrder])
+  @@map("subscription_plans")
+}
+
+/// A FIX ODDS package: a configurable, fixed-odds prediction product.
+model FixOddsPlan {
+  id            String          @id @default(cuid())
+  slug          String          @unique
+  name          String
+  description   String?
+  priceCents    Int
+  currency      String          @default("EUR") @db.VarChar(3)
+  interval      BillingInterval @default(MONTH)
+  intervalCount Int             @default(1)
+
+  targetOdds    Decimal @db.Decimal(10, 3)
+  maxOdds       Decimal @db.Decimal(10, 3)
+  minConfidence Int     @default(60)
+  picksPerPeriod Int    @default(10)
+
+  sportIds  String[] @default([])
+  leagueIds String[] @default([])
+  allowLive Boolean  @default(false)
+  requiresVip Boolean @default(false)
+
+  badge     PromoBadge @default(NONE)
+  isActive  Boolean    @default(true)
+  sortOrder Int        @default(0)
+
+  stripePriceId   String? @unique
+  appleProductId  String? @unique
+  googleProductId String? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tips Tip[]
+
+  @@index([isActive, sortOrder])
+  @@map("fix_odds_plans")
+}
+
+model Subscription {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId String?
+  plan   SubscriptionPlan? @relation(fields: [planId], references: [id], onDelete: SetNull)
+
+  provider               PaymentProvider
+  providerSubscriptionId String
+  providerCustomerId     String?
+  /// Raw provider status string, stored verbatim for debugging/audit.
+  providerStatus         String?
+  status                 SubscriptionStatus @default(INCOMPLETE)
+
+  products ProductCode[] @default([])
+
+  startedAt          DateTime  @default(now())
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  trialEndsAt        DateTime?
+  cancelAtPeriodEnd  Boolean   @default(false)
+  canceledAt         DateTime?
+  endedAt            DateTime?
+  gracePeriodEndsAt  DateTime?
+
+  priceCents Int?
+  currency   String? @db.VarChar(3)
+
+  raw       Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  entitlements Entitlement[]
+  payments     Payment[]
+  invoices     Invoice[]
+
+  @@unique([provider, providerSubscriptionId])
+  @@index([userId, status])
+  @@index([status, currentPeriodEnd])
+  @@map("subscriptions")
+}
+
+/// Derived, server-authoritative premium access. The client never decides this.
+model Entitlement {
+  id     String      @id @default(cuid())
+  userId String
+  user   User        @relation("UserEntitlements", fields: [userId], references: [id], onDelete: Cascade)
+  product ProductCode
+  source EntitlementSource @default(SUBSCRIPTION)
+
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  grantedAt   DateTime  @default(now())
+  expiresAt   DateTime?
+  revokedAt   DateTime?
+  grantedById String?
+  grantedBy   User?     @relation("EntitlementGrantedBy", fields: [grantedById], references: [id], onDelete: SetNull)
+  note        String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, product, revokedAt])
+  @@index([expiresAt])
+  @@index([subscriptionId])
+  @@map("entitlements")
+}
+
+model Payment {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+
+  provider          PaymentProvider
+  providerPaymentId String
+  providerStatus    String?
+  status            PaymentStatus   @default(PENDING)
+
+  amountCents   Int
+  refundedCents Int    @default(0)
+  taxCents      Int    @default(0)
+  currency      String @default("EUR") @db.VarChar(3)
+  description   String?
+
+  couponId String?
+  coupon   Coupon? @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  discountCents Int @default(0)
+
+  paidAt    DateTime?
+  failedAt  DateTime?
+  refundedAt DateTime?
+  raw       Json?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  invoice           Invoice?
+  couponRedemptions CouponRedemption[]
+
+  @@unique([provider, providerPaymentId])
+  @@index([userId, createdAt])
+  @@index([status, paidAt])
+  @@map("payments")
+}
+
+model Invoice {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  paymentId String? @unique
+  payment   Payment? @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+
+  number         String        @unique
+  status         InvoiceStatus @default(OPEN)
+  amountDueCents Int
+  amountPaidCents Int          @default(0)
+  taxCents       Int           @default(0)
+  currency       String        @default("EUR") @db.VarChar(3)
+  lines          Json          @default("[]")
+  issuedAt       DateTime      @default(now())
+  dueAt          DateTime?
+  paidAt         DateTime?
+  pdfUrl         String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([userId, issuedAt])
+  @@map("invoices")
+}
+
+model Coupon {
+  id                    String       @id @default(cuid())
+  code                  String       @unique
+  description           String?
+  discountType          DiscountType @default(PERCENTAGE)
+  /// Percent (1–100) when PERCENTAGE, minor units when FIXED.
+  discountValue         Int
+  currency              String       @default("EUR") @db.VarChar(3)
+  maxRedemptions        Int?
+  maxRedemptionsPerUser Int          @default(1)
+  redemptionCount       Int          @default(0)
+  minPurchaseCents      Int          @default(0)
+  applicableProducts    ProductCode[] @default([])
+  applicablePlanIds     String[]     @default([])
+  validFrom             DateTime     @default(now())
+  validUntil            DateTime?
+  isActive              Boolean      @default(true)
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+
+  redemptions CouponRedemption[]
+  payments    Payment[]
+
+  @@index([isActive, validUntil])
+  @@map("coupons")
+}
+
+model CouponRedemption {
+  id            String   @id @default(cuid())
+  couponId      String
+  coupon        Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  paymentId     String?
+  payment       Payment? @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+  discountCents Int      @default(0)
+  redeemedAt    DateTime @default(now())
+
+  @@index([couponId, userId])
+  @@index([userId])
+  @@map("coupon_redemptions")
+}
+
+model Promotion {
+  id        String            @id @default(cuid())
+  title     String
+  subtitle  String?
+  body      String?
+  imageUrl  String?
+  ctaLabel  String?
+  ctaUrl    String?
+  deepLink  String?
+  badge     PromoBadge        @default(NONE)
+  audience  PromotionAudience @default(ALL)
+  product   ProductCode?
+  planId    String?
+  plan      SubscriptionPlan? @relation(fields: [planId], references: [id], onDelete: SetNull)
+  locale    String?           @db.VarChar(8)
+  gradientFrom String?        @db.VarChar(9)
+  gradientTo   String?        @db.VarChar(9)
+  startsAt  DateTime          @default(now())
+  endsAt    DateTime?
+  priority  Int               @default(100)
+  isActive  Boolean           @default(true)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@index([isActive, startsAt, endsAt])
+  @@map("promotions")
+}
+
+/// At-least-once delivery guard for every inbound webhook.
+model WebhookEvent {
+  id          String          @id @default(cuid())
+  provider    PaymentProvider
+  eventId     String
+  type        String
+  status      WebhookStatus   @default(RECEIVED)
+  payload     Json
+  error       String?
+  attempts    Int             @default(0)
+  receivedAt  DateTime        @default(now())
+  processedAt DateTime?
+
+  @@unique([provider, eventId])
+  @@index([status, receivedAt])
+  @@map("webhook_events")
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  ENGAGEMENT
+// ══════════════════════════════════════════════════════════════════════════════
+
+model Notification {
+  id      String             @id @default(cuid())
+  userId  String?
+  user    User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// Broadcast topic when userId is null, e.g. "product:VIP".
+  topic   String?
+  type    NotificationType
+  status  NotificationStatus @default(PENDING)
+  title   String
+  body    String
+  imageUrl String?
+  data    Json               @default("{}")
+  deepLink String?
+  scheduledAt DateTime?
+  sentAt   DateTime?
+  readAt   DateTime?
+  error    String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([status, scheduledAt])
+  @@index([topic])
+  @@map("notifications")
+}
+
+model DeviceToken {
+  id         String         @id @default(cuid())
+  userId     String
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token      String         @unique
+  provider   PushProvider   @default(EXPO)
+  platform   DevicePlatform
+  deviceId   String?
+  deviceName String?
+  appVersion String?
+  locale     String?        @db.VarChar(8)
+  isActive   Boolean        @default(true)
+  lastSeenAt DateTime       @default(now())
+  createdAt  DateTime       @default(now())
+
+  @@index([userId, isActive])
+  @@map("device_tokens")
+}
+
+model Poll {
+  id            String     @id @default(cuid())
+  question      String
+  description   String?
+  kind          PollKind   @default(CUSTOM)
+  status        PollStatus @default(DRAFT)
+  product       ProductCode?
+  eventId       String?
+  event         Event?     @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  imageUrl      String?
+  allowMultiple Boolean    @default(false)
+  showResultsBeforeVote Boolean @default(false)
+  totalVotes    Int        @default(0)
+  startsAt      DateTime   @default(now())
+  endsAt        DateTime?
+  createdById   String?
+  createdBy     User?      @relation("PollAuthor", fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  options PollOption[]
+  votes   PollVote[]
+
+  @@index([status, startsAt])
+  @@map("polls")
+}
+
+model PollOption {
+  id        String   @id @default(cuid())
+  pollId    String
+  poll      Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  label     String
+  imageUrl  String?
+  sortOrder Int      @default(0)
+  voteCount Int      @default(0)
+  createdAt DateTime @default(now())
+
+  votes PollVote[]
+
+  @@index([pollId, sortOrder])
+  @@map("poll_options")
+}
+
+model PollVote {
+  id        String     @id @default(cuid())
+  pollId    String
+  poll      Poll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  optionId  String
+  option    PollOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+
+  @@unique([optionId, userId])
+  @@index([pollId, userId])
+  @@map("poll_votes")
+}
+
+model Referral {
+  id         String         @id @default(cuid())
+  code       String
+  referrerId String
+  referrer   User           @relation("ReferralReferrer", fields: [referrerId], references: [id], onDelete: Cascade)
+  refereeId  String         @unique
+  referee    User           @relation("ReferralReferee", fields: [refereeId], references: [id], onDelete: Cascade)
+  status     ReferralStatus @default(PENDING)
+  qualifiedAt DateTime?
+  rewardedAt  DateTime?
+  note       String?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  rewards ReferralReward[]
+
+  @@index([referrerId, status])
+  @@map("referrals")
+}
+
+model ReferralReward {
+  id         String             @id @default(cuid())
+  referralId String
+  referral   Referral           @relation(fields: [referralId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type       ReferralRewardType @default(FREE_DAYS)
+  status     RewardStatus       @default(PENDING)
+  days       Int?
+  amountCents Int?
+  currency   String?            @db.VarChar(3)
+  couponId   String?
+  grantedAt  DateTime?
+  expiresAt  DateTime?
+  createdAt  DateTime           @default(now())
+
+  @@index([userId, status])
+  @@map("referral_rewards")
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  OPERATIONS
+// ══════════════════════════════════════════════════════════════════════════════
+
+model ApiProvider {
+  id                  String          @id @default(cuid())
+  slug                String          @unique
+  name                String
+  kind                ApiProviderKind @default(SPORTS)
+  baseUrl             String?
+  /// AES-256-GCM ciphertext. Never returned to any client.
+  apiKeyEncrypted     String?
+  isActive            Boolean         @default(false)
+  priority            Int             @default(100)
+  pollIntervalSeconds Int             @default(120)
+  rateLimitPerMinute  Int             @default(60)
+  enabledSports       String[]        @default([])
+  enabledLeagueIds    String[]        @default([])
+  config              Json            @default("{}")
+  lastSyncAt          DateTime?
+  lastError           String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  @@index([kind, isActive, priority])
+  @@map("api_providers")
+}
+
+model StatisticsSnapshot {
+  id          String      @id @default(cuid())
+  product     ProductCode
+  window      StatsWindow
+  periodStart DateTime
+  periodEnd   DateTime
+
+  totalTips  Int     @default(0)
+  wonTips    Int     @default(0)
+  lostTips   Int     @default(0)
+  voidTips   Int     @default(0)
+  halfWonTips Int    @default(0)
+  halfLostTips Int   @default(0)
+  pendingTips Int    @default(0)
+
+  winRate    Decimal @db.Decimal(7, 4)
+  roi        Decimal @db.Decimal(10, 4)
+  yieldPct   Decimal @db.Decimal(10, 4)
+  avgOdds    Decimal @db.Decimal(10, 3)
+  avgStake   Decimal @db.Decimal(10, 2)
+  totalStake Decimal @db.Decimal(14, 2)
+  profit     Decimal @db.Decimal(14, 2)
+  bestStreak Int     @default(0)
+  worstStreak Int    @default(0)
+
+  breakdown  Json     @default("{}")
+  computedAt DateTime @default(now())
+
+  @@unique([product, window, periodEnd])
+  @@index([product, window])
+  @@map("statistics_snapshots")
+}
+
+model AnalyticsEvent {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  anonymousId String?
+  name        String
+  properties  Json     @default("{}")
+  platform    String?
+  appVersion  String?
+  locale      String?  @db.VarChar(8)
+  createdAt   DateTime @default(now())
+
+  @@index([name, createdAt])
+  @@index([userId, createdAt])
+  @@map("analytics_events")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  actor      User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  actorEmail String?
+  action     String
+  entityType String
+  entityId   String?
+  before     Json?
+  after      Json?
+  ip         String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([actorId, createdAt])
+  @@index([action, createdAt])
+  @@map("audit_logs")
+}
+
+model AppSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+
+  @@map("app_settings")
+}
