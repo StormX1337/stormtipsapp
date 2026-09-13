@@ -45,7 +45,7 @@ const hex64 = z
 export const envSchema = z.object({
   // core
   NODE_ENV: z.enum(['development', 'test', 'staging', 'production']).default('development'),
-  LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
+  LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
   API_PORT: z.coerce.number().int().positive().default(4000),
   API_HOST: z.string().default('0.0.0.0'),
   API_PUBLIC_URL: z.string().url().default('http://localhost:4000'),
@@ -67,6 +67,8 @@ export const envSchema = z.object({
   INTERNAL_API_TOKEN: z.string().min(16).default('local-development-internal-token'),
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(300),
   RATE_LIMIT_WINDOW: z.string().default('1 minute'),
+  /** Stricter bucket for credential endpoints (login, register, reset). */
+  AUTH_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(10),
 
   // oauth
   GOOGLE_OAUTH_CLIENT_ID: z.string().optional(),
