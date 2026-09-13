@@ -1,0 +1,233 @@
+@import 'tailwindcss';
+
+/*
+ * PROFIT TIPS design tokens.
+ * Mirrors packages/ui/src/tokens.ts — that file stays the source of truth and
+ * is what the React Native app consumes; this block is its CSS projection.
+ */
+@theme {
+  --color-bg-base: #0a0c10;
+  --color-bg-subtle: #0e1117;
+  --color-bg-raised: #141821;
+  --color-bg-card: #181d27;
+  --color-bg-card-alt: #1e2430;
+  --color-bg-input: #11151d;
+
+  --color-line-subtle: #222834;
+  --color-line: #2a3140;
+  --color-line-strong: #39424f;
+
+  --color-ink: #ffffff;
+  --color-ink-muted: #9ba5b7;
+  --color-ink-dim: #6c7688;
+  --color-ink-disabled: #4a5263;
+  --color-ink-inverse: #0a0c10;
+
+  --color-accent-50: #e6fff3;
+  --color-accent-100: #b8ffdd;
+  --color-accent-200: #7df9c1;
+  --color-accent-300: #45f0a5;
+  --color-accent-400: #21e88e;
+  --color-accent-500: #12e17f;
+  --color-accent-600: #0bb966;
+  --color-accent-700: #0a8f50;
+
+  --color-gold-100: #fff3cc;
+  --color-gold-200: #ffe594;
+  --color-gold-300: #ffd65c;
+  --color-gold-400: #ffc93c;
+  --color-gold-500: #f5ba15;
+  --color-gold-600: #d09a08;
+
+  --color-pink-400: #ff6b93;
+  --color-pink-500: #ff3d71;
+  --color-pink-600: #e11d50;
+
+  --color-cyan-400: #5ee7ff;
+  --color-cyan-500: #28d8f5;
+
+  --color-violet-400: #a78bfa;
+  --color-violet-500: #8b5cf6;
+
+  --color-won: #12e17f;
+  --color-lost: #ff4d5e;
+  --color-void: #8b94a6;
+  --color-half-won: #7de3a6;
+  --color-half-lost: #ff9b6b;
+  --color-pending: #7a8496;
+  --color-live: #ff3d71;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-3xl: 32px;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.35), 0 8px 24px rgb(0 0 0 / 0.28);
+  --shadow-raised: 0 12px 32px rgb(0 0 0 / 0.45);
+  --shadow-accent: 0 0 0 1px rgb(18 225 127 / 0.35), 0 8px 28px rgb(18 225 127 / 0.18);
+  --shadow-gold: 0 0 0 1px rgb(255 201 60 / 0.4), 0 10px 30px rgb(255 201 60 / 0.2);
+
+  --font-sans:
+    ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --page-gutter: 14px;
+    --tab-bar-height: 60px;
+    --header-height: 52px;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--color-bg-base);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.45;
+    /* Prevents the bottom tab bar from covering the last card on mobile. */
+    padding-bottom: env(safe-area-inset-bottom);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Consistent focus ring across the whole product. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent-500);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background: var(--color-accent-500);
+    color: var(--color-ink-inverse);
+  }
+
+  /* Slim scrollbars that match the dark surface. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line-strong) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: var(--color-line-strong);
+    border-radius: 999px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@layer components {
+  /* Horizontal strips (date picker, filter chips) hide their scrollbar. */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* The neon promo border from the reference banner. */
+  .neon-frame {
+    position: relative;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, #2b1b5e 0%, #5b2ba8 55%, #8b5cf6 100%);
+  }
+  .neon-frame::after {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border-radius: 12px;
+    border: 1.5px solid rgb(18 225 127 / 0.75);
+    box-shadow:
+      0 0 12px rgb(18 225 127 / 0.35),
+      inset 0 0 12px rgb(40 216 245 / 0.25);
+    pointer-events: none;
+  }
+
+  .card {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-line-subtle);
+    border-radius: var(--radius-lg);
+  }
+
+  .stat-circle {
+    display: grid;
+    place-items: center;
+    border-radius: 9999px;
+    background: radial-gradient(circle at 30% 25%, var(--color-gold-300), var(--color-gold-500));
+    color: var(--color-ink-inverse);
+    font-weight: 800;
+    line-height: 1;
+    text-align: center;
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .safe-bottom {
+    padding-bottom: calc(env(safe-area-inset-bottom) + var(--tab-bar-height));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@keyframes pt-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes pt-shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-card) 0%,
+    var(--color-bg-card-alt) 40%,
+    var(--color-bg-card) 80%
+  );
+  background-size: 400px 100%;
+  animation: pt-shimmer 1.4s linear infinite;
+  border-radius: var(--radius-sm);
+}
+
+.live-dot {
+  animation: pt-pulse 1.6s ease-in-out infinite;
+}

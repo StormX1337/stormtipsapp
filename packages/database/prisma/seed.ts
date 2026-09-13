@@ -74,6 +74,7 @@ interface Catalogue {
 interface SeededEvent {
   id: string;
   providerEventId: string;
+  sportKey: string;
   leagueKey: string;
   leagueId: string;
   sportId: string;
@@ -382,7 +383,7 @@ async function seedUsers(): Promise<SeededUsers> {
 
 async function seedEvents(catalogue: Catalogue): Promise<SeededEvent[]> {
   console.log(`  · fixtures (${DAYS_HISTORY} days of history + ${DAYS_FUTURE} days ahead)`);
-  const provider = new MockProvider({ seed: 'profit-tips-seed' });
+  const provider = new MockProvider();
   const from = startOfUtcDay(addDays(new Date(), -DAYS_HISTORY));
   const to = startOfUtcDay(addDays(new Date(), DAYS_FUTURE + 1));
 
@@ -438,6 +439,7 @@ async function seedEvents(catalogue: Catalogue): Promise<SeededEvent[]> {
     seeded.push({
       id,
       providerEventId: event.providerEventId,
+      sportKey: event.sportKey,
       leagueKey: event.leagueKey,
       leagueId,
       sportId,
@@ -470,7 +472,7 @@ async function seedEvents(catalogue: Catalogue): Promise<SeededEvent[]> {
 
 async function seedOdds(catalogue: Catalogue, events: SeededEvent[]): Promise<void> {
   console.log('  · odds book for the near-term fixtures');
-  const provider = new MockProvider({ seed: 'profit-tips-seed' });
+  const provider = new MockProvider();
   const window = events.filter(
     (event) =>
       event.startsAt.getTime() > Date.now() - 2 * 86_400_000 &&
@@ -573,8 +575,8 @@ function buildTip(
   const finished = event.result !== null;
   const wantWin = random() < options.winRate;
   const { candidate, outcome } = finished
-    ? selectionForOutcome(event.result as MatchResult, wantWin, random)
-    : { candidate: pickUpcomingSelection(random), outcome: 'PENDING' as const };
+    ? selectionForOutcome(event.result as MatchResult, wantWin, random, event.sportKey)
+    : { candidate: pickUpcomingSelection(random, event.sportKey), outcome: 'PENDING' as const };
 
   const range = options.oddsRange ?? ODDS_RANGE.FREE!;
   const odds = options.targetOdds
@@ -648,7 +650,8 @@ function buildTip(
   return { tip, result };
 }
 
-function pickUpcomingSelection(random: () => number) {
+function pickUpcomingSelection(random: () => number, sportKey = 'football') {
+  const allowsDraw = sportKey === 'football' || sportKey === 'ice-hockey';
   const candidates = [
     { marketKey: '1x2', marketType: 'MATCH_WINNER' as const, selectionKey: 'HOME', line: null, label: (h: string) => `${h.toUpperCase()} WIN` },
     { marketKey: '1x2', marketType: 'MATCH_WINNER' as const, selectionKey: 'AWAY', line: null, label: (_h: string, a: string) => `${a.toUpperCase()} WIN` },
@@ -657,7 +660,7 @@ function pickUpcomingSelection(random: () => number) {
     { marketKey: 'totals', marketType: 'OVER_UNDER' as const, selectionKey: 'OVER', line: 2.5, label: () => 'OVER 2.5 GOALS' },
     { marketKey: 'totals', marketType: 'OVER_UNDER' as const, selectionKey: 'UNDER', line: 2.5, label: () => 'UNDER 2.5 GOALS' },
     { marketKey: 'btts', marketType: 'BTTS' as const, selectionKey: 'BTTS_YES', line: null, label: () => 'BOTH TEAMS TO SCORE' },
-  ];
+  ].filter((candidate) => allowsDraw || candidate.marketType !== 'DOUBLE_CHANCE');
   return pick(candidates, random);
 }
 

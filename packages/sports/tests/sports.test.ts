@@ -166,3 +166,21 @@ describe('odds movement', () => {
     expect(impliedProbability(1)).toBe(1);
   });
 });
+
+describe('seed consistency', () => {
+  it('produces the same fixture for an id regardless of who constructs the provider', async () => {
+    // The database seed, the API and the worker each build their own instance;
+    // if the default salt drifted, a sync would rewrite stored fixtures.
+    const from = new Date('2026-09-13T00:00:00Z');
+    const to = new Date('2026-09-13T23:59:59Z');
+
+    const seeded = await new MockProvider().getEvents({ from, to });
+    const fromRegistry = await createProvider({ slug: 'mock' }).getEvents({ from, to });
+
+    const key = (events: Awaited<ReturnType<MockProvider['getEvents']>>) =>
+      events.map((event) => `${event.providerEventId}:${event.homeTeam.name}:${event.awayTeam.name}`);
+
+    expect(key(seeded)).toEqual(key(fromRegistry));
+    expect(seeded.length).toBeGreaterThan(0);
+  });
+});

@@ -47,13 +47,23 @@ export interface SelectionCandidate {
   label: (home: string, away: string) => string;
 }
 
-/** Candidate selections the seed can choose from, across the auto-settleable markets. */
-export function candidateSelections(random: () => number): SelectionCandidate[] {
+/** Markets that only make sense in sports where a draw is possible. */
+const DRAW_SPORTS = new Set(['football', 'ice-hockey']);
+
+/**
+ * Candidate selections the seed can choose from, across the auto-settleable
+ * markets. Draw-based markets are skipped for sports that cannot end level.
+ */
+export function candidateSelections(
+  random: () => number,
+  sportKey = 'football',
+): SelectionCandidate[] {
+  const allowsDraw = DRAW_SPORTS.has(sportKey);
   const totalLine = pick([1.5, 2.5, 3.5, 2.25, 3.25, 2.75], random);
   const altLine = pick([3.75, 4.25, 2.75], random);
   const handicapLine = pick([-0.25, -0.5, -0.75, -1, -1.25, -1.5, 0.25, 0.5, 0.75, 1], random);
 
-  return [
+  const candidates: SelectionCandidate[] = [
     {
       marketKey: '1x2',
       marketType: MarketType.MATCH_WINNER,
@@ -87,21 +97,21 @@ export function candidateSelections(random: () => number): SelectionCandidate[] 
       marketType: MarketType.OVER_UNDER,
       selectionKey: 'OVER',
       line: totalLine,
-      label: () => `OVER ${totalLine.toFixed(1)} GOALS`,
+      label: () => `OVER ${splitLineLabel(totalLine).replace(/\+/g, '')} GOALS`,
     },
     {
       marketKey: 'totals',
       marketType: MarketType.OVER_UNDER,
       selectionKey: 'UNDER',
       line: totalLine,
-      label: () => `UNDER ${totalLine.toFixed(1)} GOALS`,
+      label: () => `UNDER ${splitLineLabel(totalLine).replace(/\+/g, '')} GOALS`,
     },
     {
       marketKey: 'alt-totals',
       marketType: MarketType.OVER_UNDER,
       selectionKey: 'UNDER',
       line: altLine,
-      label: () => `ALTERNATIVE GOAL LINE UNDER ${splitLineLabel(altLine)}`,
+      label: () => `ALTERNATIVE GOAL LINE UNDER ${splitLineLabel(altLine).replace(/\+/g, '')}`,
     },
     {
       marketKey: 'btts',
@@ -139,6 +149,10 @@ export function candidateSelections(random: () => number): SelectionCandidate[] 
       label: (home) => `${home.toUpperCase()} DRAW NO BET`,
     },
   ];
+
+  if (allowsDraw) return candidates;
+  const drawMarkets = new Set<MarketType>([MarketType.DOUBLE_CHANCE, MarketType.DRAW_NO_BET]);
+  return candidates.filter((candidate) => !drawMarkets.has(candidate.marketType));
 }
 
 /**
@@ -167,8 +181,9 @@ export function selectionForOutcome(
   result: MatchResult,
   wantWin: boolean,
   random: () => number,
+  sportKey = 'football',
 ): { candidate: SelectionCandidate; outcome: SettlementOutcome } {
-  const candidates = candidateSelections(random);
+  const candidates = candidateSelections(random, sportKey);
   const evaluated: { candidate: SelectionCandidate; outcome: SettlementOutcome }[] = [];
 
   for (const candidate of candidates) {

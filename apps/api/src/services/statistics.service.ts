@@ -131,6 +131,7 @@ export class StatisticsService {
     winRate: number;
     totalTips: number;
     profit: number;
+    stake: number;
   }> {
     const stats = await this.compute({ product, window: 'ALL' });
     let averageOdds = stats.avgOdds;
@@ -152,6 +153,7 @@ export class StatisticsService {
       winRate: stats.winRate,
       totalTips: stats.settledTips,
       profit: stats.profit,
+      stake: env.STATISTICS_STAKE,
     };
   }
 

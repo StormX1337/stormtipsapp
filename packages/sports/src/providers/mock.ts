@@ -41,6 +41,15 @@ function hashString(value: string): number {
 
 const DAY_MS = 86_400_000;
 
+/**
+ * Default generator seed.
+ *
+ * Every consumer (database seed, API, worker) must use the same salt, otherwise
+ * the same `providerEventId` would resolve to different fixtures and a later
+ * sync would silently rewrite the teams of an already-stored event.
+ */
+export const DEFAULT_MOCK_SEED = process.env.MOCK_PROVIDER_SEED ?? 'profit-tips';
+
 function startOfUtcDay(date: Date): Date {
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 }
@@ -70,7 +79,7 @@ export class MockProvider extends BaseProvider {
     super();
     this.enabledSports = config.enabledSports ?? [];
     this.enabledLeagueKeys = config.enabledLeagueKeys ?? [];
-    this.seedSalt = hashString(config.seed ?? 'profit-tips');
+    this.seedSalt = hashString(config.seed ?? DEFAULT_MOCK_SEED);
   }
 
   private leagues(): CatalogueLeague[] {
