@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import type { UserRole } from '@storm-tips/types';
 import { useAdminAuth } from '@/lib/auth';
+import { WorkerHealth } from '@/components/worker-health';
 import { Skeleton } from './ui';
 
 interface NavItem {
@@ -286,7 +287,10 @@ export function AdminShell({ children }: { children: ReactNode }): ReactNode {
           </button>
         </header>
 
-        <main className="min-w-0 flex-1 p-4 lg:p-6">{children}</main>
+        <main className="min-w-0 flex-1 p-4 lg:p-6">
+          <WorkerHealth />
+          {children}
+        </main>
       </div>
     </div>
   );

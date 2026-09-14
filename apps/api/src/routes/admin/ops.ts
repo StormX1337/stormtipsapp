@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { prisma } from '@storm-tips/database';
 import { encryptSecret, maskSecret } from '@storm-tips/auth';
+import { QUEUE_NAMES, REDIS_KEYS } from '@storm-tips/config';
 import { AVAILABLE_PROVIDERS } from '@storm-tips/sports';
 import {
   idParamSchema,
@@ -15,7 +16,8 @@ import { parseBody, parseParams, parseQuery } from '../../lib/validate.js';
 import { assertFound, paginate, skipTake } from '../../lib/http.js';
 import { audit } from '../../lib/audit.js';
 import { env } from '../../lib/env.js';
-import { jobs } from '../../lib/queues.js';
+import { getQueue, jobs } from '../../lib/queues.js';
+import { redis } from '../../lib/redis.js';
 import { pollInclude, serializePoll } from '../../serializers/poll.js';
 import { notifications } from '../../services/notification.service.js';
 import { referrals } from '../../services/referral.service.js';
@@ -184,6 +186,74 @@ export async function adminOpsRoutes(app: FastifyInstance): Promise<void> {
       };
     },
   );
+
+  // ── background worker ─────────────────────────────────────────────────────
+
+  /**
+   * Is anything actually processing the queues?
+   *
+   * Without this the console has no way to say so: with the worker stopped the
+   * API still serves, the admin still loads, and fixtures, live scores, results
+   * and settlement all quietly stop — which reads as a broken data provider
+   * rather than a process nobody started.
+   *
+   * The verdict comes from the worker's heartbeat, not from BullMQ's worker
+   * registration. That registration is a live Redis connection, so whether it
+   * disappears with the process depends on how the process died and on Redis's
+   * `timeout` — a stopped worker was still counted here a minute later. The
+   * heartbeat cannot go stale that way: it expires unless something renews it,
+   * so the counts below stay as detail and only the key decides.
+   *
+   * `schedules` counts the repeatable jobs registered in Redis. The worker
+   * registers them at boot, so zero across every queue means the worker has
+   * never run against this Redis, not merely that it is down right now.
+   */
+  app.get('/workers', { preHandler: [app.requireCapability('ops:read')] }, async () => {
+    const heartbeat = await redis.get(REDIS_KEYS.workerHeartbeat());
+    const queues = await Promise.all(
+      Object.values(QUEUE_NAMES).map(async (name) => {
+        const queue = getQueue(name);
+        const [counts, workers, schedules, lastCompleted] = await Promise.all([
+          queue.getJobCounts('waiting', 'active', 'delayed', 'failed'),
+          queue.getWorkersCount(),
+          queue.getJobSchedulersCount(),
+          queue.getJobs(['completed'], 0, 0),
+        ]);
+        return {
+          name,
+          workers,
+          schedules,
+          waiting: counts.waiting ?? 0,
+          active: counts.active ?? 0,
+          delayed: counts.delayed ?? 0,
+          failed: counts.failed ?? 0,
+          lastFinishedAt: lastCompleted[0]?.finishedOn
+            ? new Date(lastCompleted[0].finishedOn).toISOString()
+            : null,
+        };
+      }),
+    );
+
+    let lastBeatAt: string | null = null;
+    if (heartbeat) {
+      try {
+        lastBeatAt = (JSON.parse(heartbeat) as { at?: string }).at ?? null;
+      } catch {
+        // A malformed value still proves something wrote it within the TTL.
+        lastBeatAt = null;
+      }
+    }
+
+    return {
+      checkedAt: new Date().toISOString(),
+      /** False means nothing is consuming any queue — no sync, no settlement. */
+      connected: Boolean(heartbeat),
+      lastBeatAt,
+      /** False means the worker has not registered its cron jobs on this Redis. */
+      scheduled: queues.some((queue) => queue.schedules > 0),
+      queues,
+    };
+  });
 
   // ── API providers ─────────────────────────────────────────────────────────
   app.get('/providers', { preHandler: [app.requireCapability('providers:write')] }, async () => {

@@ -55,7 +55,21 @@ export const REDIS_KEYS = {
   rateLimit: (bucket: string, key: string) => `rl:${bucket}:${key}`,
   plans: () => 'plans:active',
   providerQuota: (slug: string) => `provider:quota:${slug}`,
+  /**
+   * Worker liveness, written with a TTL a few beats long.
+   *
+   * BullMQ's own worker registration is not a liveness signal: a worker that is
+   * killed rather than shut down leaves its Redis client registered until the
+   * connection is reaped, which with `timeout 0` can be indefinitely — so a
+   * crashed worker would still read as connected. An expiring key cannot lie
+   * that way, because nothing is left to renew it.
+   */
+  workerHeartbeat: () => 'worker:heartbeat',
 } as const;
+
+/** How often the worker renews its heartbeat, and how long the key survives. */
+export const WORKER_HEARTBEAT_SECONDS = 15;
+export const WORKER_HEARTBEAT_TTL_SECONDS = 60;
 
 /** Redis pub/sub channels used to fan WebSocket messages across API instances. */
 export const REDIS_CHANNELS = {

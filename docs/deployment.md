@@ -57,6 +57,33 @@ once, against a fresh database:
 pnpm db:seed
 ```
 
+## The worker is not optional
+
+The API serves requests; **everything that happens on a schedule happens in
+`apps/worker`** — fixtures, live scores, odds, results, settlement, scheduled
+publishing, subscription expiry and push notifications. Run it alongside the
+API, not instead of it:
+
+```bash
+pnpm --filter @storm-tips/worker dev     # development
+pnpm --filter @storm-tips/worker start   # production
+```
+
+With the worker stopped nothing announces it: the API answers, the admin loads,
+the site renders — the data simply stops moving, which looks like a data
+provider that has gone quiet. So the worker writes a heartbeat key to Redis
+every 15 seconds with a 60-second TTL, `GET /admin/ops/workers` reads it, and
+the admin console shows a standing banner on every page while it is missing.
+
+The heartbeat is what decides, rather than BullMQ's own worker registration:
+that registration is a live Redis connection, so whether it disappears with the
+process depends on how the process died and on Redis's `timeout` setting — a
+stopped worker was still counted as connected a minute later. A key that
+expires unless something renews it cannot be wrong in that direction.
+
+The same endpoint reports each queue's depth and failures, so a worker that is
+running but wedged is visible too.
+
 ## Ports
 
 | Service | Container | Published by default                         |

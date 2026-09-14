@@ -1,4 +1,9 @@
 import { Worker, Queue } from 'bullmq';
+import {
+  REDIS_KEYS,
+  WORKER_HEARTBEAT_SECONDS,
+  WORKER_HEARTBEAT_TTL_SECONDS,
+} from '@storm-tips/config';
 import { disconnectPrisma } from '@storm-tips/database';
 import { env } from '@storm-tips/api/lib/env';
 import { logger } from '@storm-tips/api/lib/logger';
@@ -7,6 +12,29 @@ import { CONCURRENCY, HANDLERS, SCHEDULES } from './registry.js';
 
 const workers: Worker[] = [];
 const queues: Queue[] = [];
+let heartbeat: NodeJS.Timeout | null = null;
+
+/**
+ * Says "this process is alive" in a way a crash cannot fake.
+ *
+ * The key carries a TTL several beats long and is renewed on a timer, so it
+ * disappears on its own once nothing is renewing it — whether the worker was
+ * stopped, killed, or lost with its container. The admin console reads it to
+ * tell an operator that nothing is syncing, which otherwise looks exactly like
+ * a data provider that has gone quiet.
+ */
+async function beat(): Promise<void> {
+  try {
+    await redis.set(
+      REDIS_KEYS.workerHeartbeat(),
+      JSON.stringify({ pid: process.pid, at: new Date().toISOString(), queues: workers.length }),
+      'EX',
+      WORKER_HEARTBEAT_TTL_SECONDS,
+    );
+  } catch (error) {
+    logger.error({ err: error }, 'failed to write the worker heartbeat');
+  }
+}
 
 async function registerSchedules(): Promise<void> {
   const byQueue = new Map<string, Queue>();
@@ -67,6 +95,9 @@ function startWorkers(): void {
 async function shutdown(signal: string): Promise<void> {
   logger.info({ signal }, 'worker shutting down');
   try {
+    if (heartbeat) clearInterval(heartbeat);
+    // Drop it now rather than waiting out the TTL, so a clean stop shows at once.
+    await redis.del(REDIS_KEYS.workerHeartbeat());
     await Promise.all(workers.map((worker) => worker.close()));
     await Promise.all(queues.map((queue) => queue.close()));
     await closeRedis();
@@ -82,6 +113,11 @@ async function main(): Promise<void> {
   logger.info({ env: env.NODE_ENV, provider: env.SPORTS_PROVIDER }, 'STORM TIPS worker starting');
   startWorkers();
   await registerSchedules();
+
+  await beat();
+  heartbeat = setInterval(() => void beat(), WORKER_HEARTBEAT_SECONDS * 1_000);
+  // The heartbeat must never be the reason the process stays alive.
+  heartbeat.unref();
 
   for (const signal of ['SIGTERM', 'SIGINT'] as const) {
     process.on(signal, () => {

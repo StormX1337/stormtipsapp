@@ -36,6 +36,7 @@ export const CAPABILITIES = {
   'providers:write': 'SUPER_ADMIN',
   'settings:write': 'SUPER_ADMIN',
   'logs:read': 'ADMIN',
+  'ops:read': 'ADMIN',
   'statistics:read': 'MODERATOR',
 } as const satisfies Record<string, UserRole>;
 
