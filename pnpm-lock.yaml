@@ -42,6 +42,58 @@ importers:
         specifier: ^3.2.4
         version: 3.2.7(@types/node@22.20.2)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)
 
+  apps/admin:
+    dependencies:
+      '@profit-tips/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@profit-tips/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@tanstack/react-query':
+        specifier: ^5.90.2
+        version: 5.102.8(react@19.3.0)
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      lucide-react:
+        specifier: ^0.544.0
+        version: 0.544.0(react@19.3.0)
+      next:
+        specifier: ^15.5.4
+        version: 15.5.25(@types/node@22.20.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      react:
+        specifier: ^19.1.1
+        version: 19.3.0
+      react-dom:
+        specifier: ^19.1.1
+        version: 19.3.0(react@19.3.0)
+      recharts:
+        specifier: ^3.2.1
+        version: 3.10.1(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react-is@19.3.0)(react@19.3.0)(redux@5.0.1)
+    devDependencies:
+      '@tailwindcss/postcss':
+        specifier: ^4.1.13
+        version: 4.3.3
+      '@types/node':
+        specifier: ^22.18.13
+        version: 22.20.2
+      '@types/react':
+        specifier: ^19.1.13
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: ^19.1.9
+        version: 19.3.0(@types/react@19.3.0)
+      postcss:
+        specifier: ^8.5.6
+        version: 8.5.28
+      tailwindcss:
+        specifier: ^4.1.13
+        version: 4.3.3
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
+
   apps/api:
     dependencies:
       '@fastify/cookie':

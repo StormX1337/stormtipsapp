@@ -1,0 +1,128 @@
+@import 'tailwindcss';
+
+/* Admin console theme — the same PROFIT TIPS tokens, tuned for desktop density. */
+@theme {
+  --color-bg-base: #0a0c10;
+  --color-bg-subtle: #0e1117;
+  --color-bg-raised: #141821;
+  --color-bg-card: #181d27;
+  --color-bg-card-alt: #1e2430;
+  --color-bg-input: #11151d;
+
+  --color-line-subtle: #222834;
+  --color-line: #2a3140;
+  --color-line-strong: #39424f;
+
+  --color-ink: #ffffff;
+  --color-ink-muted: #9ba5b7;
+  --color-ink-dim: #6c7688;
+  --color-ink-inverse: #0a0c10;
+
+  --color-accent-300: #45f0a5;
+  --color-accent-400: #21e88e;
+  --color-accent-500: #12e17f;
+  --color-accent-600: #0bb966;
+
+  --color-gold-300: #ffd65c;
+  --color-gold-400: #ffc93c;
+  --color-pink-500: #ff3d71;
+  --color-cyan-500: #28d8f5;
+  --color-violet-500: #8b5cf6;
+
+  --color-won: #12e17f;
+  --color-lost: #ff4d5e;
+  --color-void: #8b94a6;
+  --color-half-won: #7de3a6;
+  --color-half-lost: #ff9b6b;
+  --color-pending: #7a8496;
+  --color-live: #ff3d71;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  --font-sans:
+    ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  body {
+    background-color: var(--color-bg-base);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent-500);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line-strong) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: var(--color-line-strong);
+    border-radius: 999px;
+  }
+}
+
+@layer components {
+  .card {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-line-subtle);
+    border-radius: var(--radius-lg);
+  }
+  .input {
+    width: 100%;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-line);
+    background-color: var(--color-bg-input);
+    padding: 8px 10px;
+    font-size: 13px;
+    color: var(--color-ink);
+    outline: none;
+  }
+  .input:focus {
+    border-color: var(--color-accent-500);
+  }
+  .label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-ink-muted);
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes pt-shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #181d27 0%, #1e2430 40%, #181d27 80%);
+  background-size: 400px 100%;
+  animation: pt-shimmer 1.4s linear infinite;
+  border-radius: 8px;
+}
