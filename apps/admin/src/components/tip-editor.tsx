@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { EventDTO, Paginated, TipDTO } from '@storm-tips/types';
 import { MARKET_SELECTIONS, MarketType, marketRequiresLine } from '@storm-tips/types';
@@ -65,6 +65,12 @@ export function TipEditor({
   const queryClient = useQueryClient();
   const [form, setForm] = useState<FormState>(EMPTY);
   const [eventSearch, setEventSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(eventSearch.trim()), 250);
+    return () => clearTimeout(timer);
+  }, [eventSearch]);
 
   useEffect(() => {
     if (!open) return;
@@ -92,9 +98,23 @@ export function TipEditor({
   }, [open, tip]);
 
   const events = useQuery({
-    queryKey: ['admin-events'],
-    queryFn: () => api<Paginated<EventDTO>>('/admin/catalogue/events?limit=100'),
+    /**
+     * Fixtures that have not kicked off yet, soonest first — which is what you
+     * are writing a tip for. The default listing is newest-first for the
+     * catalogue page, and with a few days of fixtures loaded that window starts
+     * beyond today, so today's matches were simply never in the list.
+     *
+     * The search runs on the server: filtering a fixed page in the browser can
+     * only ever find what happened to be on it.
+     */
+    queryKey: ['admin-events', 'upcoming', debouncedSearch],
+    queryFn: () => {
+      const params = new URLSearchParams({ limit: '100', upcoming: 'true', order: 'asc' });
+      if (debouncedSearch) params.set('search', debouncedSearch);
+      return api<Paginated<EventDTO>>(`/admin/catalogue/events?${params.toString()}`);
+    },
     enabled: open,
+    placeholderData: (previous) => previous,
   });
 
   const bookmakers = useQuery({
@@ -104,19 +124,7 @@ export function TipEditor({
   });
 
   const selectedEvent = events.data?.items.find((event) => event.id === form.eventId);
-
-  const filteredEvents = useMemo(() => {
-    const items = events.data?.items ?? [];
-    if (!eventSearch.trim()) return items.slice(0, 60);
-    const needle = eventSearch.toLowerCase();
-    return items
-      .filter((event) =>
-        `${event.homeTeam.name} ${event.awayTeam.name} ${event.league.name}`
-          .toLowerCase()
-          .includes(needle),
-      )
-      .slice(0, 60);
-  }, [events.data, eventSearch]);
+  const eventItems = events.data?.items ?? [];
 
   const allowedSelections = MARKET_SELECTIONS[form.marketType as MarketType] ?? [];
   const needsLine = marketRequiresLine(form.marketType as MarketType);
@@ -231,7 +239,7 @@ export function TipEditor({
           onChange={(event) => setForm({ ...form, eventId: event.target.value })}
           options={[
             { value: '', label: events.isPending ? 'Loading…' : 'Select an event' },
-            ...filteredEvents.map((event) => ({
+            ...eventItems.map((event) => ({
               value: event.id,
               label: `${new Date(event.startsAt).toLocaleString('en-GB', {
                 day: '2-digit',

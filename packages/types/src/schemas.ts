@@ -259,6 +259,20 @@ export const settleTipSchema = z.object({
   note: z.string().max(500).nullish(),
 });
 
+/**
+ * Admin event list.
+ *
+ * The catalogue page wants the most recent fixtures first; the tip editor wants
+ * the ones that have not kicked off yet, soonest first — so the window and the
+ * direction are both part of the query rather than baked into the route.
+ */
+export const adminEventsQuerySchema = paginationSchema.extend({
+  /** Only fixtures that have not kicked off yet. */
+  upcoming: z.coerce.boolean().optional(),
+  search: z.string().max(120).optional(),
+  order: z.enum(['asc', 'desc']).default('desc'),
+});
+
 export const adminTipsQuerySchema = paginationSchema.extend({
   product: nativeEnumOf(ProductCode).optional(),
   status: nativeEnumOf(TipStatus).optional(),

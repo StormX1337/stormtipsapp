@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
-import { prisma } from '@storm-tips/database';
+import { prisma, type Prisma } from '@storm-tips/database';
 import {
+  adminEventsQuerySchema,
   idParamSchema,
   paginationSchema,
   upsertBookmakerSchema,
@@ -189,16 +190,31 @@ export async function adminCatalogueRoutes(app: FastifyInstance): Promise<void> 
   });
 
   app.get('/events', async (request) => {
-    const query = parseQuery(request, paginationSchema);
+    const query = parseQuery(request, adminEventsQuerySchema);
     const { skip, take } = skipTake(query);
+
+    const where: Prisma.EventWhereInput = {
+      ...(query.upcoming ? { startsAt: { gte: new Date() } } : {}),
+      ...(query.search
+        ? {
+            OR: [
+              { homeTeam: { name: { contains: query.search, mode: 'insensitive' } } },
+              { awayTeam: { name: { contains: query.search, mode: 'insensitive' } } },
+              { league: { name: { contains: query.search, mode: 'insensitive' } } },
+            ],
+          }
+        : {}),
+    };
+
     const [events, total] = await Promise.all([
       prisma.event.findMany({
+        where,
         include: eventInclude,
-        orderBy: { startsAt: 'desc' },
+        orderBy: { startsAt: query.order },
         skip,
         take,
       }),
-      prisma.event.count(),
+      prisma.event.count({ where }),
     ]);
     return paginate(events.map(serializeEvent), total, query);
   });

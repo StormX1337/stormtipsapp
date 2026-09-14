@@ -81,8 +81,19 @@ export class SyncService {
     if (row.apiKeyEncrypted) {
       try {
         apiKey = decryptSecret(row.apiKeyEncrypted, env.ENCRYPTION_KEY);
-      } catch (error) {
-        logger.error({ err: error, slug: row.slug }, 'could not decrypt provider API key');
+      } catch {
+        /**
+         * AES-GCM authenticates the ciphertext, so the only way this fails on
+         * an unmodified row is that ENCRYPTION_KEY is no longer the key it was
+         * stored with. Saying so is the difference between a one-line fix and
+         * an afternoon: the key has to be re-entered in the admin console, it
+         * cannot be recovered.
+         */
+        logger.error(
+          { slug: row.slug },
+          'stored API key cannot be decrypted with the current ENCRYPTION_KEY — ' +
+            're-enter it under Admin → API providers',
+        );
       }
     }
 

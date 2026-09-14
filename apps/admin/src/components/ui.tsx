@@ -228,12 +228,31 @@ export function Skeleton({ className }: { className?: string }): ReactNode {
   return <div className={clsx('skeleton', className)} aria-hidden />;
 }
 
+/**
+ * Shows the server's message and, for a rejected body, which field it objected
+ * to — "Invalid request body" on its own tells an operator nothing about which
+ * of a dozen inputs to correct.
+ */
 export function ErrorBox({ error }: { error: unknown }): ReactNode {
-  const message = (error as Error)?.message ?? 'Unbekannter Fehler';
+  const message = (error as Error)?.message ?? 'Something went wrong';
+  const issues = (
+    error as { details?: { issues?: { path?: (string | number)[]; message: string }[] } }
+  )?.details?.issues;
+
   return (
-    <p role="alert" className="rounded-md bg-lost/15 px-3 py-2 text-[12.5px] text-lost">
-      {message}
-    </p>
+    <div role="alert" className="rounded-md bg-lost/15 px-3 py-2 text-[12.5px] text-lost">
+      <p>{message}</p>
+      {issues && issues.length > 0 ? (
+        <ul className="mt-1 list-disc pl-4">
+          {issues.map((issue, index) => (
+            <li key={index}>
+              {issue.path && issue.path.length > 0 ? <b>{issue.path.join('.')}: </b> : null}
+              {issue.message}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
   );
 }
 

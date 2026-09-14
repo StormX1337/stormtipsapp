@@ -1,5 +1,15 @@
 import path from 'node:path';
+import { config as loadEnv } from 'dotenv';
 import type { NextConfig } from 'next';
+
+/**
+ * The monorepo keeps one `.env` at the root, but Next only reads env files
+ * inside its own app directory — so without this, every value set there
+ * (API_INTERNAL_URL, the NEXT_PUBLIC_* vars, ALLOWED_DEV_ORIGINS) silently
+ * falls back to its default and a change in `.env` appears to do nothing.
+ * Anything already in the environment wins, so `FOO=bar pnpm dev` still works.
+ */
+loadEnv({ path: path.join(import.meta.dirname, '../../.env') });
 
 /** Where the Next server reaches the API. Never sent to the browser. */
 const API_INTERNAL_URL = process.env.API_INTERNAL_URL ?? 'http://localhost:4000';
