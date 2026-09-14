@@ -124,6 +124,24 @@ obtained and which file consumes it.
 `NEXT_PUBLIC_*` and `EXPO_PUBLIC_*` values are **compiled into the client
 bundle**. Only put public information there — never a secret key.
 
+`NEXT_PUBLIC_API_URL` is optional and best left empty. Empty means the web and
+admin apps call `/api` on their own origin and the Next.js server proxies it to
+`API_INTERNAL_URL`. That is one origin, so there is no CORS allowlist to
+maintain, the API port does not have to be reachable from the internet, and the
+same build works from any hostname — including a phone on your LAN.
+
+Set it only when the browser genuinely has to reach the API on another origin.
+Then that origin must also appear in the API's `CORS_ORIGINS`.
+
+`NEXT_PUBLIC_WS_URL` is separate: Next.js rewrites cannot proxy a WebSocket
+upgrade, so live updates need either a direct URL to the API or a reverse proxy
+that handles the upgrade (`infra/nginx/nginx.conf` does). Left empty, the live
+screen polls instead.
+
+The Expo app has no proxy in front of it and always needs an absolute
+`EXPO_PUBLIC_API_URL` the device can reach — `localhost` there means the
+phone.
+
 ## Troubleshooting
 
 | Symptom                                               | Cause and fix                                                                 |

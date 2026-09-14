@@ -78,6 +78,10 @@ export default function LivePage(): ReactNode {
     let cancelled = false;
     let socket: WebSocket;
 
+    // Without a configured socket URL the screen polls instead. Opening a
+    // connection that cannot succeed would only add reconnect noise.
+    if (!config.wsUrl) return;
+
     try {
       socket = new WebSocket(config.wsUrl);
     } catch {

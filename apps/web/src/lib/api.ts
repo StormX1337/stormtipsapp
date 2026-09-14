@@ -1,5 +1,5 @@
 import { DEFAULT_LOCALE, resolveLocale } from '@storm-tips/ui';
-import { apiBase } from './config';
+import { apiBase, serverApiBase } from './config';
 
 const ACCESS_TOKEN_KEY = 'st.accessToken';
 const REFRESH_TOKEN_KEY = 'st.refreshToken';
@@ -166,7 +166,7 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
 
 /** Server-side fetch (React Server Components) — never sends a user token. */
 export async function apiPublic<T>(path: string, revalidate = 60, locale = 'de'): Promise<T> {
-  const response = await fetch(`${apiBase}${path}`, {
+  const response = await fetch(`${serverApiBase}${path}`, {
     headers: { accept: 'application/json', 'accept-language': locale },
     next: { revalidate },
   });

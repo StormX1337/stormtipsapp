@@ -19,9 +19,12 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
 
 COPY apps/admin ./apps/admin
 
-# Public configuration is inlined at build time by Next.js.
-ARG NEXT_PUBLIC_API_URL=http://localhost:4000
-ARG NEXT_PUBLIC_WS_URL=ws://localhost:4000/ws
+# Public configuration is inlined at build time by Next.js. Both default to
+# empty: the browser then calls /api on this app's own origin and the Next
+# server proxies it to API_INTERNAL_URL at runtime, so the image is not tied to
+# the hostname it will be served from.
+ARG NEXT_PUBLIC_API_URL=
+ARG NEXT_PUBLIC_WS_URL=
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_WS_URL=$NEXT_PUBLIC_WS_URL
 RUN pnpm --filter @storm-tips/admin build

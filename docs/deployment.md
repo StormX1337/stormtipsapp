@@ -17,9 +17,16 @@ All four are multi-stage, install with `--frozen-lockfile`, drop to the
 unprivileged `node` user, and ship no build tooling. The API and worker generate
 the Prisma client against the exact `node_modules` the runtime uses.
 
-The Next.js images bake `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_WS_URL` at build
-time — those are build arguments, not runtime environment variables, because
-Next.js inlines them into the client bundle.
+The Next.js images do **not** bake an API URL by default. The browser calls
+`/api` on the app's own origin and the Next server proxies it to
+`API_INTERNAL_URL` (a runtime variable, `http://api:4000` on the compose
+network). One origin: no CORS allowlist to maintain, no API port to publish,
+and the same image runs behind any hostname.
+
+`NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_WS_URL` remain available as build
+arguments for the case where the browser must address the API directly. They
+are build arguments rather than runtime variables because Next.js inlines them
+into the client bundle, so changing one means rebuilding the image.
 
 ## Running the stack
 
@@ -128,6 +135,18 @@ Images are tagged with the release tag and the commit sha, so rolling back is
 re-deploying the previous tag. A migration is not rolled back automatically —
 if a release contained a destructive migration, restore the dump taken before
 it. That is the reason destructive changes should be split across two releases.
+
+### When a front-end cannot reach the API
+
+Almost always one of two things, and the API log now names which:
+
+- **`Netzwerkfehler` in the browser, nothing in the API log** — the bundle is
+  calling an address the visitor's device cannot reach, classically
+  `localhost:4000` from a phone. Leave `NEXT_PUBLIC_API_URL` empty and let the
+  proxy handle it.
+- **`origin rejected` in the API log** — the browser reaches the API directly
+  from an origin that is not in `CORS_ORIGINS`. The log line names the origin
+  and the configured allowlist.
 
 ## Operational runbook
 

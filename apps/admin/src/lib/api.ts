@@ -1,4 +1,4 @@
-import { apiBase } from './config';
+import { apiBase, serverApiBase } from './config';
 
 const ACCESS_TOKEN_KEY = 'st.admin.accessToken';
 const REFRESH_TOKEN_KEY = 'st.admin.refreshToken';
@@ -139,7 +139,7 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
 
 /** Server-side fetch (React Server Components) — never sends a user token. */
 export async function apiPublic<T>(path: string, revalidate = 60): Promise<T> {
-  const response = await fetch(`${apiBase}${path}`, {
+  const response = await fetch(`${serverApiBase}${path}`, {
     headers: { accept: 'application/json' },
     next: { revalidate },
   });
