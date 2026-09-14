@@ -118,7 +118,11 @@ export async function adminUserRoutes(app: FastifyInstance): Promise<void> {
     if (input.role && input.role !== before.role && request.auth!.role !== 'SUPER_ADMIN') {
       throw AppError.forbidden('Only a super admin can change roles');
     }
-    if (before.role === 'SUPER_ADMIN' && request.auth!.userId !== id && request.auth!.role !== 'SUPER_ADMIN') {
+    if (
+      before.role === 'SUPER_ADMIN' &&
+      request.auth!.userId !== id &&
+      request.auth!.role !== 'SUPER_ADMIN'
+    ) {
       throw AppError.forbidden('Super admin accounts can only be modified by a super admin');
     }
 
@@ -163,7 +167,12 @@ export async function adminUserRoutes(app: FastifyInstance): Promise<void> {
         data: { revokedAt: new Date(), revokedReason: 'BANNED' },
       }),
     ]);
-    await audit(request, { action: 'user.banned', entityType: 'User', entityId: id, after: { banReason } });
+    await audit(request, {
+      action: 'user.banned',
+      entityType: 'User',
+      entityId: id,
+      after: { banReason },
+    });
     return { success: true };
   });
 
@@ -226,13 +235,17 @@ export async function adminUserRoutes(app: FastifyInstance): Promise<void> {
     },
   );
 
-  app.post('/:id/logout-all', { preHandler: [app.requireCapability('users:write')] }, async (request) => {
-    const { id } = parseParams(request, idParamSchema);
-    const { count } = await prisma.session.updateMany({
-      where: { userId: id, revokedAt: null },
-      data: { revokedAt: new Date(), revokedReason: 'ADMIN_REVOKED' },
-    });
-    await audit(request, { action: 'user.sessions_revoked', entityType: 'User', entityId: id });
-    return { revoked: count };
-  });
+  app.post(
+    '/:id/logout-all',
+    { preHandler: [app.requireCapability('users:write')] },
+    async (request) => {
+      const { id } = parseParams(request, idParamSchema);
+      const { count } = await prisma.session.updateMany({
+        where: { userId: id, revokedAt: null },
+        data: { revokedAt: new Date(), revokedReason: 'ADMIN_REVOKED' },
+      });
+      await audit(request, { action: 'user.sessions_revoked', entityType: 'User', entityId: id });
+      return { revoked: count };
+    },
+  );
 }

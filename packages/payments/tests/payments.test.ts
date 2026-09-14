@@ -43,22 +43,34 @@ describe('subscriptionGrantsAccess', () => {
 describe('entitlements', () => {
   it('treats an open-ended entitlement as active', () => {
     expect(
-      entitlementIsActive({ product: 'VIP', grantedAt: past, expiresAt: null, revokedAt: null }, now),
+      entitlementIsActive(
+        { product: 'VIP', grantedAt: past, expiresAt: null, revokedAt: null },
+        now,
+      ),
     ).toBe(true);
   });
 
   it('respects expiry and revocation', () => {
     expect(
-      entitlementIsActive({ product: 'VIP', grantedAt: past, expiresAt: past, revokedAt: null }, now),
+      entitlementIsActive(
+        { product: 'VIP', grantedAt: past, expiresAt: past, revokedAt: null },
+        now,
+      ),
     ).toBe(false);
     expect(
-      entitlementIsActive({ product: 'VIP', grantedAt: past, expiresAt: future, revokedAt: past }, now),
+      entitlementIsActive(
+        { product: 'VIP', grantedAt: past, expiresAt: future, revokedAt: past },
+        now,
+      ),
     ).toBe(false);
   });
 
   it('ignores entitlements that start in the future', () => {
     expect(
-      entitlementIsActive({ product: 'VIP', grantedAt: future, expiresAt: null, revokedAt: null }, now),
+      entitlementIsActive(
+        { product: 'VIP', grantedAt: future, expiresAt: null, revokedAt: null },
+        now,
+      ),
     ).toBe(false);
   });
 
@@ -110,16 +122,31 @@ describe('pricing', () => {
 
   it('applies percentage and fixed coupons without going negative', () => {
     expect(
-      applyDiscount(2999, { discountType: 'PERCENTAGE', discountValue: 20, minPurchaseCents: 0, currency: 'EUR' }),
+      applyDiscount(2999, {
+        discountType: 'PERCENTAGE',
+        discountValue: 20,
+        minPurchaseCents: 0,
+        currency: 'EUR',
+      }),
     ).toEqual({ discountCents: 600, finalPriceCents: 2399 });
     expect(
-      applyDiscount(2999, { discountType: 'FIXED', discountValue: 5000, minPurchaseCents: 0, currency: 'EUR' }),
+      applyDiscount(2999, {
+        discountType: 'FIXED',
+        discountValue: 5000,
+        minPurchaseCents: 0,
+        currency: 'EUR',
+      }),
     ).toEqual({ discountCents: 2999, finalPriceCents: 0 });
   });
 
   it('ignores a coupon below its minimum purchase', () => {
     expect(
-      applyDiscount(1000, { discountType: 'PERCENTAGE', discountValue: 20, minPurchaseCents: 2000, currency: 'EUR' }),
+      applyDiscount(1000, {
+        discountType: 'PERCENTAGE',
+        discountValue: 20,
+        minPurchaseCents: 2000,
+        currency: 'EUR',
+      }),
     ).toEqual({ discountCents: 0, finalPriceCents: 1000 });
   });
 

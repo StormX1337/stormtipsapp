@@ -10,7 +10,13 @@
     "./tokens": "./src/tokens.ts",
     "./i18n": "./src/i18n/index.ts"
   },
-  "scripts": { "typecheck": "tsc --noEmit" },
-  "dependencies": { "@profit-tips/types": "workspace:*" },
-  "devDependencies": { "typescript": "~5.9.3" }
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@profit-tips/types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3"
+  }
 }

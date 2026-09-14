@@ -282,7 +282,8 @@ export class MockProvider extends BaseProvider {
       const pOver = 0.4 + base() * 0.25;
 
       for (const bookmaker of bookmakers) {
-        const margin = 1.03 + mulberry32(hashString(`${providerEventId}:${bookmaker.key}`))() * 0.05;
+        const margin =
+          1.03 + mulberry32(hashString(`${providerEventId}:${bookmaker.key}`))() * 0.05;
         const now = new Date().toISOString();
         const price = (probability: number) =>
           Math.round(Math.max(1.01, 1 / (probability * margin)) * 100) / 100;

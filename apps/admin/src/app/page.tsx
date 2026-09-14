@@ -210,7 +210,9 @@ export default function DashboardPage(): ReactNode {
         </div>
 
         <div className="card p-3 lg:col-span-2">
-          <h2 className="mb-2 text-[13px] font-bold">Kumulierter Gewinn aller Analysen (30 Tage)</h2>
+          <h2 className="mb-2 text-[13px] font-bold">
+            Kumulierter Gewinn aller Analysen (30 Tage)
+          </h2>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data.charts.profitByDay} margin={{ top: 4, right: 4, left: -16 }}>

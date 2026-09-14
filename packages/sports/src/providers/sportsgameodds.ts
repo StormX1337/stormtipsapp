@@ -57,7 +57,13 @@ interface RawOdd {
   fairOdds?: string | number;
   byBookmaker?: Record<
     string,
-    { odds?: string | number; overUnder?: string | number; spread?: string | number; available?: boolean; lastUpdatedAt?: string }
+    {
+      odds?: string | number;
+      overUnder?: string | number;
+      spread?: string | number;
+      available?: boolean;
+      lastUpdatedAt?: string;
+    }
   >;
 }
 
@@ -219,7 +225,8 @@ export class SportsGameOddsProvider extends BaseProvider {
   private toTeam(event: RawEvent, side: 'home' | 'away'): ProviderTeam | null {
     const raw = event.teams?.[side];
     if (!raw) return null;
-    const name = raw.names?.long ?? raw.names?.medium ?? raw.names?.short ?? raw.teamID ?? 'Unknown';
+    const name =
+      raw.names?.long ?? raw.names?.medium ?? raw.names?.short ?? raw.teamID ?? 'Unknown';
     return {
       providerTeamId: raw.teamID ?? slugify(name),
       name,
@@ -248,8 +255,7 @@ export class SportsGameOddsProvider extends BaseProvider {
     if (!home || !away || !event.status?.startsAt) return null;
     const game = event.results?.game ?? {};
     const firstHalf = (event.results?.['1h'] ?? event.results?.['half1']) as
-      | Record<string, number | undefined>
-      | undefined;
+      Record<string, number | undefined> | undefined;
 
     return {
       providerEventId: event.eventID,
@@ -316,7 +322,9 @@ export class SportsGameOddsProvider extends BaseProvider {
             bookmakerKey,
             bookmakerName: prettifyBookmaker(bookmakerKey),
             marketType,
-            marketKey: entry.statID ? `${entry.statID}:${entry.betTypeID}` : (entry.betTypeID ?? 'unknown'),
+            marketKey: entry.statID
+              ? `${entry.statID}:${entry.betTypeID}`
+              : (entry.betTypeID ?? 'unknown'),
             selection,
             line:
               toNumber(book.overUnder ?? entry.bookOverUnder) ??
@@ -344,8 +352,7 @@ export class SportsGameOddsProvider extends BaseProvider {
       const awayScore = numberOrNull(game.awayPoints);
       if (homeScore === null || awayScore === null) continue;
       const firstHalf = (event.results?.['1h'] ?? event.results?.['half1']) as
-        | Record<string, number | undefined>
-        | undefined;
+        Record<string, number | undefined> | undefined;
 
       results.push({
         providerEventId: event.eventID,
@@ -420,5 +427,8 @@ function prettifyBookmaker(key: string): string {
 }
 
 function slugify(value: string): string {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
 }

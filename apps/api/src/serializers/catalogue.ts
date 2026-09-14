@@ -1,5 +1,13 @@
 import type { Prisma } from '@profit-tips/database';
-import type { CountryDTO, EventDTO, LeagueDTO, SportDTO, TeamDTO, BookmakerDTO, OddDTO } from '@profit-tips/types';
+import type {
+  CountryDTO,
+  EventDTO,
+  LeagueDTO,
+  SportDTO,
+  TeamDTO,
+  BookmakerDTO,
+  OddDTO,
+} from '@profit-tips/types';
 import { dec, iso } from './common.js';
 
 export const leagueInclude = { sport: true, country: true } satisfies Prisma.LeagueInclude;
@@ -16,7 +24,9 @@ export function serializeSport(sport: Prisma.SportGetPayload<object>): SportDTO 
   return { id: sport.id, key: sport.key, name: sport.name, icon: sport.icon };
 }
 
-export function serializeCountry(country: Prisma.CountryGetPayload<object> | null): CountryDTO | null {
+export function serializeCountry(
+  country: Prisma.CountryGetPayload<object> | null,
+): CountryDTO | null {
   if (!country) return null;
   return {
     id: country.id,

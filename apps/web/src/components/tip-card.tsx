@@ -7,13 +7,7 @@ import type { ReactNode } from 'react';
 import type { TipDTO, TipFeedGroupDTO } from '@profit-tips/types';
 import { formatKickoff } from '@profit-tips/ui';
 import { useI18n } from '@/lib/i18n';
-import {
-  CountryFlag,
-  OddsBadge,
-  ProductBadge,
-  StatusBadge,
-  TeamCrest,
-} from './primitives';
+import { CountryFlag, OddsBadge, ProductBadge, StatusBadge, TeamCrest } from './primitives';
 
 /**
  * League header.

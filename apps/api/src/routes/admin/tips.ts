@@ -54,7 +54,10 @@ async function resolveMarket(input: {
       `Selection "${input.selectionKey}" is not valid for market ${input.marketType}`,
     );
   }
-  if (marketRequiresLine(input.marketType as never) && (input.line === null || input.line === undefined)) {
+  if (
+    marketRequiresLine(input.marketType as never) &&
+    (input.line === null || input.line === undefined)
+  ) {
     throw AppError.validation(`Market ${input.marketType} requires a line`);
   }
 
@@ -99,12 +102,22 @@ export async function adminTipRoutes(app: FastifyInstance): Promise<void> {
     };
 
     const [tips, total] = await Promise.all([
-      prisma.tip.findMany({ where, include: tipInclude, orderBy: { createdAt: 'desc' }, skip, take }),
+      prisma.tip.findMany({
+        where,
+        include: tipInclude,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take,
+      }),
       prisma.tip.count({ where }),
     ]);
 
     // Admins always see the full tip, never a masked one.
-    return paginate(tips.map((tip) => serializeTip(tip, true)), total, query);
+    return paginate(
+      tips.map((tip) => serializeTip(tip, true)),
+      total,
+      query,
+    );
   });
 
   app.get('/:id', { preHandler: [app.requireCapability('tips:read')] }, async (request) => {
@@ -169,7 +182,12 @@ export async function adminTipRoutes(app: FastifyInstance): Promise<void> {
       await announceTip(tip);
     }
 
-    await audit(request, { action: 'tip.created', entityType: 'Tip', entityId: tip.id, after: input });
+    await audit(request, {
+      action: 'tip.created',
+      entityType: 'Tip',
+      entityId: tip.id,
+      after: input,
+    });
     reply.status(201);
     return serializeTip(tip, true);
   });
@@ -231,123 +249,155 @@ export async function adminTipRoutes(app: FastifyInstance): Promise<void> {
     return serializeTip(tip, true);
   });
 
-  app.post('/:id/publish', { preHandler: [app.requireCapability('tips:publish')] }, async (request) => {
-    const { id } = parseParams(request, idParamSchema);
-    const tip = await prisma.tip.update({
-      where: { id },
-      data: { status: 'PUBLISHED', publishAt: new Date() },
-      include: tipInclude,
-    });
-    await announceTip(tip);
-    await audit(request, { action: 'tip.published', entityType: 'Tip', entityId: id });
-    return serializeTip(tip, true);
-  });
+  app.post(
+    '/:id/publish',
+    { preHandler: [app.requireCapability('tips:publish')] },
+    async (request) => {
+      const { id } = parseParams(request, idParamSchema);
+      const tip = await prisma.tip.update({
+        where: { id },
+        data: { status: 'PUBLISHED', publishAt: new Date() },
+        include: tipInclude,
+      });
+      await announceTip(tip);
+      await audit(request, { action: 'tip.published', entityType: 'Tip', entityId: id });
+      return serializeTip(tip, true);
+    },
+  );
 
-  app.post('/:id/cancel', { preHandler: [app.requireCapability('tips:publish')] }, async (request) => {
-    const { id } = parseParams(request, idParamSchema);
-    const tip = await prisma.tip.update({
-      where: { id },
-      data: { status: 'CANCELLED' },
-      include: tipInclude,
-    });
-    await audit(request, { action: 'tip.cancelled', entityType: 'Tip', entityId: id });
-    return serializeTip(tip, true);
-  });
+  app.post(
+    '/:id/cancel',
+    { preHandler: [app.requireCapability('tips:publish')] },
+    async (request) => {
+      const { id } = parseParams(request, idParamSchema);
+      const tip = await prisma.tip.update({
+        where: { id },
+        data: { status: 'CANCELLED' },
+        include: tipInclude,
+      });
+      await audit(request, { action: 'tip.cancelled', entityType: 'Tip', entityId: id });
+      return serializeTip(tip, true);
+    },
+  );
 
-  app.post('/:id/settle', { preHandler: [app.requireCapability('tips:settle')] }, async (request) => {
-    const { id } = parseParams(request, idParamSchema);
-    const input = parseBody(request, settleTipSchema);
-    await settlement.settleManually(id, input.outcome, request.auth!.userId, {
-      homeScore: input.homeScore,
-      awayScore: input.awayScore,
-      note: input.note,
-    });
-    await statistics.invalidate();
-    await audit(request, {
-      action: 'tip.settled',
-      entityType: 'Tip',
-      entityId: id,
-      after: input,
-    });
-    const tip = await prisma.tip.findUniqueOrThrow({ where: { id }, include: tipInclude });
-    return serializeTip(tip, true);
-  });
+  app.post(
+    '/:id/settle',
+    { preHandler: [app.requireCapability('tips:settle')] },
+    async (request) => {
+      const { id } = parseParams(request, idParamSchema);
+      const input = parseBody(request, settleTipSchema);
+      await settlement.settleManually(id, input.outcome, request.auth!.userId, {
+        homeScore: input.homeScore,
+        awayScore: input.awayScore,
+        note: input.note,
+      });
+      await statistics.invalidate();
+      await audit(request, {
+        action: 'tip.settled',
+        entityType: 'Tip',
+        entityId: id,
+        after: input,
+      });
+      const tip = await prisma.tip.findUniqueOrThrow({ where: { id }, include: tipInclude });
+      return serializeTip(tip, true);
+    },
+  );
 
-  app.post('/:id/resettle', { preHandler: [app.requireCapability('tips:settle')] }, async (request) => {
-    const { id } = parseParams(request, idParamSchema);
-    await settlement.resettle(id, request.auth!.userId);
-    await statistics.invalidate();
-    await audit(request, { action: 'tip.resettled', entityType: 'Tip', entityId: id });
-    return { success: true };
-  });
+  app.post(
+    '/:id/resettle',
+    { preHandler: [app.requireCapability('tips:settle')] },
+    async (request) => {
+      const { id } = parseParams(request, idParamSchema);
+      await settlement.resettle(id, request.auth!.userId);
+      await statistics.invalidate();
+      await audit(request, { action: 'tip.resettled', entityType: 'Tip', entityId: id });
+      return { success: true };
+    },
+  );
 
   app.delete('/:id', { preHandler: [app.requireCapability('tips:delete')] }, async (request) => {
     const { id } = parseParams(request, idParamSchema);
     const existing = assertFound(await prisma.tip.findUnique({ where: { id } }), 'Tip');
     await prisma.tip.delete({ where: { id } });
-    await audit(request, { action: 'tip.deleted', entityType: 'Tip', entityId: id, before: existing });
+    await audit(request, {
+      action: 'tip.deleted',
+      entityType: 'Tip',
+      entityId: id,
+      before: existing,
+    });
     return { success: true };
   });
 
   /** Bulk import — every row is validated; one bad row fails the whole batch. */
-  app.post('/import', { preHandler: [app.requireCapability('tips:write')] }, async (request, reply) => {
-    const { tips: rows } = parseBody(request, importTipsSchema);
-    const created: string[] = [];
+  app.post(
+    '/import',
+    { preHandler: [app.requireCapability('tips:write')] },
+    async (request, reply) => {
+      const { tips: rows } = parseBody(request, importTipsSchema);
+      const created: string[] = [];
 
-    await prisma.$transaction(async (tx) => {
-      for (const row of rows) {
-        const event = await tx.event.findUnique({
-          where: { id: row.eventId },
-          include: { league: true },
-        });
-        if (!event) throw AppError.validation(`Unknown event ${row.eventId}`);
-        const marketId = await resolveMarket(row);
-        const tip = await tx.tip.create({
-          data: {
-            sportId: event.sportId,
-            countryId: event.league.countryId,
-            leagueId: event.leagueId,
-            eventId: event.id,
-            marketId,
-            bookmakerId: row.bookmakerId ?? null,
-            marketType: row.marketType,
-            selectionLabel: row.selectionLabel,
-            selectionKey: row.selectionKey,
-            line: row.line ?? null,
-            odds: row.odds,
-            originalOdds: row.odds,
-            currentOdds: row.odds,
-            stake: row.stake,
-            confidence: row.confidence,
-            confidenceBand: bandFor(row.confidence),
-            product: row.product,
-            status: row.status,
-            isLive: row.isLive,
-            isStandalone: row.isStandalone,
-            analysis: row.analysis ?? null,
-            tags: row.tags,
-            publishAt: row.publishAt ? new Date(row.publishAt) : null,
-            expiresAt: row.expiresAt ? new Date(row.expiresAt) : event.startsAt,
-            createdById: request.auth!.userId,
-          },
-        });
-        created.push(tip.id);
-      }
-    });
+      await prisma.$transaction(async (tx) => {
+        for (const row of rows) {
+          const event = await tx.event.findUnique({
+            where: { id: row.eventId },
+            include: { league: true },
+          });
+          if (!event) throw AppError.validation(`Unknown event ${row.eventId}`);
+          const marketId = await resolveMarket(row);
+          const tip = await tx.tip.create({
+            data: {
+              sportId: event.sportId,
+              countryId: event.league.countryId,
+              leagueId: event.leagueId,
+              eventId: event.id,
+              marketId,
+              bookmakerId: row.bookmakerId ?? null,
+              marketType: row.marketType,
+              selectionLabel: row.selectionLabel,
+              selectionKey: row.selectionKey,
+              line: row.line ?? null,
+              odds: row.odds,
+              originalOdds: row.odds,
+              currentOdds: row.odds,
+              stake: row.stake,
+              confidence: row.confidence,
+              confidenceBand: bandFor(row.confidence),
+              product: row.product,
+              status: row.status,
+              isLive: row.isLive,
+              isStandalone: row.isStandalone,
+              analysis: row.analysis ?? null,
+              tags: row.tags,
+              publishAt: row.publishAt ? new Date(row.publishAt) : null,
+              expiresAt: row.expiresAt ? new Date(row.expiresAt) : event.startsAt,
+              createdById: request.auth!.userId,
+            },
+          });
+          created.push(tip.id);
+        }
+      });
 
-    await audit(request, {
-      action: 'tip.imported',
-      entityType: 'Tip',
-      after: { count: created.length },
-    });
-    reply.status(201);
-    return { created: created.length, ids: created };
-  });
+      await audit(request, {
+        action: 'tip.imported',
+        entityType: 'Tip',
+        after: { count: created.length },
+      });
+      reply.status(201);
+      return { created: created.length, ids: created };
+    },
+  );
 
   /** Tips whose market cannot be settled automatically. */
   app.get('/queue/manual', { preHandler: [app.requireCapability('tips:settle')] }, async () => {
     const queue = await settlement.manualQueue();
-    return { items: queue.map((tip) => ({ id: tip.id, selectionLabel: tip.selectionLabel, marketType: tip.marketType, eventId: tip.eventId })) };
+    return {
+      items: queue.map((tip) => ({
+        id: tip.id,
+        selectionLabel: tip.selectionLabel,
+        marketType: tip.marketType,
+        eventId: tip.eventId,
+      })),
+    };
   });
 
   // ── combos ────────────────────────────────────────────────────────────────
@@ -360,126 +410,163 @@ export async function adminTipRoutes(app: FastifyInstance): Promise<void> {
       ...(query.outcome ? { outcome: query.outcome } : {}),
     };
     const [combos, total] = await Promise.all([
-      prisma.combo.findMany({ where, include: comboInclude, orderBy: { createdAt: 'desc' }, skip, take }),
+      prisma.combo.findMany({
+        where,
+        include: comboInclude,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take,
+      }),
       prisma.combo.count({ where }),
     ]);
-    return paginate(combos.map((combo) => serializeCombo(combo, true)), total, query);
+    return paginate(
+      combos.map((combo) => serializeCombo(combo, true)),
+      total,
+      query,
+    );
   });
 
-  app.post('/combos', { preHandler: [app.requireCapability('combos:write')] }, async (request, reply) => {
-    const input = parseBody(request, createComboSchema);
-    const legs = await prisma.tip.findMany({ where: { id: { in: input.tipIds } } });
-    if (legs.length !== input.tipIds.length) {
-      throw AppError.validation('One or more selections could not be found');
-    }
-
-    const totalOdds = comboOdds(legs.map((leg) => Number(leg.odds)));
-    const combo = await prisma.combo.create({
-      data: {
-        title: input.title,
-        subtitle: input.subtitle ?? `${legs.length} Auswahlen · Gesamtquote ${totalOdds.toFixed(2)}`,
-        product: input.product,
-        status: input.status,
-        totalOdds,
-        stake: input.stake,
-        analysis: input.analysis ?? null,
-        publishAt: input.publishAt ? new Date(input.publishAt) : null,
-        expiresAt: input.expiresAt ? new Date(input.expiresAt) : null,
-        createdById: request.auth!.userId,
-        items: {
-          create: input.tipIds.map((tipId, index) => ({ tipId, sortOrder: index })),
-        },
-      },
-      include: comboInclude,
-    });
-
-    // Combo legs are not shown on their own in the product feeds.
-    await prisma.tip.updateMany({
-      where: { id: { in: input.tipIds } },
-      data: { isStandalone: false, product: input.product },
-    });
-
-    if (combo.status === 'SCHEDULED' && combo.publishAt) {
-      await jobs.publishCombo(combo.id, combo.publishAt);
-    }
-
-    await audit(request, { action: 'combo.created', entityType: 'Combo', entityId: combo.id, after: input });
-    reply.status(201);
-    return serializeCombo(combo, true);
-  });
-
-  app.patch('/combos/:id', { preHandler: [app.requireCapability('combos:write')] }, async (request) => {
-    const { id } = parseParams(request, idParamSchema);
-    const input = parseBody(request, updateComboSchema);
-    const existing = assertFound(await prisma.combo.findUnique({ where: { id } }), 'Combo');
-    if (existing.settledAt) throw AppError.conflict('A settled combo can no longer be edited');
-
-    if (input.tipIds) {
+  app.post(
+    '/combos',
+    { preHandler: [app.requireCapability('combos:write')] },
+    async (request, reply) => {
+      const input = parseBody(request, createComboSchema);
       const legs = await prisma.tip.findMany({ where: { id: { in: input.tipIds } } });
       if (legs.length !== input.tipIds.length) {
         throw AppError.validation('One or more selections could not be found');
       }
-      await prisma.$transaction([
-        prisma.comboItem.deleteMany({ where: { comboId: id } }),
-        prisma.comboItem.createMany({
-          data: input.tipIds.map((tipId, index) => ({ comboId: id, tipId, sortOrder: index })),
-        }),
-        prisma.combo.update({
-          where: { id },
-          data: { totalOdds: comboOdds(legs.map((leg) => Number(leg.odds))) },
-        }),
-      ]);
-    }
 
-    const combo = await prisma.combo.update({
-      where: { id },
-      data: {
-        title: input.title,
-        subtitle: input.subtitle,
-        product: input.product,
-        status: input.status,
-        stake: input.stake,
-        analysis: input.analysis,
-        publishAt: input.publishAt ? new Date(input.publishAt) : undefined,
-        expiresAt: input.expiresAt ? new Date(input.expiresAt) : undefined,
-      },
-      include: comboInclude,
-    });
+      const totalOdds = comboOdds(legs.map((leg) => Number(leg.odds)));
+      const combo = await prisma.combo.create({
+        data: {
+          title: input.title,
+          subtitle:
+            input.subtitle ?? `${legs.length} Auswahlen · Gesamtquote ${totalOdds.toFixed(2)}`,
+          product: input.product,
+          status: input.status,
+          totalOdds,
+          stake: input.stake,
+          analysis: input.analysis ?? null,
+          publishAt: input.publishAt ? new Date(input.publishAt) : null,
+          expiresAt: input.expiresAt ? new Date(input.expiresAt) : null,
+          createdById: request.auth!.userId,
+          items: {
+            create: input.tipIds.map((tipId, index) => ({ tipId, sortOrder: index })),
+          },
+        },
+        include: comboInclude,
+      });
 
-    await audit(request, { action: 'combo.updated', entityType: 'Combo', entityId: id, after: input });
-    return serializeCombo(combo, true);
-  });
+      // Combo legs are not shown on their own in the product feeds.
+      await prisma.tip.updateMany({
+        where: { id: { in: input.tipIds } },
+        data: { isStandalone: false, product: input.product },
+      });
 
-  app.post('/combos/:id/publish', { preHandler: [app.requireCapability('tips:publish')] }, async (request) => {
-    const { id } = parseParams(request, idParamSchema);
-    const combo = await prisma.combo.update({
-      where: { id },
-      data: { status: 'PUBLISHED', publishAt: new Date() },
-      include: comboInclude,
-    });
-    const dto = serializeCombo(combo, true);
-    await broadcast({
-      topic: WS_TOPICS.tipsCombo,
-      message: { type: 'combo.published', topic: WS_TOPICS.tipsCombo, payload: dto },
-    });
-    await notifications.broadcast({
-      type: 'NEW_COMBO',
-      title: 'Neue Combo verfügbar',
-      body: combo.subtitle ?? combo.title,
-      deepLink: `profittips://combo/${combo.id}`,
-      audience: { products: ['COMBO'] },
-      dedupeKey: `combo:${combo.id}`,
-    });
-    await audit(request, { action: 'combo.published', entityType: 'Combo', entityId: id });
-    return dto;
-  });
+      if (combo.status === 'SCHEDULED' && combo.publishAt) {
+        await jobs.publishCombo(combo.id, combo.publishAt);
+      }
 
-  app.delete('/combos/:id', { preHandler: [app.requireCapability('tips:delete')] }, async (request) => {
-    const { id } = parseParams(request, idParamSchema);
-    await prisma.combo.delete({ where: { id } });
-    await audit(request, { action: 'combo.deleted', entityType: 'Combo', entityId: id });
-    return { success: true };
-  });
+      await audit(request, {
+        action: 'combo.created',
+        entityType: 'Combo',
+        entityId: combo.id,
+        after: input,
+      });
+      reply.status(201);
+      return serializeCombo(combo, true);
+    },
+  );
+
+  app.patch(
+    '/combos/:id',
+    { preHandler: [app.requireCapability('combos:write')] },
+    async (request) => {
+      const { id } = parseParams(request, idParamSchema);
+      const input = parseBody(request, updateComboSchema);
+      const existing = assertFound(await prisma.combo.findUnique({ where: { id } }), 'Combo');
+      if (existing.settledAt) throw AppError.conflict('A settled combo can no longer be edited');
+
+      if (input.tipIds) {
+        const legs = await prisma.tip.findMany({ where: { id: { in: input.tipIds } } });
+        if (legs.length !== input.tipIds.length) {
+          throw AppError.validation('One or more selections could not be found');
+        }
+        await prisma.$transaction([
+          prisma.comboItem.deleteMany({ where: { comboId: id } }),
+          prisma.comboItem.createMany({
+            data: input.tipIds.map((tipId, index) => ({ comboId: id, tipId, sortOrder: index })),
+          }),
+          prisma.combo.update({
+            where: { id },
+            data: { totalOdds: comboOdds(legs.map((leg) => Number(leg.odds))) },
+          }),
+        ]);
+      }
+
+      const combo = await prisma.combo.update({
+        where: { id },
+        data: {
+          title: input.title,
+          subtitle: input.subtitle,
+          product: input.product,
+          status: input.status,
+          stake: input.stake,
+          analysis: input.analysis,
+          publishAt: input.publishAt ? new Date(input.publishAt) : undefined,
+          expiresAt: input.expiresAt ? new Date(input.expiresAt) : undefined,
+        },
+        include: comboInclude,
+      });
+
+      await audit(request, {
+        action: 'combo.updated',
+        entityType: 'Combo',
+        entityId: id,
+        after: input,
+      });
+      return serializeCombo(combo, true);
+    },
+  );
+
+  app.post(
+    '/combos/:id/publish',
+    { preHandler: [app.requireCapability('tips:publish')] },
+    async (request) => {
+      const { id } = parseParams(request, idParamSchema);
+      const combo = await prisma.combo.update({
+        where: { id },
+        data: { status: 'PUBLISHED', publishAt: new Date() },
+        include: comboInclude,
+      });
+      const dto = serializeCombo(combo, true);
+      await broadcast({
+        topic: WS_TOPICS.tipsCombo,
+        message: { type: 'combo.published', topic: WS_TOPICS.tipsCombo, payload: dto },
+      });
+      await notifications.broadcast({
+        type: 'NEW_COMBO',
+        title: 'Neue Combo verfügbar',
+        body: combo.subtitle ?? combo.title,
+        deepLink: `profittips://combo/${combo.id}`,
+        audience: { products: ['COMBO'] },
+        dedupeKey: `combo:${combo.id}`,
+      });
+      await audit(request, { action: 'combo.published', entityType: 'Combo', entityId: id });
+      return dto;
+    },
+  );
+
+  app.delete(
+    '/combos/:id',
+    { preHandler: [app.requireCapability('tips:delete')] },
+    async (request) => {
+      const { id } = parseParams(request, idParamSchema);
+      await prisma.combo.delete({ where: { id } });
+      await audit(request, { action: 'combo.deleted', entityType: 'Combo', entityId: id });
+      return { success: true };
+    },
+  );
 }
 
 function bandFor(confidence: number): 'LOW' | 'MEDIUM' | 'HIGH' | 'VERY_HIGH' {
@@ -490,7 +577,9 @@ function bandFor(confidence: number): 'LOW' | 'MEDIUM' | 'HIGH' | 'VERY_HIGH' {
 }
 
 /** Pushes a freshly published tip to sockets and to subscribers' devices. */
-async function announceTip(tip: Awaited<ReturnType<typeof prisma.tip.findFirstOrThrow>> & { product: string }): Promise<void> {
+async function announceTip(
+  tip: Awaited<ReturnType<typeof prisma.tip.findFirstOrThrow>> & { product: string },
+): Promise<void> {
   const full = await prisma.tip.findUnique({ where: { id: tip.id }, include: tipInclude });
   if (!full) return;
   const product = full.product as ProductCode;

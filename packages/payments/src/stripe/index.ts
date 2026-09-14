@@ -80,7 +80,8 @@ export class StripeAdapter {
         discounts: params.couponCode ? [{ promotion_code: params.couponCode }] : undefined,
         locale: (params.locale as Stripe.Checkout.SessionCreateParams.Locale) ?? 'auto',
         subscription_data: {
-          trial_period_days: params.trialDays && params.trialDays > 0 ? params.trialDays : undefined,
+          trial_period_days:
+            params.trialDays && params.trialDays > 0 ? params.trialDays : undefined,
           metadata: { userId: params.userId, planSlug: params.planSlug, ...params.metadata },
         },
         metadata: { userId: params.userId, planSlug: params.planSlug, ...params.metadata },
@@ -161,7 +162,9 @@ export class StripeAdapter {
         if (typeof session.subscription === 'string') {
           envelope.subscription = await this.fetchSubscription(session.subscription);
           envelope.subscription.userRef =
-            session.client_reference_id ?? session.metadata?.userId ?? envelope.subscription.userRef;
+            session.client_reference_id ??
+            session.metadata?.userId ??
+            envelope.subscription.userRef;
         }
         break;
       }

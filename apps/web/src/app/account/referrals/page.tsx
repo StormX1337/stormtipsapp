@@ -79,9 +79,14 @@ export default function ReferralsPage(): ReactNode {
                 </h2>
                 <ul className="divide-y divide-line-subtle">
                   {summary.data.rewards.map((reward) => (
-                    <li key={reward.id} className="flex items-center justify-between gap-3 px-3 py-2.5">
+                    <li
+                      key={reward.id}
+                      className="flex items-center justify-between gap-3 px-3 py-2.5"
+                    >
                       <span className="text-[12.5px]">
-                        {reward.days ? `${reward.days} Tage` : (reward.amount?.formatted ?? reward.type)}
+                        {reward.days
+                          ? `${reward.days} Tage`
+                          : (reward.amount?.formatted ?? reward.type)}
                       </span>
                       <span className="text-[11px] text-ink-dim">{reward.status}</span>
                     </li>

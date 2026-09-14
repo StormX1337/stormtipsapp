@@ -3,7 +3,12 @@ import { prisma } from '@profit-tips/database';
 import { WS_TOPICS, type ProductCode } from '@profit-tips/types';
 import { notifications } from '@profit-tips/api/services';
 import { logger } from '@profit-tips/api/lib/logger';
-import { serializeTip, tipInclude, serializeCombo, comboInclude } from '@profit-tips/api/serializers/tip';
+import {
+  serializeTip,
+  tipInclude,
+  serializeCombo,
+  comboInclude,
+} from '@profit-tips/api/serializers/tip';
 import { publish } from '../lib/broadcast.js';
 
 const TOPIC_BY_PRODUCT: Record<ProductCode, string> = {
@@ -84,7 +89,10 @@ export async function publishDueTipsJob(job: Job): Promise<unknown> {
   }
 
   if (due.length > 0 || combos.length > 0) {
-    logger.info({ jobId: job.id, tips: due.length, combos: combos.length }, 'scheduled content published');
+    logger.info(
+      { jobId: job.id, tips: due.length, combos: combos.length },
+      'scheduled content published',
+    );
   }
   return { tips: due.length, combos: combos.length };
 }
@@ -137,7 +145,8 @@ export async function kickoffRemindersJob(job: Job): Promise<unknown> {
     });
   }
 
-  if (tips.length > 0) logger.info({ jobId: job.id, count: tips.length }, 'kick-off reminders queued');
+  if (tips.length > 0)
+    logger.info({ jobId: job.id, count: tips.length }, 'kick-off reminders queued');
   return { reminders: tips.length };
 }
 

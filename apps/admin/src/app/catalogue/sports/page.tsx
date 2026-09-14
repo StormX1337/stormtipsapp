@@ -54,14 +54,24 @@ export default function SportsPage(): ReactNode {
   });
 
   const columns: Column<SportRow>[] = [
-    { key: 'name', header: 'Sportart', render: (row) => <span className="font-medium">{row.name}</span> },
-    { key: 'key', header: 'Schlüssel', render: (row) => <code className="text-ink-dim">{row.key}</code> },
+    {
+      key: 'name',
+      header: 'Sportart',
+      render: (row) => <span className="font-medium">{row.name}</span>,
+    },
+    {
+      key: 'key',
+      header: 'Schlüssel',
+      render: (row) => <code className="text-ink-dim">{row.key}</code>,
+    },
     { key: 'order', header: 'Reihenfolge', align: 'right', render: (row) => row.sortOrder },
     {
       key: 'active',
       header: 'Status',
       render: (row) => (
-        <Badge tone={row.isActive ? 'positive' : 'neutral'}>{row.isActive ? 'AKTIV' : 'INAKTIV'}</Badge>
+        <Badge tone={row.isActive ? 'positive' : 'neutral'}>
+          {row.isActive ? 'AKTIV' : 'INAKTIV'}
+        </Badge>
       ),
     },
   ];

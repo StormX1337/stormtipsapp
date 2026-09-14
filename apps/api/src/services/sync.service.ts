@@ -58,7 +58,9 @@ const MARKET_KEY_BY_TYPE: Partial<Record<MarketType, string>> = {
  */
 export class SyncService {
   /** Resolves the active provider, decrypting its stored API key. */
-  async resolveProvider(slug?: string): Promise<{ provider: SportsDataProvider; fellBack: boolean }> {
+  async resolveProvider(
+    slug?: string,
+  ): Promise<{ provider: SportsDataProvider; fellBack: boolean }> {
     const row = slug
       ? await prisma.apiProvider.findUnique({ where: { slug } })
       : await prisma.apiProvider.findFirst({
@@ -216,7 +218,9 @@ export class SyncService {
   }
 
   /** Pulls fixtures for a window around today. */
-  async syncFixtures(options: { providerSlug?: string; daysBack?: number; daysForward?: number } = {}): Promise<SyncSummary> {
+  async syncFixtures(
+    options: { providerSlug?: string; daysBack?: number; daysForward?: number } = {},
+  ): Promise<SyncSummary> {
     const { provider, fellBack } = await this.resolveProvider(options.providerSlug);
     const summary = emptySummary(provider.slug, fellBack);
 
@@ -246,14 +250,19 @@ export class SyncService {
   }
 
   /** Refreshes odds for upcoming fixtures and appends a history point on change. */
-  async syncOdds(options: { providerSlug?: string; eventIds?: string[] } = {}): Promise<SyncSummary> {
+  async syncOdds(
+    options: { providerSlug?: string; eventIds?: string[] } = {},
+  ): Promise<SyncSummary> {
     const { provider, fellBack } = await this.resolveProvider(options.providerSlug);
     const summary = emptySummary(provider.slug, fellBack);
 
     const events = await prisma.event.findMany({
       where: {
         ...(options.eventIds?.length ? { id: { in: options.eventIds } } : {}),
-        startsAt: { gte: new Date(Date.now() - 3_600_000), lte: new Date(Date.now() + 7 * 86_400_000) },
+        startsAt: {
+          gte: new Date(Date.now() - 3_600_000),
+          lte: new Date(Date.now() + 7 * 86_400_000),
+        },
         status: { in: ['SCHEDULED', 'LIVE', 'HALFTIME'] },
         providerEventId: { not: null },
       },
@@ -262,7 +271,9 @@ export class SyncService {
     });
     if (events.length === 0) return summary;
 
-    const byProviderId = new Map(events.map((event) => [event.providerEventId as string, event.id]));
+    const byProviderId = new Map(
+      events.map((event) => [event.providerEventId as string, event.id]),
+    );
 
     let providerOdds: ProviderOdds[] = [];
     try {
@@ -370,7 +381,9 @@ export class SyncService {
   }
 
   /** Pulls final scores for fixtures that should have finished. */
-  async syncResults(options: { providerSlug?: string; eventIds?: string[] } = {}): Promise<SyncSummary> {
+  async syncResults(
+    options: { providerSlug?: string; eventIds?: string[] } = {},
+  ): Promise<SyncSummary> {
     const { provider, fellBack } = await this.resolveProvider(options.providerSlug);
     const summary = emptySummary(provider.slug, fellBack);
 
@@ -378,7 +391,10 @@ export class SyncService {
       where: {
         ...(options.eventIds?.length ? { id: { in: options.eventIds } } : {}),
         status: { in: ['SCHEDULED', 'LIVE', 'HALFTIME'] },
-        startsAt: { lte: new Date(Date.now() - 100 * 60_000), gte: new Date(Date.now() - 7 * 86_400_000) },
+        startsAt: {
+          lte: new Date(Date.now() - 100 * 60_000),
+          gte: new Date(Date.now() - 7 * 86_400_000),
+        },
         providerEventId: { not: null },
       },
       select: { id: true, providerEventId: true },
@@ -386,7 +402,9 @@ export class SyncService {
     });
     if (events.length === 0) return summary;
 
-    const byProviderId = new Map(events.map((event) => [event.providerEventId as string, event.id]));
+    const byProviderId = new Map(
+      events.map((event) => [event.providerEventId as string, event.id]),
+    );
 
     try {
       const results = await provider.getResults({ providerEventIds: [...byProviderId.keys()] });

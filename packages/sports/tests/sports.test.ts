@@ -178,7 +178,9 @@ describe('seed consistency', () => {
     const fromRegistry = await createProvider({ slug: 'mock' }).getEvents({ from, to });
 
     const key = (events: Awaited<ReturnType<MockProvider['getEvents']>>) =>
-      events.map((event) => `${event.providerEventId}:${event.homeTeam.name}:${event.awayTeam.name}`);
+      events.map(
+        (event) => `${event.providerEventId}:${event.homeTeam.name}:${event.awayTeam.name}`,
+      );
 
     expect(key(seeded)).toEqual(key(fromRegistry));
     expect(seeded.length).toBeGreaterThan(0);

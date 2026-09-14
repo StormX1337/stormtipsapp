@@ -5,14 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { RefreshCw } from 'lucide-react';
 import type { ProductCode, StatsWindow } from '@profit-tips/types';
 import { api } from '@/lib/api';
-import {
-  Button,
-  DataTable,
-  ErrorBox,
-  PageHeader,
-  Select,
-  type Column,
-} from '@/components/ui';
+import { Button, DataTable, ErrorBox, PageHeader, Select, type Column } from '@/components/ui';
 
 interface PerformanceRow {
   product: ProductCode;
@@ -42,7 +35,8 @@ export default function AdminStatisticsPage(): ReactNode {
 
   const funnel = useQuery({
     queryKey: ['admin-funnel'],
-    queryFn: () => api<{ items: { name: string; count: number }[] }>('/admin/dashboard/funnel?days=30'),
+    queryFn: () =>
+      api<{ items: { name: string; count: number }[] }>('/admin/dashboard/funnel?days=30'),
   });
 
   const recompute = useMutation({
@@ -51,7 +45,11 @@ export default function AdminStatisticsPage(): ReactNode {
   });
 
   const columns: Column<PerformanceRow>[] = [
-    { key: 'product', header: 'Produkt', render: (row) => <span className="font-semibold">{row.product}</span> },
+    {
+      key: 'product',
+      header: 'Produkt',
+      render: (row) => <span className="font-semibold">{row.product}</span>,
+    },
     { key: 'tips', header: 'Abgerechnet', align: 'right', render: (row) => row.settledTips },
     {
       key: 'record',
@@ -59,7 +57,8 @@ export default function AdminStatisticsPage(): ReactNode {
       align: 'right',
       render: (row) => (
         <span className="tabular">
-          <span className="text-won">{row.won}</span> / <span className="text-lost">{row.lost}</span>
+          <span className="text-won">{row.won}</span> /{' '}
+          <span className="text-lost">{row.lost}</span>
         </span>
       ),
     },
@@ -106,7 +105,11 @@ export default function AdminStatisticsPage(): ReactNode {
         title="Statistik"
         description="Performance je Produkt, berechnet ausschließlich aus abgerechneten Analysen."
         actions={
-          <Button variant="outline" onClick={() => recompute.mutate()} disabled={recompute.isPending}>
+          <Button
+            variant="outline"
+            onClick={() => recompute.mutate()}
+            disabled={recompute.isPending}
+          >
             <RefreshCw size={14} aria-hidden /> Neu berechnen
           </Button>
         }
@@ -138,7 +141,11 @@ export default function AdminStatisticsPage(): ReactNode {
       <h2 className="mt-6 mb-2 text-[14px] font-bold">Produkt-Events (30 Tage)</h2>
       <DataTable
         columns={[
-          { key: 'name', header: 'Event', render: (row: { name: string }) => <code>{row.name}</code> },
+          {
+            key: 'name',
+            header: 'Event',
+            render: (row: { name: string }) => <code>{row.name}</code>,
+          },
           {
             key: 'count',
             header: 'Anzahl',

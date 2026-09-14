@@ -1,0 +1,57 @@
+# syntax=docker/dockerfile:1.7
+#
+# PROFIT TIPS API.
+#
+# The API is bundled by tsup into a single ESM file; only the Prisma client and
+# the Argon2 native addon stay external, so the runtime image carries just the
+# production dependency tree produced by `pnpm deploy`.
+
+FROM node:22-bookworm-slim AS build
+ENV PNPM_HOME=/pnpm
+ENV PATH=$PNPM_HOME:$PATH
+RUN corepack enable
+WORKDIR /repo
+
+# Manifests first: the dependency layer is cached independently of the sources.
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc tsconfig.base.json ./
+COPY packages ./packages
+COPY apps/api/package.json ./apps/api/
+COPY apps/worker/package.json ./apps/worker/
+COPY apps/web/package.json ./apps/web/
+COPY apps/admin/package.json ./apps/admin/
+
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile --filter @profit-tips/api...
+
+COPY apps/api ./apps/api
+RUN pnpm --filter @profit-tips/api build
+
+# Production tree + the bundle + the schema, then generate the client against
+# the very node_modules the runtime will use.
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm deploy --filter @profit-tips/api --prod --legacy /out \
+    && cp -r apps/api/dist /out/dist \
+    && cp -r packages/database/prisma /out/prisma \
+    && cd /out \
+    && ./node_modules/.bin/prisma generate --schema prisma/schema.prisma
+
+FROM node:22-bookworm-slim AS runtime
+ENV NODE_ENV=production
+ENV API_HOST=0.0.0.0
+ENV API_PORT=4000
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends openssl ca-certificates curl \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+
+COPY --from=build --chown=node:node /out/node_modules ./node_modules
+COPY --from=build --chown=node:node /out/dist ./dist
+COPY --from=build --chown=node:node /out/prisma ./prisma
+COPY --from=build --chown=node:node /out/package.json ./package.json
+
+USER node
+EXPOSE 4000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD curl -fsS "http://127.0.0.1:${API_PORT}/health" || exit 1
+
+CMD ["node", "dist/index.js"]

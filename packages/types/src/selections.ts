@@ -34,11 +34,7 @@ export type SelectionKey = (typeof SelectionKey)[keyof typeof SelectionKey];
 /** Which selection keys are legal for a given market. */
 export const MARKET_SELECTIONS: Record<MarketType, readonly string[]> = {
   MATCH_WINNER: [SelectionKey.HOME, SelectionKey.DRAW, SelectionKey.AWAY],
-  DOUBLE_CHANCE: [
-    SelectionKey.HOME_OR_DRAW,
-    SelectionKey.AWAY_OR_DRAW,
-    SelectionKey.HOME_OR_AWAY,
-  ],
+  DOUBLE_CHANCE: [SelectionKey.HOME_OR_DRAW, SelectionKey.AWAY_OR_DRAW, SelectionKey.HOME_OR_AWAY],
   DRAW_NO_BET: [SelectionKey.HOME, SelectionKey.AWAY],
   OVER_UNDER: [SelectionKey.OVER, SelectionKey.UNDER],
   TEAM_TOTAL: [
@@ -71,10 +67,7 @@ export const MARKETS_WITH_LINE: MarketType[] = [
 ];
 
 /** Markets the automatic result engine cannot settle without a human. */
-export const MANUAL_SETTLEMENT_MARKETS: MarketType[] = [
-  MarketType.PLAYER_PROP,
-  MarketType.OTHER,
-];
+export const MANUAL_SETTLEMENT_MARKETS: MarketType[] = [MarketType.PLAYER_PROP, MarketType.OTHER];
 
 export function marketRequiresLine(market: MarketType): boolean {
   return MARKETS_WITH_LINE.includes(market);

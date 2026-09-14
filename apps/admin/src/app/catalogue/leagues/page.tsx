@@ -47,7 +47,11 @@ export default function LeaguesPage(): ReactNode {
         rowKey={(league) => league.id}
       />
       {leagues.data ? (
-        <Pagination page={leagues.data.page} totalPages={leagues.data.totalPages} onChange={setPage} />
+        <Pagination
+          page={leagues.data.page}
+          totalPages={leagues.data.totalPages}
+          onChange={setPage}
+        />
       ) : null}
     </>
   );

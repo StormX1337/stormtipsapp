@@ -26,7 +26,11 @@ export type ServerMessage =
   | { type: 'event.update'; topic: string; payload: EventDTO }
   | { type: 'tip.published'; topic: string; payload: TipDTO }
   | { type: 'tip.settled'; topic: string; payload: TipDTO }
-  | { type: 'tip.odds'; topic: string; payload: { tipId: string; currentOdds: number; oddsChanged: boolean } }
+  | {
+      type: 'tip.odds';
+      topic: string;
+      payload: { tipId: string; currentOdds: number; oddsChanged: boolean };
+    }
   | { type: 'combo.published'; topic: string; payload: ComboDTO }
   | { type: 'poll.update'; topic: string; payload: PollDTO };
 

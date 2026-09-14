@@ -12,7 +12,12 @@ import { parseBody, parseParams, parseQuery } from '../../lib/validate.js';
 import { paginate, skipTake } from '../../lib/http.js';
 import { audit } from '../../lib/audit.js';
 import { cacheInvalidatePattern } from '../../lib/cache.js';
-import { eventInclude, leagueInclude, serializeEvent, serializeLeague } from '../../serializers/catalogue.js';
+import {
+  eventInclude,
+  leagueInclude,
+  serializeEvent,
+  serializeLeague,
+} from '../../serializers/catalogue.js';
 
 export async function adminCatalogueRoutes(app: FastifyInstance): Promise<void> {
   app.addHook('preHandler', app.requireCapability('catalogue:write'));
@@ -29,7 +34,12 @@ export async function adminCatalogueRoutes(app: FastifyInstance): Promise<void> 
       update: input,
     });
     await cacheInvalidatePattern('catalogue:*');
-    await audit(request, { action: 'sport.upserted', entityType: 'Sport', entityId: sport.id, after: input });
+    await audit(request, {
+      action: 'sport.upserted',
+      entityType: 'Sport',
+      entityId: sport.id,
+      after: input,
+    });
     reply.status(201);
     return sport;
   });
@@ -39,7 +49,12 @@ export async function adminCatalogueRoutes(app: FastifyInstance): Promise<void> 
     const input = parseBody(request, upsertSportSchema.partial());
     const sport = await prisma.sport.update({ where: { id }, data: input });
     await cacheInvalidatePattern('catalogue:*');
-    await audit(request, { action: 'sport.updated', entityType: 'Sport', entityId: id, after: input });
+    await audit(request, {
+      action: 'sport.updated',
+      entityType: 'Sport',
+      entityId: id,
+      after: input,
+    });
     return sport;
   });
 
@@ -67,7 +82,12 @@ export async function adminCatalogueRoutes(app: FastifyInstance): Promise<void> 
       include: leagueInclude,
     });
     await cacheInvalidatePattern('catalogue:*');
-    await audit(request, { action: 'league.upserted', entityType: 'League', entityId: league.id, after: input });
+    await audit(request, {
+      action: 'league.upserted',
+      entityType: 'League',
+      entityId: league.id,
+      after: input,
+    });
     reply.status(201);
     return serializeLeague(league);
   });
@@ -81,12 +101,20 @@ export async function adminCatalogueRoutes(app: FastifyInstance): Promise<void> 
       include: leagueInclude,
     });
     await cacheInvalidatePattern('catalogue:*');
-    await audit(request, { action: 'league.updated', entityType: 'League', entityId: id, after: input });
+    await audit(request, {
+      action: 'league.updated',
+      entityType: 'League',
+      entityId: id,
+      after: input,
+    });
     return serializeLeague(league);
   });
 
   app.get('/teams', async (request) => {
-    const query = parseQuery(request, paginationSchema.extend(upsertTeamSchema.pick({ leagueId: true }).partial().shape));
+    const query = parseQuery(
+      request,
+      paginationSchema.extend(upsertTeamSchema.pick({ leagueId: true }).partial().shape),
+    );
     const { skip, take } = skipTake(query);
     const where = query.leagueId ? { leagueId: query.leagueId } : {};
     const [teams, total] = await Promise.all([
@@ -103,7 +131,12 @@ export async function adminCatalogueRoutes(app: FastifyInstance): Promise<void> 
       create: input as never,
       update: input as never,
     });
-    await audit(request, { action: 'team.upserted', entityType: 'Team', entityId: team.id, after: input });
+    await audit(request, {
+      action: 'team.upserted',
+      entityType: 'Team',
+      entityId: team.id,
+      after: input,
+    });
     reply.status(201);
     return team;
   });
@@ -112,7 +145,12 @@ export async function adminCatalogueRoutes(app: FastifyInstance): Promise<void> 
     const { id } = parseParams(request, idParamSchema);
     const input = parseBody(request, upsertTeamSchema.partial());
     const team = await prisma.team.update({ where: { id }, data: input as never });
-    await audit(request, { action: 'team.updated', entityType: 'Team', entityId: id, after: input });
+    await audit(request, {
+      action: 'team.updated',
+      entityType: 'Team',
+      entityId: id,
+      after: input,
+    });
     return team;
   });
 
@@ -141,7 +179,12 @@ export async function adminCatalogueRoutes(app: FastifyInstance): Promise<void> 
     const { id } = parseParams(request, idParamSchema);
     const input = parseBody(request, upsertBookmakerSchema.partial());
     const bookmaker = await prisma.bookmaker.update({ where: { id }, data: input as never });
-    await audit(request, { action: 'bookmaker.updated', entityType: 'Bookmaker', entityId: id, after: input });
+    await audit(request, {
+      action: 'bookmaker.updated',
+      entityType: 'Bookmaker',
+      entityId: id,
+      after: input,
+    });
     return bookmaker;
   });
 
@@ -182,7 +225,12 @@ export async function adminCatalogueRoutes(app: FastifyInstance): Promise<void> 
       },
       include: eventInclude,
     });
-    await audit(request, { action: 'event.result_corrected', entityType: 'Event', entityId: id, after: body });
+    await audit(request, {
+      action: 'event.result_corrected',
+      entityType: 'Event',
+      entityId: id,
+      after: body,
+    });
     return serializeEvent(event);
   });
 }

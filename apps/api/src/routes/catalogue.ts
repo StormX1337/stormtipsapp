@@ -21,9 +21,9 @@ export async function catalogueRoutes(app: FastifyInstance): Promise<void> {
   app.get('/sports', async (_request, reply) => {
     publicCache(reply, CACHE_TTL.leagues);
     const sports = await cached('catalogue:sports', CACHE_TTL.leagues, async () =>
-      (await prisma.sport.findMany({ where: { isActive: true }, orderBy: { sortOrder: 'asc' } })).map(
-        serializeSport,
-      ),
+      (
+        await prisma.sport.findMany({ where: { isActive: true }, orderBy: { sortOrder: 'asc' } })
+      ).map(serializeSport),
     );
     return { items: sports };
   });

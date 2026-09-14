@@ -30,7 +30,8 @@ function VerifyContent(): ReactNode {
     })();
   }, [token]);
 
-  if (state === 'pending') return <p className="text-[13px] text-ink-muted">{t('common.loading')}</p>;
+  if (state === 'pending')
+    return <p className="text-[13px] text-ink-muted">{t('common.loading')}</p>;
   if (state === 'error') return <FormError message={error} />;
   return (
     <p className="rounded-md bg-accent-500/10 px-3 py-3 text-[13px] text-accent-300">

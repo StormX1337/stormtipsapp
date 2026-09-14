@@ -42,9 +42,7 @@ export const sortSchema = z.object({
   sortDir: z.enum(['asc', 'desc']).default('desc'),
 });
 
-export const isoDateSchema = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, 'expected YYYY-MM-DD');
+export const isoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'expected YYYY-MM-DD');
 
 export const passwordSchema = z
   .string()
@@ -342,7 +340,11 @@ export const upsertBookmakerSchema = z.object({
 // ── admin: commerce ──────────────────────────────────────────────────────────
 
 export const upsertPlanSchema = z.object({
-  slug: z.string().min(2).max(60).regex(/^[a-z0-9-]+$/),
+  slug: z
+    .string()
+    .min(2)
+    .max(60)
+    .regex(/^[a-z0-9-]+$/),
   name: z.string().min(2).max(80),
   description: z.string().max(500).nullish(),
   products: z.array(nativeEnumOf(ProductCode)).min(1),
@@ -367,7 +369,11 @@ export const upsertPlanSchema = z.object({
 export type UpsertPlanInput = z.infer<typeof upsertPlanSchema>;
 
 export const upsertFixOddsPlanSchema = z.object({
-  slug: z.string().min(2).max(60).regex(/^[a-z0-9-]+$/),
+  slug: z
+    .string()
+    .min(2)
+    .max(60)
+    .regex(/^[a-z0-9-]+$/),
   name: z.string().min(2).max(80),
   description: z.string().max(500).nullish(),
   priceCents: z.number().int().min(0).max(10_000_00),
@@ -391,7 +397,11 @@ export const upsertFixOddsPlanSchema = z.object({
 });
 
 export const upsertCouponSchema = z.object({
-  code: z.string().min(3).max(32).regex(/^[A-Z0-9_-]+$/, 'Use A-Z, 0-9, - and _'),
+  code: z
+    .string()
+    .min(3)
+    .max(32)
+    .regex(/^[A-Z0-9_-]+$/, 'Use A-Z, 0-9, - and _'),
   description: z.string().max(200).nullish(),
   discountType: nativeEnumOf(DiscountType).default('PERCENTAGE'),
   discountValue: z.number().int().min(1).max(1_000_00),
@@ -474,7 +484,13 @@ export const upsertPollSchema = z.object({
   startsAt: z.string().datetime().optional(),
   endsAt: z.string().datetime().nullish(),
   options: z
-    .array(z.object({ id: idSchema.optional(), label: z.string().min(1).max(80), imageUrl: z.string().url().nullish() }))
+    .array(
+      z.object({
+        id: idSchema.optional(),
+        label: z.string().min(1).max(80),
+        imageUrl: z.string().url().nullish(),
+      }),
+    )
     .min(2)
     .max(10),
 });
@@ -536,7 +552,11 @@ export const revokeEntitlementSchema = z.object({
 // ── admin: providers / settings ──────────────────────────────────────────────
 
 export const upsertApiProviderSchema = z.object({
-  slug: z.string().min(2).max(40).regex(/^[a-z0-9-]+$/),
+  slug: z
+    .string()
+    .min(2)
+    .max(40)
+    .regex(/^[a-z0-9-]+$/),
   name: z.string().min(2).max(60),
   kind: z.enum(['SPORTS', 'ODDS', 'PAYMENT', 'PUSH', 'EMAIL']).default('SPORTS'),
   baseUrl: z.string().url().max(300).nullish(),

@@ -43,9 +43,7 @@ function TeamRow({
       <Text numberOfLines={1} style={styles.teamName}>
         {name}
       </Text>
-      {score !== null && score !== undefined ? (
-        <Text style={styles.score}>{score}</Text>
-      ) : null}
+      {score !== null && score !== undefined ? <Text style={styles.score}>{score}</Text> : null}
     </View>
   );
 }
@@ -154,7 +152,12 @@ const styles = StyleSheet.create({
     marginBottom: spacing[2],
   },
   timeRail: { width: 36 },
-  railDate: { color: colors.text.muted, fontSize: fontSize['2xs'], fontWeight: '500', lineHeight: 12 },
+  railDate: {
+    color: colors.text.muted,
+    fontSize: fontSize['2xs'],
+    fontWeight: '500',
+    lineHeight: 12,
+  },
   railTime: {
     marginTop: spacing[2],
     color: colors.text.secondary,

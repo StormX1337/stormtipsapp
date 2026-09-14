@@ -99,7 +99,11 @@ export default function PromotionsPage(): ReactNode {
       render: (promotion) =>
         promotion.badge === 'NONE' ? '—' : <Badge tone="info">{promotion.badge}</Badge>,
     },
-    { key: 'audience', header: 'Zielgruppe', render: (promotion) => <Badge>{promotion.audience}</Badge> },
+    {
+      key: 'audience',
+      header: 'Zielgruppe',
+      render: (promotion) => <Badge>{promotion.audience}</Badge>,
+    },
     {
       key: 'product',
       header: 'Produkt',
@@ -160,7 +164,10 @@ export default function PromotionsPage(): ReactNode {
             <Button variant="ghost" onClick={() => setOpen(false)}>
               Abbrechen
             </Button>
-            <Button onClick={() => create.mutate()} disabled={create.isPending || form.title.length < 2}>
+            <Button
+              onClick={() => create.mutate()}
+              disabled={create.isPending || form.title.length < 2}
+            >
               Anlegen
             </Button>
           </>
@@ -195,10 +202,12 @@ export default function PromotionsPage(): ReactNode {
               label="Badge"
               value={form.badge}
               onChange={(event) => setForm({ ...form, badge: event.target.value })}
-              options={['NONE', 'MOST_POPULAR', 'LIMITED', 'SALE', 'NEW', 'BEST_VALUE'].map((value) => ({
-                value,
-                label: value,
-              }))}
+              options={['NONE', 'MOST_POPULAR', 'LIMITED', 'SALE', 'NEW', 'BEST_VALUE'].map(
+                (value) => ({
+                  value,
+                  label: value,
+                }),
+              )}
             />
             <Select
               label="Zielgruppe"

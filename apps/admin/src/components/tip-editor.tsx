@@ -132,9 +132,13 @@ export function TipEditor({
     const label = (() => {
       switch (form.selectionKey) {
         case 'HOME':
-          return form.marketType === 'ASIAN_HANDICAP' ? `ASIAN HANDICAP${suffix} ${home}` : `${home} WIN`;
+          return form.marketType === 'ASIAN_HANDICAP'
+            ? `ASIAN HANDICAP${suffix} ${home}`
+            : `${home} WIN`;
         case 'AWAY':
-          return form.marketType === 'ASIAN_HANDICAP' ? `ASIAN HANDICAP${suffix} ${away}` : `${away} WIN`;
+          return form.marketType === 'ASIAN_HANDICAP'
+            ? `ASIAN HANDICAP${suffix} ${away}`
+            : `${away} WIN`;
         case 'DRAW':
           return 'DRAW';
         case 'HOME_OR_DRAW':

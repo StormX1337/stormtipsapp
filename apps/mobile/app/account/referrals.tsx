@@ -84,7 +84,11 @@ export default function ReferralsScreen(): ReactNode {
               value={String(data.qualifiedReferrals)}
               tone="positive"
             />
-            <StatTile label={t('referral.rewards')} value={String(data.rewardedReferrals)} tone="gold" />
+            <StatTile
+              label={t('referral.rewards')}
+              value={String(data.rewardedReferrals)}
+              tone="gold"
+            />
             <StatTile label={t('status.PENDING')} value={String(data.pendingReferrals)} />
           </StatGrid>
 

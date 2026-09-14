@@ -54,7 +54,11 @@ export function PromoBanner({ promotion }: { promotion: PromotionDTO }): ReactNo
       accessibilityRole="button"
       accessibilityLabel={promotion.title}
       onPress={() => router.push(targetRoute(promotion) as never)}
-      style={({ pressed }) => [styles.banner, { backgroundColor: background }, pressed && { opacity: 0.9 }]}
+      style={({ pressed }) => [
+        styles.banner,
+        { backgroundColor: background },
+        pressed && { opacity: 0.9 },
+      ]}
     >
       <View style={styles.neonFrame} pointerEvents="none" />
 
@@ -75,11 +79,7 @@ export function PromoBanner({ promotion }: { promotion: PromotionDTO }): ReactNo
             stroke={colors.accent.DEFAULT}
             strokeWidth={1.4}
           />
-          <Path
-            d="M12 6.5 15.5 9l-1.3 4h-4.4L8.5 9z"
-            fill={colors.accent.DEFAULT}
-            opacity={0.9}
-          />
+          <Path d="M12 6.5 15.5 9l-1.3 4h-4.4L8.5 9z" fill={colors.accent.DEFAULT} opacity={0.9} />
           <Path
             d="M12 2.6v3.9M3.6 8.6 8.5 9M20.4 8.6 15.5 9M6.6 20.2l3.2-7.2M17.4 20.2l-3.2-7.2"
             stroke={colors.accent.DEFAULT}

@@ -162,7 +162,10 @@ export class GoogleAdapter {
   }
 
   /** Fetches the authoritative subscription state for a purchase token. */
-  async verifyPurchase(purchaseToken: string, packageName?: string): Promise<NormalizedSubscription> {
+  async verifyPurchase(
+    purchaseToken: string,
+    packageName?: string,
+  ): Promise<NormalizedSubscription> {
     const pkg = packageName ?? this.config.packageName;
     const purchase = await this.request<SubscriptionPurchaseV2>(
       `/applications/${encodeURIComponent(pkg)}/purchases/subscriptionsv2/tokens/${encodeURIComponent(purchaseToken)}`,
@@ -266,10 +269,7 @@ export class GoogleAdapter {
     return envelope;
   }
 
-  toSubscription(
-    purchase: SubscriptionPurchaseV2,
-    purchaseToken: string,
-  ): NormalizedSubscription {
+  toSubscription(purchase: SubscriptionPurchaseV2, purchaseToken: string): NormalizedSubscription {
     const lineItem = purchase.lineItems?.[0];
     const expiry = lineItem?.expiryTime ? new Date(lineItem.expiryTime) : null;
     const startTime = purchase.startTime ? new Date(purchase.startTime) : new Date();

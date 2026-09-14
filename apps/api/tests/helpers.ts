@@ -32,7 +32,10 @@ export interface TestUser {
 
 /** Creates an isolated user. Every test gets its own so they can run in any order. */
 export async function createTestUser(
-  overrides: { role?: 'USER' | 'MODERATOR' | 'ADMIN' | 'SUPER_ADMIN'; status?: 'ACTIVE' | 'BANNED' } = {},
+  overrides: {
+    role?: 'USER' | 'MODERATOR' | 'ADMIN' | 'SUPER_ADMIN';
+    status?: 'ACTIVE' | 'BANNED';
+  } = {},
 ): Promise<TestUser> {
   const email = `test-${randomUUID()}@example.test`;
   const user = await prisma.user.create({

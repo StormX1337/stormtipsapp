@@ -135,7 +135,9 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
         isActive: true,
         startsAt: { lte: now },
         OR: [{ endsAt: null }, { endsAt: { gt: now } }],
-        ...(request.auth?.language ? { OR: [{ locale: null }, { locale: request.auth.language }] } : {}),
+        ...(request.auth?.language
+          ? { OR: [{ locale: null }, { locale: request.auth.language }] }
+          : {}),
       },
       orderBy: { priority: 'asc' },
       take: 10,
@@ -238,7 +240,11 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
 
   app.post('/portal', { preHandler: [app.authenticate] }, async (request, reply) => {
     const subscription = await prisma.subscription.findFirst({
-      where: { userId: request.auth!.userId, provider: 'STRIPE', providerCustomerId: { not: null } },
+      where: {
+        userId: request.auth!.userId,
+        provider: 'STRIPE',
+        providerCustomerId: { not: null },
+      },
       orderBy: { startedAt: 'desc' },
     });
     if (!subscription?.providerCustomerId) {

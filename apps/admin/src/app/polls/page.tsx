@@ -175,9 +175,14 @@ export default function PollsPage(): ReactNode {
               label="Art"
               value={form.kind}
               onChange={(event) => setForm({ ...form, kind: event.target.value })}
-              options={['MATCH_WINNER', 'GOALS', 'PLAYER_PERFORMANCE', 'LEAGUE', 'BEST_TIP', 'CUSTOM'].map(
-                (value) => ({ value, label: value }),
-              )}
+              options={[
+                'MATCH_WINNER',
+                'GOALS',
+                'PLAYER_PERFORMANCE',
+                'LEAGUE',
+                'BEST_TIP',
+                'CUSTOM',
+              ].map((value) => ({ value, label: value }))}
             />
             <Select
               label="Status"

@@ -32,7 +32,12 @@ export async function cleanupJob(job: Job): Promise<unknown> {
 
   const [sessions, tokens, analyticsEvents, webhooks, notificationsPruned] = await Promise.all([
     prisma.session.deleteMany({
-      where: { OR: [{ expiresAt: { lt: now } }, { revokedAt: { lt: new Date(now.getTime() - 30 * 86_400_000) } }] },
+      where: {
+        OR: [
+          { expiresAt: { lt: now } },
+          { revokedAt: { lt: new Date(now.getTime() - 30 * 86_400_000) } },
+        ],
+      },
     }),
     prisma.verificationToken.deleteMany({ where: { expiresAt: { lt: now } } }),
     prisma.analyticsEvent.deleteMany({

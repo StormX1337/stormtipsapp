@@ -5,9 +5,9 @@
 ```
                     ┌──────────────────────────────────────────────┐
                     │                  Clients                     │
-   iOS / Android ──▶│  apps/mobile   (Expo 57 · expo-router · RN)  │
-   Browser       ──▶│  apps/web      (Next.js 16 · App Router)     │
-   Operators     ──▶│  apps/admin    (Next.js 16 · admin console)  │
+   iOS / Android ──▶│  apps/mobile   (Expo SDK 54 · expo-router)   │
+   Browser       ──▶│  apps/web      (Next.js 15 · App Router)     │
+   Operators     ──▶│  apps/admin    (Next.js 15 · admin console)  │
                     └───────────────┬──────────────────────────────┘
                                     │ HTTPS  /api/v1   +  WSS /ws
                     ┌───────────────▼──────────────────────────────┐
@@ -50,23 +50,25 @@ packages/
   payments/   Stripe / Apple / Google adapters → NormalizedSubscription
   statistics/ Settlement engine, combo maths, statistics aggregation (pure functions)
   notifications/ Expo push · FCM v1 · APNs transports + templating
-  ui/         Design tokens (colors/spacing/typography/radii/shadows) shared web+mobile
+  ui/         Design tokens, formatters, i18n catalogues and legal copy (web + mobile)
 infra/
-  docker/     Dockerfiles for api / worker / web / admin
+  docker/     Dockerfiles for api / worker / web / admin + docker-compose stack
   nginx/      TLS terminating reverse proxy config
+.github/
+  workflows/  CI (lint · typecheck · test · build · images), release, CodeQL
 docs/
 ```
 
 ## 3. Runtime processes
 
-| Process | Command | Responsibility |
-| --- | --- | --- |
-| `api` | `pnpm dev:api` | Stateless HTTP + WS. Horizontally scalable. |
-| `worker` | `pnpm dev:worker` | All scheduled + background work. Single queue, many workers. |
-| `web` | `pnpm dev:web` | Next.js SSR/ISR. |
-| `admin` | `pnpm dev:admin` | Next.js, admin-only. |
-| `postgres` | docker | System of record. |
-| `redis` | docker | Cache, rate-limit counters, BullMQ, WS fan-out (pub/sub). |
+| Process    | Command           | Responsibility                                               |
+| ---------- | ----------------- | ------------------------------------------------------------ |
+| `api`      | `pnpm dev:api`    | Stateless HTTP + WS. Horizontally scalable.                  |
+| `worker`   | `pnpm dev:worker` | All scheduled + background work. Single queue, many workers. |
+| `web`      | `pnpm dev:web`    | Next.js SSR/ISR.                                             |
+| `admin`    | `pnpm dev:admin`  | Next.js, admin-only.                                         |
+| `postgres` | docker            | System of record.                                            |
+| `redis`    | docker            | Cache, rate-limit counters, BullMQ, WS fan-out (pub/sub).    |
 
 ## 4. Request lifecycle
 
@@ -104,11 +106,11 @@ SubscriptionPlan ──includes──▶ Product(VIP | COMBO | EXTRA | FIX_ODDS)
       Subscription ─────────────────────▶ Entitlement(userId, product, expiresAt, source)
 ```
 
-* A `Subscription` row is created/updated **only** by a verified webhook or a verified
+- A `Subscription` row is created/updated **only** by a verified webhook or a verified
   store receipt — never by the client.
-* `Entitlement` rows are derived; admins can also grant/revoke them manually
+- `Entitlement` rows are derived; admins can also grant/revoke them manually
   (`source = ADMIN_GRANT`) which is fully audit-logged.
-* `EntitlementService.check(userId, product)` is the only place access is decided, and it is
+- `EntitlementService.has(userId, product)` is the only place access is decided, and it is
   called by REST handlers, the WS gateway and the tip serializer (which masks locked tips).
 
 ## 7. Tip pipeline
@@ -118,7 +120,7 @@ Admin creates Tip (status=DRAFT, publishAt=T)
         │
         ├─ odds snapshot stored as originalOdds
         │
-  worker: publish:tips (every minute)
+  worker: publish:due (every minute)
         │ publishAt <= now  →  status=PUBLISHED, push notification fan-out
         ▼
   Event kicks off → tip is LIVE-locked (no further edits)
@@ -142,15 +144,15 @@ Every provider poll writes an `Odd` (current) and appends an `OddsHistory` row w
 actually changed. `openingOdds` is the first observation, `closingOdds` is frozen at kickoff.
 `OddsMovement` (`UP` / `DOWN` / `STABLE` / `SIGNIFICANT`) is computed from
 `(current − opening) / opening` against a configurable threshold (default 5%). Tips display
-*Original odds* vs *Current odds* and flag `oddsChanged` when the delta exceeds the threshold.
+_Original odds_ vs _Current odds_ and flag `oddsChanged` when the delta exceeds the threshold.
 
 ## 9. Statistics engine
 
 `packages/statistics` is pure and side-effect free:
 
-* `settleSelection()` — market → outcome truth tables (incl. quarter lines).
-* `returnFactor(outcome, odds)` — 0, 1 (void), `odds`, `1 + (odds−1)/2`, `0.5`.
-* `aggregate(tips[], { stake })` — totals, win rate, ROI, yield, average odds, profit,
+- `settleSelection()` — market → outcome truth tables (incl. quarter lines).
+- `returnFactor(outcome, odds)` — 0, 1 (void), `odds`, `1 + (odds−1)/2`, `0.5`.
+- `aggregate(tips[], { stake })` — totals, win rate, ROI, yield, average odds, profit,
   best/worst streak, and grouped breakdowns (day/week/month/league/market/product).
 
 The API caches each `(product, window)` aggregate in Redis for 5 minutes and persists a daily
@@ -161,19 +163,19 @@ The API caches each `(product, window)` aggregate in Redis for 5 minutes and per
 `apps/api` exposes `GET /ws`. A client subscribes to topics (`live:events`, `tips:FREE`,
 `tips:VIP`, …). Topic authorisation reuses `EntitlementService`. The worker publishes to a Redis
 channel; every API instance re-broadcasts to its local sockets, so the gateway scales
-horizontally. Clients fall back to 15 s polling when the socket cannot be established.
+horizontally. Clients fall back to polling (15-20 s) when the socket cannot be established.
 
 ## 11. Security posture
 
-* Argon2id password hashing, refresh-token **rotation with reuse detection** (a replayed
+- Argon2id password hashing, refresh-token **rotation with reuse detection** (a replayed
   refresh token revokes the whole session family).
-* Access tokens 15 min, refresh tokens 30 days, both signed with separate secrets.
-* Provider API keys are encrypted at rest (AES-256-GCM, key from `ENCRYPTION_KEY`).
-* Webhooks verify signatures (Stripe HMAC, Apple JWS chain, Google Pub/Sub OIDC) and are
+- Access tokens 15 min, refresh tokens 30 days, both signed with separate secrets.
+- Provider API keys are encrypted at rest (AES-256-GCM, key from `ENCRYPTION_KEY`).
+- Webhooks verify signatures (Stripe HMAC, Apple JWS chain, Google Pub/Sub OIDC) and are
   idempotent via `WebhookEvent`.
-* `helmet` CSP/HSTS, strict CORS allowlist, Redis-backed rate limits, Zod validation
+- `helmet` CSP/HSTS, strict CORS allowlist, Redis-backed rate limits, Zod validation
   everywhere, Prisma parameterised queries, output escaping in React.
-* Every privileged mutation writes an `AuditLog` row (actor, action, entity, before/after, IP).
+- Every privileged mutation writes an `AuditLog` row (actor, action, entity, before/after, IP).
 
 Details: [`docs/security.md`](./security.md).
 

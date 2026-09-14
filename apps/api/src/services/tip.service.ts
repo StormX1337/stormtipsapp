@@ -41,7 +41,8 @@ function dayRange(date: string, timezone: string): { start: Date; end: Date } {
     .find((part) => part.type === 'timeZoneName')?.value;
   const match = /GMT([+-]\d{2}):?(\d{2})?/.exec(offsetPart ?? '');
   const offsetMinutes = match
-    ? Number(match[1]) * 60 + (Number(match[1]) < 0 ? -Number(match[2] ?? 0) : Number(match[2] ?? 0))
+    ? Number(match[1]) * 60 +
+      (Number(match[1]) < 0 ? -Number(match[2] ?? 0) : Number(match[2] ?? 0))
     : 0;
 
   const start = new Date(`${date}T00:00:00Z`);
@@ -113,8 +114,7 @@ export class TipService {
     }
 
     const ordered = [...groups.values()].sort(
-      (a, b) =>
-        a.league.priority - b.league.priority || a.league.name.localeCompare(b.league.name),
+      (a, b) => a.league.priority - b.league.priority || a.league.name.localeCompare(b.league.name),
     );
 
     return {
@@ -189,7 +189,13 @@ export class TipService {
 
     const { skip, take } = skipTake(options);
     const [tips, total] = await Promise.all([
-      prisma.tip.findMany({ where, include: tipInclude, orderBy: { settledAt: 'desc' }, skip, take }),
+      prisma.tip.findMany({
+        where,
+        include: tipInclude,
+        orderBy: { settledAt: 'desc' },
+        skip,
+        take,
+      }),
       prisma.tip.count({ where }),
     ]);
 

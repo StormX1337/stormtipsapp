@@ -5,13 +5,21 @@
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
-  "exports": { ".": "./src/index.ts" },
-  "scripts": { "typecheck": "tsc --noEmit", "test": "vitest run" },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
   "dependencies": {
     "@node-rs/argon2": "^2.0.2",
     "@profit-tips/config": "workspace:*",
     "@profit-tips/types": "workspace:*",
     "jose": "^6.1.0"
   },
-  "devDependencies": { "typescript": "~5.9.3", "vitest": "^3.2.4" }
+  "devDependencies": {
+    "typescript": "~5.9.3",
+    "vitest": "^3.2.4"
+  }
 }

@@ -169,7 +169,12 @@ describe('result engine', () => {
         totalOdds: 2.7,
         stake: 10,
         status: 'PUBLISHED',
-        items: { create: [{ tipId: tipA, sortOrder: 0 }, { tipId: tipB, sortOrder: 1 }] },
+        items: {
+          create: [
+            { tipId: tipA, sortOrder: 0 },
+            { tipId: tipB, sortOrder: 1 },
+          ],
+        },
       },
     });
     cleanup.combos.push(combo.id);
@@ -201,7 +206,12 @@ describe('result engine', () => {
         totalOdds: 2.7,
         stake: 10,
         status: 'PUBLISHED',
-        items: { create: [{ tipId: tipA, sortOrder: 0 }, { tipId: tipB, sortOrder: 1 }] },
+        items: {
+          create: [
+            { tipId: tipA, sortOrder: 0 },
+            { tipId: tipB, sortOrder: 1 },
+          ],
+        },
       },
     });
     cleanup.combos.push(combo.id);
@@ -237,7 +247,9 @@ describe('webhook idempotency', () => {
     await billing.completeWebhook('STRIPE', eventId, 'FAILED', 'boom');
 
     expect(await billing.claimWebhook('STRIPE', eventId, 'invoice.paid', {})).toBe(true);
-    const row = await prisma.webhookEvent.findFirstOrThrow({ where: { provider: 'STRIPE', eventId } });
+    const row = await prisma.webhookEvent.findFirstOrThrow({
+      where: { provider: 'STRIPE', eventId },
+    });
     expect(row.attempts).toBe(2);
   });
 

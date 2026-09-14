@@ -108,7 +108,9 @@ export const registerWebSocketGateway = fp(async function registerWebSocketGatew
       client.isAlive = true;
     });
 
-    const authorise = async (topics: string[]): Promise<{ granted: string[]; rejected: string[] }> => {
+    const authorise = async (
+      topics: string[],
+    ): Promise<{ granted: string[]; rejected: string[] }> => {
       const granted: string[] = [];
       const rejected: string[] = [];
       const products = await entitlements.productsFor(client.userId);
@@ -145,7 +147,10 @@ export const registerWebSocketGateway = fp(async function registerWebSocketGatew
               const claims = await verifyAccessToken(message.token, app.tokenConfig);
               client.userId = claims.sub;
               // Re-authorise topics that were rejected before authentication.
-              const { granted, rejected } = await authorise([...client.topics, ...Object.values(WS_TOPICS)]);
+              const { granted, rejected } = await authorise([
+                ...client.topics,
+                ...Object.values(WS_TOPICS),
+              ]);
               client.topics = new Set(granted.filter((topic) => client.topics.has(topic)));
               send(socket, { type: 'subscribed', topics: [...client.topics], rejected });
             } catch {

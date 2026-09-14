@@ -24,7 +24,11 @@ export async function configureAndroidChannels(): Promise<void> {
   const channels: { id: string; name: string; importance: Notifications.AndroidImportance }[] = [
     { id: 'tips', name: 'Neue Analysen', importance: Notifications.AndroidImportance.HIGH },
     { id: 'results', name: 'Ergebnisse', importance: Notifications.AndroidImportance.DEFAULT },
-    { id: 'reminders', name: 'Anstoß-Erinnerungen', importance: Notifications.AndroidImportance.HIGH },
+    {
+      id: 'reminders',
+      name: 'Anstoß-Erinnerungen',
+      importance: Notifications.AndroidImportance.HIGH,
+    },
     { id: 'account', name: 'Konto & Abo', importance: Notifications.AndroidImportance.DEFAULT },
     { id: 'promotions', name: 'Angebote', importance: Notifications.AndroidImportance.LOW },
   ];

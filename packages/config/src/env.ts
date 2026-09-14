@@ -38,9 +38,7 @@ const csv = z
       .filter(Boolean),
   );
 
-const hex64 = z
-  .string()
-  .regex(/^[0-9a-fA-F]{64}$/, 'must be 64 hexadecimal characters (32 bytes)');
+const hex64 = z.string().regex(/^[0-9a-fA-F]{64}$/, 'must be 64 hexadecimal characters (32 bytes)');
 
 export const envSchema = z.object({
   // core

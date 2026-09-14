@@ -58,7 +58,12 @@ export async function webhookRoutes(app: FastifyInstance): Promise<void> {
     }
 
     const envelope = await billing.apple.handleNotification(body.signedPayload);
-    const fresh = await billing.claimWebhook('APPLE', envelope.eventId, envelope.type, envelope.raw);
+    const fresh = await billing.claimWebhook(
+      'APPLE',
+      envelope.eventId,
+      envelope.type,
+      envelope.raw,
+    );
     if (!fresh) return reply.status(200).send({ received: true, duplicate: true });
 
     try {

@@ -53,7 +53,9 @@ export default function AccountPage(): ReactNode {
   }, [loading, user, router]);
 
   async function deleteAccount(): Promise<void> {
-    if (!window.confirm('Konto wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.'))
+    if (
+      !window.confirm('Konto wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')
+    )
       return;
     await api('/me', { method: 'DELETE' });
     await logout();
@@ -142,18 +144,30 @@ export default function AccountPage(): ReactNode {
                   icon={<ShieldQuestion size={18} aria-hidden />}
                   label={t('legal.responsible')}
                 />
-                <Item href="/legal/terms" icon={<span aria-hidden>§</span>} label={t('legal.terms')} />
+                <Item
+                  href="/legal/terms"
+                  icon={<span aria-hidden>§</span>}
+                  label={t('legal.terms')}
+                />
                 <Item
                   href="/legal/privacy"
                   icon={<span aria-hidden>◎</span>}
                   label={t('legal.privacy')}
                 />
-                <Item href="/legal/help" icon={<span aria-hidden>?</span>} label={t('legal.help')} />
+                <Item
+                  href="/legal/help"
+                  icon={<span aria-hidden>?</span>}
+                  label={t('legal.help')}
+                />
               </div>
             </section>
 
             <div className="flex flex-col gap-2">
-              <Button variant="outline" size="lg" onClick={() => void logout().then(() => router.push('/free'))}>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => void logout().then(() => router.push('/free'))}
+              >
                 <LogOut size={16} aria-hidden /> {t('auth.logout')}
               </Button>
               <Button variant="danger" size="lg" onClick={() => void deleteAccount()}>

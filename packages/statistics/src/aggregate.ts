@@ -168,9 +168,7 @@ function toBucket(key: string, label: string, acc: Accumulator): Bucket {
   };
 }
 
-function buildSeries(
-  map: Map<string, Accumulator>,
-): SeriesPoint[] {
+function buildSeries(map: Map<string, Accumulator>): SeriesPoint[] {
   const keys = [...map.keys()].sort();
   let cumulative = 0;
   return keys.map((key) => {

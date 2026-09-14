@@ -13,7 +13,13 @@
  * Refuses to run against NODE_ENV=production.
  */
 import { PrismaClient, type Prisma } from '@prisma/client';
-import { MockProvider, CATALOGUE_BOOKMAKERS, CATALOGUE_COUNTRIES, CATALOGUE_LEAGUES, CATALOGUE_SPORTS } from '@profit-tips/sports';
+import {
+  MockProvider,
+  CATALOGUE_BOOKMAKERS,
+  CATALOGUE_COUNTRIES,
+  CATALOGUE_LEAGUES,
+  CATALOGUE_SPORTS,
+} from '@profit-tips/sports';
 import { profitFor, returnFactor, settleCombo } from '@profit-tips/statistics';
 import { generateReferralCode, hashPassword } from '@profit-tips/auth';
 import type { MatchResult, SettlementOutcome } from '@profit-tips/statistics';
@@ -266,7 +272,8 @@ async function seedCommerce(): Promise<Map<string, string>> {
     data: [
       {
         title: 'Bereit für mehr?',
-        subtitle: 'Abonnieren Sie unseren Newsletter und erhalten Sie jedes Wochenende noch mehr Fußballtipps und Sonderangebote',
+        subtitle:
+          'Abonnieren Sie unseren Newsletter und erhalten Sie jedes Wochenende noch mehr Fußballtipps und Sonderangebote',
         ctaLabel: 'Jetzt abonnieren',
         deepLink: 'profittips://paywall/COMBO',
         badge: 'NONE',
@@ -346,8 +353,28 @@ async function seedUsers(): Promise<SeededUsers> {
   });
 
   const random = mulberry32(hashString('users'));
-  const firstNames = ['Lukas', 'Marie', 'Jonas', 'Emma', 'Felix', 'Laura', 'Tim', 'Sophie', 'Max', 'Anna'];
-  const lastNames = ['Müller', 'Schmidt', 'Weber', 'Fischer', 'Becker', 'Wagner', 'Koch', 'Richter'];
+  const firstNames = [
+    'Lukas',
+    'Marie',
+    'Jonas',
+    'Emma',
+    'Felix',
+    'Laura',
+    'Tim',
+    'Sophie',
+    'Max',
+    'Anna',
+  ];
+  const lastNames = [
+    'Müller',
+    'Schmidt',
+    'Weber',
+    'Fischer',
+    'Becker',
+    'Wagner',
+    'Koch',
+    'Richter',
+  ];
   const demo: { id: string; email: string }[] = [];
 
   for (let index = 0; index < 36; index += 1) {
@@ -499,7 +526,9 @@ async function seedOdds(catalogue: Catalogue, events: SeededEvent[]): Promise<vo
     const marketId = catalogue.marketIds.get(marketKeyByType[entry.marketType] ?? '');
     if (!event || !bookmakerId || !marketId) continue;
 
-    const random = mulberry32(hashString(`${entry.providerEventId}${entry.selection}${entry.bookmakerKey}`));
+    const random = mulberry32(
+      hashString(`${entry.providerEventId}${entry.selection}${entry.bookmakerKey}`),
+    );
     const opening = Math.round(entry.price * (0.94 + random() * 0.12) * 100) / 100;
     const id = createId('od');
 
@@ -582,7 +611,10 @@ function buildTip(
     ? between(random, options.targetOdds * 0.88, options.targetOdds * 1.12)
     : between(random, range[0], range[1]);
 
-  const bookmakerKey = pick(CATALOGUE_BOOKMAKERS.map((entry) => entry.key), random);
+  const bookmakerKey = pick(
+    CATALOGUE_BOOKMAKERS.map((entry) => entry.key),
+    random,
+  );
   const marketId = catalogue.marketIds.get(candidate.marketKey) ?? null;
   const label = candidate.label(event.homeName, event.awayName);
   const confidence =
@@ -652,13 +684,55 @@ function buildTip(
 function pickUpcomingSelection(random: () => number, sportKey = 'football') {
   const allowsDraw = sportKey === 'football' || sportKey === 'ice-hockey';
   const candidates = [
-    { marketKey: '1x2', marketType: 'MATCH_WINNER' as const, selectionKey: 'HOME', line: null, label: (h: string) => `${h.toUpperCase()} WIN` },
-    { marketKey: '1x2', marketType: 'MATCH_WINNER' as const, selectionKey: 'AWAY', line: null, label: (_h: string, a: string) => `${a.toUpperCase()} WIN` },
-    { marketKey: 'double-chance', marketType: 'DOUBLE_CHANCE' as const, selectionKey: 'HOME_OR_DRAW', line: null, label: (h: string) => `${h.toUpperCase()} WIN OR DRAW` },
-    { marketKey: 'double-chance', marketType: 'DOUBLE_CHANCE' as const, selectionKey: 'AWAY_OR_DRAW', line: null, label: (_h: string, a: string) => `${a.toUpperCase()} WIN OR DRAW` },
-    { marketKey: 'totals', marketType: 'OVER_UNDER' as const, selectionKey: 'OVER', line: 2.5, label: () => 'OVER 2.5 GOALS' },
-    { marketKey: 'totals', marketType: 'OVER_UNDER' as const, selectionKey: 'UNDER', line: 2.5, label: () => 'UNDER 2.5 GOALS' },
-    { marketKey: 'btts', marketType: 'BTTS' as const, selectionKey: 'BTTS_YES', line: null, label: () => 'BOTH TEAMS TO SCORE' },
+    {
+      marketKey: '1x2',
+      marketType: 'MATCH_WINNER' as const,
+      selectionKey: 'HOME',
+      line: null,
+      label: (h: string) => `${h.toUpperCase()} WIN`,
+    },
+    {
+      marketKey: '1x2',
+      marketType: 'MATCH_WINNER' as const,
+      selectionKey: 'AWAY',
+      line: null,
+      label: (_h: string, a: string) => `${a.toUpperCase()} WIN`,
+    },
+    {
+      marketKey: 'double-chance',
+      marketType: 'DOUBLE_CHANCE' as const,
+      selectionKey: 'HOME_OR_DRAW',
+      line: null,
+      label: (h: string) => `${h.toUpperCase()} WIN OR DRAW`,
+    },
+    {
+      marketKey: 'double-chance',
+      marketType: 'DOUBLE_CHANCE' as const,
+      selectionKey: 'AWAY_OR_DRAW',
+      line: null,
+      label: (_h: string, a: string) => `${a.toUpperCase()} WIN OR DRAW`,
+    },
+    {
+      marketKey: 'totals',
+      marketType: 'OVER_UNDER' as const,
+      selectionKey: 'OVER',
+      line: 2.5,
+      label: () => 'OVER 2.5 GOALS',
+    },
+    {
+      marketKey: 'totals',
+      marketType: 'OVER_UNDER' as const,
+      selectionKey: 'UNDER',
+      line: 2.5,
+      label: () => 'UNDER 2.5 GOALS',
+    },
+    {
+      marketKey: 'btts',
+      marketType: 'BTTS' as const,
+      selectionKey: 'BTTS_YES',
+      line: null,
+      label: () => 'BOTH TEAMS TO SCORE',
+    },
   ].filter((candidate) => allowsDraw || candidate.marketType !== 'DOUBLE_CHANCE');
   return pick(candidates, random);
 }
@@ -686,7 +760,9 @@ async function seedTipsAndCombos(
 
   for (const [day, dayEvents] of [...byDay.entries()].sort()) {
     const random = mulberry32(hashString(`tips:${day}`));
-    const pool = dayEvents.filter((event) => event.status === 'FINISHED' || event.startsAt.getTime() > Date.now());
+    const pool = dayEvents.filter(
+      (event) => event.status === 'FINISHED' || event.startsAt.getTime() > Date.now(),
+    );
     if (pool.length < 4) continue;
     const shuffled = [...pool].sort(() => random() - 0.5);
     let cursor = 0;
@@ -701,30 +777,36 @@ async function seedTipsAndCombos(
     for (let index = 0; index < 4; index += 1) {
       const event = take();
       if (!event) break;
-      push(buildTip(event, 'FREE', catalogue, authorId, random, {
-        oddsRange: ODDS_RANGE.FREE,
-        winRate: WIN_RATES.FREE,
-      }));
+      push(
+        buildTip(event, 'FREE', catalogue, authorId, random, {
+          oddsRange: ODDS_RANGE.FREE,
+          winRate: WIN_RATES.FREE,
+        }),
+      );
     }
 
     // VIP
     for (let index = 0; index < 3; index += 1) {
       const event = take();
       if (!event) break;
-      push(buildTip(event, 'VIP', catalogue, authorId, random, {
-        oddsRange: ODDS_RANGE.VIP,
-        winRate: WIN_RATES.VIP,
-      }));
+      push(
+        buildTip(event, 'VIP', catalogue, authorId, random, {
+          oddsRange: ODDS_RANGE.VIP,
+          winRate: WIN_RATES.VIP,
+        }),
+      );
     }
 
     // EXTRA — higher odds, lower hit rate
     for (let index = 0; index < 2; index += 1) {
       const event = take();
       if (!event) break;
-      push(buildTip(event, 'EXTRA', catalogue, authorId, random, {
-        oddsRange: ODDS_RANGE.EXTRA,
-        winRate: WIN_RATES.EXTRA,
-      }));
+      push(
+        buildTip(event, 'EXTRA', catalogue, authorId, random, {
+          oddsRange: ODDS_RANGE.EXTRA,
+          winRate: WIN_RATES.EXTRA,
+        }),
+      );
     }
 
     // FIX ODDS — one pick per plan every other day
@@ -732,11 +814,13 @@ async function seedTipsAndCombos(
       if (random() > 0.5) continue;
       const event = take();
       if (!event) break;
-      push(buildTip(event, 'FIX_ODDS', catalogue, authorId, random, {
-        winRate: Math.min(0.85, (1 / Number(plan.targetOdds)) * 1.12),
-        targetOdds: Number(plan.targetOdds),
-        fixOddsPlanId: plan.id,
-      }));
+      push(
+        buildTip(event, 'FIX_ODDS', catalogue, authorId, random, {
+          winRate: Math.min(0.85, (1 / Number(plan.targetOdds)) * 1.12),
+          targetOdds: Number(plan.targetOdds),
+          fixOddsPlanId: plan.id,
+        }),
+      );
     }
 
     // COMBO — two accumulators per day, three or four legs each
@@ -821,7 +905,9 @@ async function seedTipsAndCombos(
   console.log(`    ${tips.length} tips (${results.length} settled), ${combos.length} combos`);
 
   // A handful of live tips on fixtures that are in play right now.
-  const liveEvents = events.filter((event) => event.status === 'LIVE' || event.status === 'HALFTIME');
+  const liveEvents = events.filter(
+    (event) => event.status === 'LIVE' || event.status === 'HALFTIME',
+  );
   if (liveEvents.length > 0) {
     const random = mulberry32(hashString('live'));
     for (const event of liveEvents.slice(0, 4)) {
@@ -968,9 +1054,7 @@ async function seedSubscriptions(users: SeededUsers, planIds: Map<string, string
 async function seedPolls(events: SeededEvent[], users: SeededUsers): Promise<void> {
   console.log('  · polls and votes');
   const random = mulberry32(hashString('polls'));
-  const upcoming = events
-    .filter((event) => event.startsAt.getTime() > Date.now())
-    .slice(0, 3);
+  const upcoming = events.filter((event) => event.startsAt.getTime() > Date.now()).slice(0, 3);
 
   const definitions = [
     {
@@ -1151,7 +1235,9 @@ async function summary(): Promise<void> {
     prisma.subscription.count(),
   ]);
 
-  const comboTips = await prisma.tip.count({ where: { product: 'COMBO', outcome: { in: ['WON', 'HALF_WON'] } } });
+  const comboTips = await prisma.tip.count({
+    where: { product: 'COMBO', outcome: { in: ['WON', 'HALF_WON'] } },
+  });
 
   console.log('\n  Seed complete:');
   console.table({
@@ -1164,7 +1250,9 @@ async function summary(): Promise<void> {
     subscriptions,
     successfulComboAnalyses: comboTips,
   });
-  console.log(`\n  Admin login: ${process.env.SEED_ADMIN_EMAIL ?? 'admin@profittips.app'} / ${process.env.SEED_ADMIN_PASSWORD ?? 'ChangeMe!2026'}`);
+  console.log(
+    `\n  Admin login: ${process.env.SEED_ADMIN_EMAIL ?? 'admin@profittips.app'} / ${process.env.SEED_ADMIN_PASSWORD ?? 'ChangeMe!2026'}`,
+  );
   console.log('  Demo user login: any seeded @example.com address / DemoUser!2026\n');
 }
 

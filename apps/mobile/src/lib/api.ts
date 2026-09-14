@@ -140,7 +140,11 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
   } catch (error) {
     const aborted = (error as Error).name === 'AbortError';
     setOnline(false);
-    throw apiError(0, aborted ? 'TIMEOUT' : 'NETWORK_ERROR', aborted ? 'Zeitüberschreitung' : 'Netzwerkfehler');
+    throw apiError(
+      0,
+      aborted ? 'TIMEOUT' : 'NETWORK_ERROR',
+      aborted ? 'Zeitüberschreitung' : 'Netzwerkfehler',
+    );
   } finally {
     clearTimeout(timer);
   }

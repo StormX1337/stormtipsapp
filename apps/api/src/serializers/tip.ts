@@ -1,7 +1,15 @@
 import type { Prisma } from '@profit-tips/database';
 import type { ComboDTO, ProductCode, TipDTO, TipResultDTO } from '@profit-tips/types';
 import { dec, decOr, iso } from './common.js';
-import { eventInclude, leagueInclude, serializeBookmaker, serializeEvent, serializeLeague, serializeCountry, serializeSport } from './catalogue.js';
+import {
+  eventInclude,
+  leagueInclude,
+  serializeBookmaker,
+  serializeEvent,
+  serializeLeague,
+  serializeCountry,
+  serializeSport,
+} from './catalogue.js';
 
 export const tipInclude = {
   sport: true,

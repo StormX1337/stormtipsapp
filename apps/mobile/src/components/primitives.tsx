@@ -28,7 +28,12 @@ export function TeamCrest({
     <View
       style={[
         styles.crest,
-        { width: size, height: size, borderRadius: size / 2, backgroundColor: color ?? colors.bg.cardAlt },
+        {
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          backgroundColor: color ?? colors.bg.cardAlt,
+        },
       ]}
     >
       <Text style={{ fontSize: size * 0.42, fontWeight: '700', color: contrastOn(color) }}>
@@ -168,14 +173,15 @@ export function Button({
   );
 }
 
-export function Skeleton({ height, width }: { height: number; width?: number | string }): ReactNode {
+export function Skeleton({
+  height,
+  width,
+}: {
+  height: number;
+  width?: number | string;
+}): ReactNode {
   return (
-    <View
-      style={[
-        styles.skeleton,
-        { height, width: (width as number | undefined) ?? '100%' },
-      ]}
-    />
+    <View style={[styles.skeleton, { height, width: (width as number | undefined) ?? '100%' }]} />
   );
 }
 
@@ -190,7 +196,13 @@ export function EmptyState({ title, body }: { title: string; body?: string }): R
   );
 }
 
-export function ErrorState({ message, onRetry }: { message: string; onRetry?: () => void }): ReactNode {
+export function ErrorState({
+  message,
+  onRetry,
+}: {
+  message: string;
+  onRetry?: () => void;
+}): ReactNode {
   const t = useT();
   return (
     <View style={styles.empty}>

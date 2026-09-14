@@ -54,7 +54,15 @@ export default function UsersPage(): ReactNode {
       key: 'status',
       header: 'Status',
       render: (user) => (
-        <Badge tone={user.status === 'ACTIVE' ? 'positive' : user.status === 'BANNED' ? 'negative' : 'neutral'}>
+        <Badge
+          tone={
+            user.status === 'ACTIVE'
+              ? 'positive'
+              : user.status === 'BANNED'
+                ? 'negative'
+                : 'neutral'
+          }
+        >
           {user.status}
         </Badge>
       ),
@@ -93,16 +101,17 @@ export default function UsersPage(): ReactNode {
       header: 'Registriert',
       align: 'right',
       render: (user) => (
-        <span className="text-ink-dim">
-          {new Date(user.createdAt).toLocaleDateString('de-DE')}
-        </span>
+        <span className="text-ink-dim">{new Date(user.createdAt).toLocaleDateString('de-DE')}</span>
       ),
     },
   ];
 
   return (
     <>
-      <PageHeader title="Nutzer" description="Konten suchen, prüfen, sperren und Zugänge vergeben." />
+      <PageHeader
+        title="Nutzer"
+        description="Konten suchen, prüfen, sperren und Zugänge vergeben."
+      />
 
       <div className="mb-3 grid gap-2 sm:grid-cols-4">
         <label className="block">
@@ -126,7 +135,10 @@ export default function UsersPage(): ReactNode {
           }}
           options={[
             { value: '', label: 'Alle' },
-            ...['USER', 'MODERATOR', 'ADMIN', 'SUPER_ADMIN'].map((value) => ({ value, label: value })),
+            ...['USER', 'MODERATOR', 'ADMIN', 'SUPER_ADMIN'].map((value) => ({
+              value,
+              label: value,
+            })),
           ]}
         />
         <Select

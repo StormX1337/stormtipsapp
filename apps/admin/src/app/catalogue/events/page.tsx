@@ -167,7 +167,11 @@ export default function EventsPage(): ReactNode {
       />
 
       {events.data ? (
-        <Pagination page={events.data.page} totalPages={events.data.totalPages} onChange={setPage} />
+        <Pagination
+          page={events.data.page}
+          totalPages={events.data.totalPages}
+          onChange={setPage}
+        />
       ) : null}
 
       <Modal
@@ -237,7 +241,9 @@ export default function EventsPage(): ReactNode {
               key: 'open',
               header: 'Eröffnung',
               align: 'right',
-              render: (row: OddDTO) => <span className="tabular">{row.openingPrice.toFixed(2)}</span>,
+              render: (row: OddDTO) => (
+                <span className="tabular">{row.openingPrice.toFixed(2)}</span>
+              ),
             },
             {
               key: 'price',

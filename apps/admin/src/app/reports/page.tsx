@@ -126,7 +126,11 @@ export default function ReportsPage(): ReactNode {
       <h2 className="mt-6 mb-2 text-[14px] font-bold">Nach Liga</h2>
       <DataTable
         columns={[
-          { key: 'league', header: 'Liga', render: (row: StatisticsDTO['byLeague'][number]) => row.label },
+          {
+            key: 'league',
+            header: 'Liga',
+            render: (row: StatisticsDTO['byLeague'][number]) => row.label,
+          },
           { key: 'tips', header: 'Analysen', align: 'right', render: (row) => row.tips },
           {
             key: 'winRate',
@@ -159,7 +163,11 @@ export default function ReportsPage(): ReactNode {
       <h2 className="mt-6 mb-2 text-[14px] font-bold">Nach Wettmarkt</h2>
       <DataTable
         columns={[
-          { key: 'market', header: 'Markt', render: (row: StatisticsDTO['byMarket'][number]) => row.label },
+          {
+            key: 'market',
+            header: 'Markt',
+            render: (row: StatisticsDTO['byMarket'][number]) => row.label,
+          },
           { key: 'tips', header: 'Analysen', align: 'right', render: (row) => row.tips },
           {
             key: 'avgOdds',

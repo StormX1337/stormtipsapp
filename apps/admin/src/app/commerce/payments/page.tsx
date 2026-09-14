@@ -4,14 +4,7 @@ import { useState, type ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { Paginated, PaymentDTO } from '@profit-tips/types';
 import { api } from '@/lib/api';
-import {
-  Badge,
-  DataTable,
-  ErrorBox,
-  PageHeader,
-  Pagination,
-  type Column,
-} from '@/components/ui';
+import { Badge, DataTable, ErrorBox, PageHeader, Pagination, type Column } from '@/components/ui';
 
 type PaymentRow = PaymentDTO & { userEmail: string };
 
@@ -98,7 +91,11 @@ export default function PaymentsPage(): ReactNode {
       />
 
       {payments.data ? (
-        <Pagination page={payments.data.page} totalPages={payments.data.totalPages} onChange={setPage} />
+        <Pagination
+          page={payments.data.page}
+          totalPages={payments.data.totalPages}
+          onChange={setPage}
+        />
       ) : null}
     </>
   );

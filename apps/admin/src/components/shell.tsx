@@ -77,7 +77,12 @@ const SECTIONS: NavSection[] = [
       { href: '/catalogue/leagues', label: 'Ligen', Icon: Globe2, minRole: 'ADMIN' },
       { href: '/catalogue/teams', label: 'Teams', Icon: Building2, minRole: 'ADMIN' },
       { href: '/catalogue/bookmakers', label: 'Buchmacher', Icon: BadgePercent, minRole: 'ADMIN' },
-      { href: '/catalogue/events', label: 'Events & Quoten', Icon: CalendarRange, minRole: 'ADMIN' },
+      {
+        href: '/catalogue/events',
+        label: 'Events & Quoten',
+        Icon: CalendarRange,
+        minRole: 'ADMIN',
+      },
     ],
   },
   {

@@ -72,7 +72,9 @@ describe('ExpoPushTransport', () => {
       return jsonResponse({ data: payload.map((_, index) => ({ status: 'ok', id: `r${index}` })) });
     });
     const transport = new ExpoPushTransport({ fetchImpl: fetchImpl as unknown as typeof fetch });
-    const targets = Array.from({ length: 250 }, (_, index) => target(`ExponentPushToken[${index}]`));
+    const targets = Array.from({ length: 250 }, (_, index) =>
+      target(`ExponentPushToken[${index}]`),
+    );
 
     const result = await transport.send(targets, { title: 't', body: 'b' });
 
@@ -162,20 +164,20 @@ describe('PushService', () => {
 
   it('reports a clear error when FCM is not configured', async () => {
     const service = new PushService({});
-    const result = await service.send(
-      [{ token: 'x', provider: 'FCM', platform: 'ANDROID' }],
-      { title: 't', body: 'b' },
-    );
+    const result = await service.send([{ token: 'x', provider: 'FCM', platform: 'ANDROID' }], {
+      title: 't',
+      body: 'b',
+    });
     expect(result.failed).toBe(1);
     expect(result.deliveries[0]?.error).toContain('FCM is not configured');
   });
 
   it('reports a clear error when APNs is not configured', async () => {
     const service = new PushService({});
-    const result = await service.send(
-      [{ token: 'x', provider: 'APNS', platform: 'IOS' }],
-      { title: 't', body: 'b' },
-    );
+    const result = await service.send([{ token: 'x', provider: 'APNS', platform: 'IOS' }], {
+      title: 't',
+      body: 'b',
+    });
     expect(result.deliveries[0]?.error).toContain('APNs is not configured');
   });
 });

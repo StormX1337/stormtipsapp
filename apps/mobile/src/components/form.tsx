@@ -76,7 +76,11 @@ export function Field({
           </Pressable>
         ) : null}
       </View>
-      {error ? <Text style={styles.error}>{error}</Text> : hint ? <Text style={styles.hint}>{hint}</Text> : null}
+      {error ? (
+        <Text style={styles.error}>{error}</Text>
+      ) : hint ? (
+        <Text style={styles.hint}>{hint}</Text>
+      ) : null}
     </View>
   );
 }
@@ -157,7 +161,10 @@ export function FormMessage({
 }): ReactNode {
   const color = tone === 'error' ? colors.feedback.danger : colors.feedback.success;
   return (
-    <Text accessibilityRole="alert" style={[styles.formMessage, { color, backgroundColor: `${color}1F` }]}>
+    <Text
+      accessibilityRole="alert"
+      style={[styles.formMessage, { color, backgroundColor: `${color}1F` }]}
+    >
       {message}
     </Text>
   );

@@ -33,7 +33,8 @@ export default function StatisticsPage(): ReactNode {
 
   const stats = useQuery({
     queryKey: ['statistics', product, window],
-    queryFn: () => api<StatisticsDTO>(`/statistics?product=${product}&window=${window}`, { auth: false }),
+    queryFn: () =>
+      api<StatisticsDTO>(`/statistics?product=${product}&window=${window}`, { auth: false }),
   });
 
   const numberFormat = new Intl.NumberFormat(locale === 'de' ? 'de-DE' : 'en-GB');
@@ -88,20 +89,37 @@ export default function StatisticsPage(): ReactNode {
         ) : stats.isError ? (
           <ErrorState error={stats.error} onRetry={() => void stats.refetch()} />
         ) : stats.data.settledTips === 0 ? (
-          <p className="card px-4 py-8 text-center text-[13px] text-ink-muted">{t('stats.empty')}</p>
+          <p className="card px-4 py-8 text-center text-[13px] text-ink-muted">
+            {t('stats.empty')}
+          </p>
         ) : (
           <>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-              <StatTile label={t('stats.totalTips')} value={numberFormat.format(stats.data.settledTips)} />
-              <StatTile label={t('stats.winRate')} value={`${stats.data.winRate.toFixed(1)}%`} tone="gold" />
+              <StatTile
+                label={t('stats.totalTips')}
+                value={numberFormat.format(stats.data.settledTips)}
+              />
+              <StatTile
+                label={t('stats.winRate')}
+                value={`${stats.data.winRate.toFixed(1)}%`}
+                tone="gold"
+              />
               <StatTile
                 label={t('stats.roi')}
                 value={`${stats.data.roi > 0 ? '+' : ''}${stats.data.roi.toFixed(2)}%`}
                 tone={stats.data.roi >= 0 ? 'positive' : 'negative'}
               />
               <StatTile label={t('stats.averageOdds')} value={stats.data.avgOdds.toFixed(2)} />
-              <StatTile label={t('stats.wins')} value={numberFormat.format(stats.data.won)} tone="positive" />
-              <StatTile label={t('stats.losses')} value={numberFormat.format(stats.data.lost)} tone="negative" />
+              <StatTile
+                label={t('stats.wins')}
+                value={numberFormat.format(stats.data.won)}
+                tone="positive"
+              />
+              <StatTile
+                label={t('stats.losses')}
+                value={numberFormat.format(stats.data.lost)}
+                tone="negative"
+              />
               <StatTile label={t('stats.void')} value={numberFormat.format(stats.data.void)} />
               <StatTile
                 label={t('stats.profit')}
@@ -115,7 +133,10 @@ export default function StatisticsPage(): ReactNode {
               <h2 className="mb-2 text-[13px] font-bold">{t('stats.cumulativeProfit')}</h2>
               <div className="h-56 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={stats.data.byDay} margin={{ top: 4, right: 4, left: -18, bottom: 0 }}>
+                  <AreaChart
+                    data={stats.data.byDay}
+                    margin={{ top: 4, right: 4, left: -18, bottom: 0 }}
+                  >
                     <defs>
                       <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor="#12E17F" stopOpacity={0.5} />
@@ -130,7 +151,12 @@ export default function StatisticsPage(): ReactNode {
                       axisLine={false}
                       minTickGap={28}
                     />
-                    <YAxis tick={{ fill: '#6C7688', fontSize: 10 }} tickLine={false} axisLine={false} width={44} />
+                    <YAxis
+                      tick={{ fill: '#6C7688', fontSize: 10 }}
+                      tickLine={false}
+                      axisLine={false}
+                      width={44}
+                    />
                     <Tooltip
                       contentStyle={{
                         background: '#141821',
@@ -157,7 +183,10 @@ export default function StatisticsPage(): ReactNode {
               <h2 className="mb-2 text-[13px] font-bold">{t('stats.dailyProfit')}</h2>
               <div className="h-44 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={stats.data.byDay.slice(-30)} margin={{ top: 4, right: 4, left: -18, bottom: 0 }}>
+                  <BarChart
+                    data={stats.data.byDay.slice(-30)}
+                    margin={{ top: 4, right: 4, left: -18, bottom: 0 }}
+                  >
                     <CartesianGrid stroke="#222834" vertical={false} />
                     <XAxis
                       dataKey="date"
@@ -166,7 +195,12 @@ export default function StatisticsPage(): ReactNode {
                       axisLine={false}
                       minTickGap={28}
                     />
-                    <YAxis tick={{ fill: '#6C7688', fontSize: 10 }} tickLine={false} axisLine={false} width={44} />
+                    <YAxis
+                      tick={{ fill: '#6C7688', fontSize: 10 }}
+                      tickLine={false}
+                      axisLine={false}
+                      width={44}
+                    />
                     <Tooltip
                       cursor={{ fill: '#1E2430' }}
                       contentStyle={{

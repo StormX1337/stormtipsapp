@@ -42,11 +42,13 @@ export function formatPercent(value: number, locale = 'de', digits = 1): string 
   }).format(value)}%`;
 }
 
-/** Compact display used inside the statistics circles (1150, 5025%, 3.20). */
+/** Compact display for the statistics circles, e.g. "1,2K" for 1200. */
 export function formatCompact(value: number, locale = 'de'): string {
   const intlLocale = CURRENCY_LOCALE[locale] ?? locale;
-  return new Intl.NumberFormat(intlLocale, { notation: 'compact', maximumFractionDigits: 1 })
-    .format(value);
+  return new Intl.NumberFormat(intlLocale, {
+    notation: 'compact',
+    maximumFractionDigits: 1,
+  }).format(value);
 }
 
 export function formatSignedUnits(amount: number, locale = 'de'): string {

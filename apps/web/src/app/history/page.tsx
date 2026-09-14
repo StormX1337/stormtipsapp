@@ -70,7 +70,9 @@ function HistoryContent(): ReactNode {
                   <th className="px-3 py-2 font-semibold">{t('common.today')}</th>
                   <th className="px-3 py-2 font-semibold">{t('tip.selection')}</th>
                   <th className="px-3 py-2 text-right font-semibold">{t('common.odds')}</th>
-                  <th className="px-3 py-2 text-center font-semibold">{t('subscription.status')}</th>
+                  <th className="px-3 py-2 text-center font-semibold">
+                    {t('subscription.status')}
+                  </th>
                   <th className="px-3 py-2 text-right font-semibold">{t('tip.profit')}</th>
                 </tr>
               </thead>

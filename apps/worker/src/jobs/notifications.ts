@@ -93,7 +93,13 @@ export async function fanOutNotificationJob(job: Job<FanOutData>): Promise<unkno
 
   await handleDeliveries(result.deliveries);
   logger.info(
-    { jobId: job.id, type, recipients: recipients.length, sent: result.sent, failed: result.failed },
+    {
+      jobId: job.id,
+      type,
+      recipients: recipients.length,
+      sent: result.sent,
+      failed: result.failed,
+    },
     'notification fan-out finished',
   );
   return { recipients: recipients.length, sent: result.sent, failed: result.failed };
@@ -194,7 +200,10 @@ export async function checkPushReceiptsJob(job: Job): Promise<unknown> {
     });
   }
 
-  logger.debug({ jobId: job.id, checked: receipts.length, dead: dead.length }, 'push receipts checked');
+  logger.debug(
+    { jobId: job.id, checked: receipts.length, dead: dead.length },
+    'push receipts checked',
+  );
   return { checked: receipts.length, dead: dead.length };
 }
 

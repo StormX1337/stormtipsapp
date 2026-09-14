@@ -19,9 +19,10 @@ export interface AudienceFilter {
  */
 export class NotificationService {
   /** Resolves an audience filter to the users who opted in to this type. */
-  async resolveAudience(type: NotificationType, filter: AudienceFilter): Promise<
-    { id: string; language: string }[]
-  > {
+  async resolveAudience(
+    type: NotificationType,
+    filter: AudienceFilter,
+  ): Promise<{ id: string; language: string }[]> {
     const where: Prisma.UserWhereInput = {
       status: 'ACTIVE',
       deletedAt: null,
@@ -50,7 +51,10 @@ export class NotificationService {
     const preferenceKey = PREFERENCE_FOR_TYPE[type];
     return candidates
       .filter((user) => {
-        const prefs = mergePreferences(user.notificationPrefs) as unknown as Record<string, boolean>;
+        const prefs = mergePreferences(user.notificationPrefs) as unknown as Record<
+          string,
+          boolean
+        >;
         return prefs[preferenceKey] !== false;
       })
       .map((user) => ({ id: user.id, language: user.language }));

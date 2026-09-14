@@ -90,7 +90,11 @@ export function ComboCard({ combo }: { combo: ComboDTO }): ReactNode {
             <span
               className={clsx(
                 'tabular font-bold',
-                (combo.profit ?? 0) > 0 ? 'text-won' : (combo.profit ?? 0) < 0 ? 'text-lost' : 'text-ink',
+                (combo.profit ?? 0) > 0
+                  ? 'text-won'
+                  : (combo.profit ?? 0) < 0
+                    ? 'text-lost'
+                    : 'text-ink',
               )}
             >
               {combo.profit === null

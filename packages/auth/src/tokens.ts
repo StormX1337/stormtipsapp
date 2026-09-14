@@ -69,7 +69,8 @@ export async function verifyAccessToken(
     return payload as AccessTokenClaims;
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Invalid token';
-    if (message.includes('exp')) throw new AppError(ErrorCode.TOKEN_EXPIRED, 'Access token expired');
+    if (message.includes('exp'))
+      throw new AppError(ErrorCode.TOKEN_EXPIRED, 'Access token expired');
     throw new AppError(ErrorCode.UNAUTHORIZED, 'Invalid access token');
   }
 }

@@ -1,8 +1,12 @@
+import path from 'node:path';
 import type { NextConfig } from 'next';
 
 const config: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Emits a self-contained server bundle for the container image.
+  output: 'standalone',
+  outputFileTracingRoot: path.join(import.meta.dirname, '../..'),
   transpilePackages: ['@profit-tips/ui', '@profit-tips/types'],
   eslint: { ignoreDuringBuilds: true },
   webpack(webpackConfig) {

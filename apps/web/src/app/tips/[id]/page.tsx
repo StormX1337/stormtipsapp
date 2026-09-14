@@ -31,11 +31,7 @@ function Row({ label, value }: { label: string; value: ReactNode }): ReactNode {
   );
 }
 
-export default function TipDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}): ReactNode {
+export default function TipDetailPage({ params }: { params: Promise<{ id: string }> }): ReactNode {
   const { id } = use(params);
   const { t, locale } = useI18n();
   const router = useRouter();
@@ -173,7 +169,10 @@ export default function TipDetailPage({
                         }
                       />
                     ) : null}
-                    <Row label={t('tip.originalOdds')} value={tip.originalOdds?.toFixed(2) ?? '—'} />
+                    <Row
+                      label={t('tip.originalOdds')}
+                      value={tip.originalOdds?.toFixed(2) ?? '—'}
+                    />
                     <Row
                       label={t('tip.currentOdds')}
                       value={

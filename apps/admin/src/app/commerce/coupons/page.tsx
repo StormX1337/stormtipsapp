@@ -185,7 +185,11 @@ export default function CouponsPage(): ReactNode {
       />
 
       {coupons.data ? (
-        <Pagination page={coupons.data.page} totalPages={coupons.data.totalPages} onChange={setPage} />
+        <Pagination
+          page={coupons.data.page}
+          totalPages={coupons.data.totalPages}
+          onChange={setPage}
+        />
       ) : null}
 
       <Modal

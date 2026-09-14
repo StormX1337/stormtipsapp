@@ -72,13 +72,19 @@ export default function BookmakersPage(): ReactNode {
         </span>
       ),
     },
-    { key: 'key', header: 'Schlüssel', render: (row) => <code className="text-ink-dim">{row.key}</code> },
+    {
+      key: 'key',
+      header: 'Schlüssel',
+      render: (row) => <code className="text-ink-dim">{row.key}</code>,
+    },
     { key: 'priority', header: 'Priorität', align: 'right', render: (row) => row.priority },
     {
       key: 'active',
       header: 'Status',
       render: (row) => (
-        <Badge tone={row.isActive ? 'positive' : 'neutral'}>{row.isActive ? 'AKTIV' : 'INAKTIV'}</Badge>
+        <Badge tone={row.isActive ? 'positive' : 'neutral'}>
+          {row.isActive ? 'AKTIV' : 'INAKTIV'}
+        </Badge>
       ),
     },
   ];

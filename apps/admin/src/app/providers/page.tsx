@@ -190,7 +190,9 @@ export default function ProvidersPage(): ReactNode {
 
       {providers.isError ? <ErrorBox error={providers.error} /> : null}
       {health ? (
-        <p className="mb-3 rounded-sm bg-bg-card-alt px-3 py-2 text-[12px] text-ink-muted">{health}</p>
+        <p className="mb-3 rounded-sm bg-bg-card-alt px-3 py-2 text-[12px] text-ink-muted">
+          {health}
+        </p>
       ) : null}
 
       <DataTable
@@ -261,7 +263,10 @@ export default function ProvidersPage(): ReactNode {
               label="Art"
               value={form.kind}
               onChange={(event) => setForm({ ...form, kind: event.target.value })}
-              options={['SPORTS', 'ODDS', 'PUSH', 'EMAIL'].map((value) => ({ value, label: value }))}
+              options={['SPORTS', 'ODDS', 'PUSH', 'EMAIL'].map((value) => ({
+                value,
+                label: value,
+              }))}
             />
           </div>
           <Field

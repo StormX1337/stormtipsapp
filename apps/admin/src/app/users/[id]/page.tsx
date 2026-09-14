@@ -28,11 +28,7 @@ interface UserDetail {
   lastLoginIp: string | null;
 }
 
-export default function UserDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}): ReactNode {
+export default function UserDetailPage({ params }: { params: Promise<{ id: string }> }): ReactNode {
   const { id } = use(params);
   const queryClient = useQueryClient();
   const { can } = useAdminAuth();
@@ -90,17 +86,24 @@ export default function UserDetailPage({
   const { user, subscriptions, payments, sessions } = detail.data;
 
   const entitlementColumns: Column<EntitlementDTO>[] = [
-    { key: 'product', header: 'Produkt', render: (row) => <Badge tone="warning">{row.product}</Badge> },
+    {
+      key: 'product',
+      header: 'Produkt',
+      render: (row) => <Badge tone="warning">{row.product}</Badge>,
+    },
     {
       key: 'active',
       header: 'Aktiv',
-      render: (row) => <Badge tone={row.active ? 'positive' : 'neutral'}>{row.active ? 'JA' : 'NEIN'}</Badge>,
+      render: (row) => (
+        <Badge tone={row.active ? 'positive' : 'neutral'}>{row.active ? 'JA' : 'NEIN'}</Badge>
+      ),
     },
     { key: 'source', header: 'Quelle', render: (row) => row.source },
     {
       key: 'expires',
       header: 'Läuft ab',
-      render: (row) => (row.expiresAt ? new Date(row.expiresAt).toLocaleString('de-DE') : 'unbefristet'),
+      render: (row) =>
+        row.expiresAt ? new Date(row.expiresAt).toLocaleString('de-DE') : 'unbefristet',
     },
     {
       key: 'actions',
@@ -183,7 +186,11 @@ export default function UserDetailPage({
       <h2 className="mt-5 mb-2 text-[14px] font-bold">Abonnements</h2>
       <DataTable
         columns={[
-          { key: 'plan', header: 'Tarif', render: (row) => row.plan?.name ?? row.products.join(' + ') },
+          {
+            key: 'plan',
+            header: 'Tarif',
+            render: (row) => row.plan?.name ?? row.products.join(' + '),
+          },
           { key: 'provider', header: 'Anbieter', render: (row) => <Badge>{row.provider}</Badge> },
           {
             key: 'status',
@@ -196,7 +203,9 @@ export default function UserDetailPage({
             key: 'end',
             header: 'Periode bis',
             render: (row) =>
-              row.currentPeriodEnd ? new Date(row.currentPeriodEnd).toLocaleDateString('de-DE') : '—',
+              row.currentPeriodEnd
+                ? new Date(row.currentPeriodEnd).toLocaleDateString('de-DE')
+                : '—',
           },
         ]}
         rows={subscriptions}
@@ -218,7 +227,9 @@ export default function UserDetailPage({
             key: 'status',
             header: 'Status',
             render: (row) => (
-              <Badge tone={row.status === 'SUCCEEDED' ? 'positive' : 'negative'}>{row.status}</Badge>
+              <Badge tone={row.status === 'SUCCEEDED' ? 'positive' : 'negative'}>
+                {row.status}
+              </Badge>
             ),
           },
           {
@@ -226,7 +237,9 @@ export default function UserDetailPage({
             header: 'Datum',
             align: 'right',
             render: (row) =>
-              row.paidAt ? new Date(row.paidAt).toLocaleString('de-DE') : new Date(row.createdAt).toLocaleString('de-DE'),
+              row.paidAt
+                ? new Date(row.paidAt).toLocaleString('de-DE')
+                : new Date(row.createdAt).toLocaleString('de-DE'),
           },
         ]}
         rows={payments}
@@ -241,7 +254,9 @@ export default function UserDetailPage({
           {
             key: 'ua',
             header: 'Gerät',
-            render: (row) => <span className="text-ink-dim">{row.userAgent?.slice(0, 70) ?? '—'}</span>,
+            render: (row) => (
+              <span className="text-ink-dim">{row.userAgent?.slice(0, 70) ?? '—'}</span>
+            ),
           },
           {
             key: 'last',
@@ -276,7 +291,10 @@ export default function UserDetailPage({
             label="Produkt"
             value={grantProduct}
             onChange={(event) => setGrantProduct(event.target.value)}
-            options={['VIP', 'EXTRA', 'COMBO', 'FIX_ODDS'].map((value) => ({ value, label: value }))}
+            options={['VIP', 'EXTRA', 'COMBO', 'FIX_ODDS'].map((value) => ({
+              value,
+              label: value,
+            }))}
           />
           <Field
             label="Dauer in Tagen"

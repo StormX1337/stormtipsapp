@@ -43,7 +43,10 @@ describe('MATCH_WINNER', () => {
   ];
   it.each(cases)('%s %i-%i → %s', (key, home, away, expected) => {
     expect(
-      settleSelection({ marketType: MarketType.MATCH_WINNER, selectionKey: key }, result(home, away)),
+      settleSelection(
+        { marketType: MarketType.MATCH_WINNER, selectionKey: key },
+        result(home, away),
+      ),
     ).toBe(expected);
   });
 });
@@ -59,10 +62,16 @@ describe('DOUBLE_CHANCE', () => {
 
   it('settles the other two double chance legs', () => {
     expect(
-      settleSelection({ marketType: MarketType.DOUBLE_CHANCE, selectionKey: 'HOME_OR_DRAW' }, result(1, 1)),
+      settleSelection(
+        { marketType: MarketType.DOUBLE_CHANCE, selectionKey: 'HOME_OR_DRAW' },
+        result(1, 1),
+      ),
     ).toBe('WON');
     expect(
-      settleSelection({ marketType: MarketType.DOUBLE_CHANCE, selectionKey: 'HOME_OR_AWAY' }, result(1, 1)),
+      settleSelection(
+        { marketType: MarketType.DOUBLE_CHANCE, selectionKey: 'HOME_OR_AWAY' },
+        result(1, 1),
+      ),
     ).toBe('LOST');
   });
 });
@@ -160,8 +169,12 @@ describe('EUROPEAN_HANDICAP', () => {
 
 describe('other markets', () => {
   it('settles BTTS', () => {
-    expect(settleSelection({ marketType: MarketType.BTTS, selectionKey: 'BTTS_YES' }, result(1, 1))).toBe('WON');
-    expect(settleSelection({ marketType: MarketType.BTTS, selectionKey: 'BTTS_NO' }, result(1, 0))).toBe('WON');
+    expect(
+      settleSelection({ marketType: MarketType.BTTS, selectionKey: 'BTTS_YES' }, result(1, 1)),
+    ).toBe('WON');
+    expect(
+      settleSelection({ marketType: MarketType.BTTS, selectionKey: 'BTTS_NO' }, result(1, 0)),
+    ).toBe('WON');
   });
 
   it('settles team totals', () => {
@@ -171,8 +184,12 @@ describe('other markets', () => {
   });
 
   it('settles correct score', () => {
-    expect(settleSelection({ marketType: MarketType.CORRECT_SCORE, selectionKey: '2-1' }, result(2, 1))).toBe('WON');
-    expect(settleSelection({ marketType: MarketType.CORRECT_SCORE, selectionKey: '2-1' }, result(1, 2))).toBe('LOST');
+    expect(
+      settleSelection({ marketType: MarketType.CORRECT_SCORE, selectionKey: '2-1' }, result(2, 1)),
+    ).toBe('WON');
+    expect(
+      settleSelection({ marketType: MarketType.CORRECT_SCORE, selectionKey: '2-1' }, result(1, 2)),
+    ).toBe('LOST');
   });
 
   it('settles half-time/full-time', () => {

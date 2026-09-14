@@ -112,7 +112,8 @@ export default function FixOddsPage(): ReactNode {
       align: 'right',
       render: (plan) => (
         <span className="tabular font-bold text-violet-500">
-          {plan.targetOdds.toFixed(2)} <span className="text-ink-dim">/ max {plan.maxOdds.toFixed(2)}</span>
+          {plan.targetOdds.toFixed(2)}{' '}
+          <span className="text-ink-dim">/ max {plan.maxOdds.toFixed(2)}</span>
         </span>
       ),
     },
@@ -278,10 +279,12 @@ export default function FixOddsPage(): ReactNode {
               label="Badge"
               value={form.badge}
               onChange={(event) => setForm({ ...form, badge: event.target.value })}
-              options={['NONE', 'MOST_POPULAR', 'LIMITED', 'SALE', 'NEW', 'BEST_VALUE'].map((value) => ({
-                value,
-                label: value,
-              }))}
+              options={['NONE', 'MOST_POPULAR', 'LIMITED', 'SALE', 'NEW', 'BEST_VALUE'].map(
+                (value) => ({
+                  value,
+                  label: value,
+                }),
+              )}
             />
           </div>
           <div className="flex flex-wrap gap-4">

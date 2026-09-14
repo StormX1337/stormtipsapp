@@ -83,7 +83,12 @@ export function AuthProvider({ children }: { children: ReactNode }): ReactNode {
   );
 
   const register = useCallback(
-    async (input: { email: string; password: string; displayName?: string; referralCode?: string }) => {
+    async (input: {
+      email: string;
+      password: string;
+      displayName?: string;
+      referralCode?: string;
+    }) => {
       await applySession(
         await api<AuthResponseDTO>('/auth/register', {
           method: 'POST',

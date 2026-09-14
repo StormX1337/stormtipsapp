@@ -42,7 +42,10 @@ export default function LiveScreen(): ReactNode {
         {query.isPending ? (
           Array.from({ length: 4 }, (_, index) => <TipCardSkeleton key={index} />)
         ) : query.isError ? (
-          <ErrorState message={(query.error as Error).message} onRetry={() => void query.refetch()} />
+          <ErrorState
+            message={(query.error as Error).message}
+            onRetry={() => void query.refetch()}
+          />
         ) : query.data.items.length === 0 ? (
           <EmptyState title={t('live.empty')} />
         ) : (

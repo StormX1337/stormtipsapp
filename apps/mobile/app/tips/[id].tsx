@@ -77,7 +77,10 @@ export default function TipDetailScreen(): ReactNode {
             <Skeleton height={180} />
           </>
         ) : query.isError ? (
-          <ErrorState message={(query.error as Error).message} onRetry={() => void query.refetch()} />
+          <ErrorState
+            message={(query.error as Error).message}
+            onRetry={() => void query.refetch()}
+          />
         ) : tip ? (
           <>
             <Card>
@@ -145,7 +148,10 @@ export default function TipDetailScreen(): ReactNode {
                         tone={tip.bookmaker.color ?? undefined}
                       />
                     ) : null}
-                    <Row label={t('tip.originalOdds')} value={tip.originalOdds?.toFixed(2) ?? '—'} />
+                    <Row
+                      label={t('tip.originalOdds')}
+                      value={tip.originalOdds?.toFixed(2) ?? '—'}
+                    />
                     <Row
                       label={t('tip.currentOdds')}
                       value={`${tip.currentOdds?.toFixed(2) ?? '—'}${
@@ -165,7 +171,9 @@ export default function TipDetailScreen(): ReactNode {
 
                 {tip.result ? (
                   <Card>
-                    <Text style={styles.sectionLabel}>{t('subscription.status').toUpperCase()}</Text>
+                    <Text style={styles.sectionLabel}>
+                      {t('subscription.status').toUpperCase()}
+                    </Text>
                     <View style={styles.rows}>
                       <Row
                         label={t('stats.profit')}
@@ -217,7 +225,12 @@ const styles = StyleSheet.create({
   },
   flag: { fontSize: fontSize.lg },
   leagueName: { flex: 1, color: colors.text.secondary, fontSize: fontSize.sm },
-  teamRow: { flexDirection: 'row', alignItems: 'center', gap: spacing[2], paddingVertical: spacing[1] },
+  teamRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[2],
+    paddingVertical: spacing[1],
+  },
   teamName: { flex: 1, color: colors.text.primary, fontSize: fontSize.lg, fontWeight: '600' },
   score: { color: colors.text.primary, fontSize: fontSize.lg, fontWeight: '700' },
   kickoff: { marginTop: spacing[3], color: colors.text.muted, fontSize: fontSize.sm },

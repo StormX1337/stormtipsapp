@@ -4,11 +4,7 @@ import clsx from 'clsx';
 import { useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { Check, Crown, ShieldCheck, Ticket, Zap } from 'lucide-react';
-import type {
-  ProductCode,
-  PromotionDTO,
-  SubscriptionPlanDTO,
-} from '@profit-tips/types';
+import type { ProductCode, PromotionDTO, SubscriptionPlanDTO } from '@profit-tips/types';
 import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/lib/auth';
 import { api } from '@/lib/api';
@@ -40,7 +36,8 @@ export function StatCircle({
   size?: 'sm' | 'md' | 'lg';
 }): ReactNode {
   const dimension = size === 'lg' ? 84 : size === 'md' ? 64 : 54;
-  const fontSize = value.length > 6 ? dimension * 0.2 : value.length > 4 ? dimension * 0.24 : dimension * 0.3;
+  const fontSize =
+    value.length > 6 ? dimension * 0.2 : value.length > 4 ? dimension * 0.24 : dimension * 0.3;
   return (
     <span
       className="stat-circle shrink-0"

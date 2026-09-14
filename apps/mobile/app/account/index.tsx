@@ -177,6 +177,11 @@ const styles = StyleSheet.create({
   name: { color: colors.text.primary, fontSize: fontSize.xl, fontWeight: '800' },
   email: { marginTop: 2, color: colors.text.muted, fontSize: fontSize.base },
   unverified: { marginTop: spacing[2], color: colors.gold.DEFAULT, fontSize: fontSize.sm },
-  products: { marginTop: spacing[2], color: colors.accent.DEFAULT, fontSize: fontSize.sm, fontWeight: '700' },
+  products: {
+    marginTop: spacing[2],
+    color: colors.accent.DEFAULT,
+    fontSize: fontSize.sm,
+    fontWeight: '700',
+  },
   prefLabel: { color: colors.text.secondary, fontSize: fontSize.sm, marginBottom: spacing[2] },
 });

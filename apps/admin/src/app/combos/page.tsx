@@ -192,10 +192,16 @@ export default function CombosPage(): ReactNode {
       header: 'Gesamtquote',
       align: 'right',
       render: (combo) => (
-        <span className="tabular font-bold text-gold-400">{combo.totalOdds?.toFixed(2) ?? '—'}</span>
+        <span className="tabular font-bold text-gold-400">
+          {combo.totalOdds?.toFixed(2) ?? '—'}
+        </span>
       ),
     },
-    { key: 'product', header: 'Produkt', render: (combo) => <Badge tone="warning">{combo.product}</Badge> },
+    {
+      key: 'product',
+      header: 'Produkt',
+      render: (combo) => <Badge tone="warning">{combo.product}</Badge>,
+    },
     {
       key: 'status',
       header: 'Status',
@@ -204,7 +210,11 @@ export default function CombosPage(): ReactNode {
           <Badge tone={combo.status === 'PUBLISHED' ? 'positive' : 'neutral'}>{combo.status}</Badge>
           <Badge
             tone={
-              combo.outcome === 'WON' ? 'positive' : combo.outcome === 'LOST' ? 'negative' : 'neutral'
+              combo.outcome === 'WON'
+                ? 'positive'
+                : combo.outcome === 'LOST'
+                  ? 'negative'
+                  : 'neutral'
             }
           >
             {combo.outcome}
@@ -261,7 +271,11 @@ export default function CombosPage(): ReactNode {
       />
 
       {combos.data ? (
-        <Pagination page={combos.data.page} totalPages={combos.data.totalPages} onChange={setPage} />
+        <Pagination
+          page={combos.data.page}
+          totalPages={combos.data.totalPages}
+          onChange={setPage}
+        />
       ) : null}
 
       <ComboCreator open={creatorOpen} onClose={() => setCreatorOpen(false)} />

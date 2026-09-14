@@ -106,9 +106,7 @@ export class HttpClient {
           lastError = new Error(`Provider responded ${response.status}`);
           const retryAfter = Number(response.headers.get('retry-after'));
           await delay(
-            Number.isFinite(retryAfter) && retryAfter > 0
-              ? retryAfter * 1000
-              : backoffMs(attempt),
+            Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter * 1000 : backoffMs(attempt),
           );
           continue;
         }

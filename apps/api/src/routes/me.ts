@@ -187,7 +187,9 @@ export async function meRoutes(app: FastifyInstance): Promise<void> {
     return { success: true };
   });
 
-  app.get('/referrals', async (request) => referrals.summary(request.auth!.userId, request.auth!.language));
+  app.get('/referrals', async (request) =>
+    referrals.summary(request.auth!.userId, request.auth!.language),
+  );
 
   app.get('/referrals/list', async (request) => ({
     items: await referrals.list(request.auth!.userId),

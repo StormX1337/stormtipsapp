@@ -54,7 +54,9 @@ export const securityPlugin = fp(async function securityPlugin(app: FastifyInsta
     maxAge: 86_400,
   });
 
-  await app.register(cookie, { parseOptions: { httpOnly: true, sameSite: 'lax', secure: env.NODE_ENV === 'production' } });
+  await app.register(cookie, {
+    parseOptions: { httpOnly: true, sameSite: 'lax', secure: env.NODE_ENV === 'production' },
+  });
 
   await app.register(rateLimit, {
     global: true,

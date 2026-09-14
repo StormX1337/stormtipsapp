@@ -128,10 +128,7 @@ function settleAsianHandicap(
  *
  * @throws AppError(UNSUPPORTED_MARKET) for markets that must be settled by a human.
  */
-export function settleSelection(
-  selection: SelectionInput,
-  result: MatchResult,
-): SettlementOutcome {
+export function settleSelection(selection: SelectionInput, result: MatchResult): SettlementOutcome {
   const { homeScore, awayScore } = result;
   const key = selection.selectionKey;
   const total = homeScore + awayScore;

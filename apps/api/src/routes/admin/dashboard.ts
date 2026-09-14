@@ -52,7 +52,11 @@ export async function adminDashboardRoutes(app: FastifyInstance): Promise<void> 
       }),
       prisma.subscription.findMany({
         where: { status: { in: ['ACTIVE', 'TRIALING', 'GRACE_PERIOD', 'PAST_DUE'] } },
-        select: { products: true, priceCents: true, plan: { select: { interval: true, intervalCount: true } } },
+        select: {
+          products: true,
+          priceCents: true,
+          plan: { select: { interval: true, intervalCount: true } },
+        },
       }),
       prisma.user.count({ where: { deletedAt: null } }),
       prisma.user.count({ where: { createdAt: { gte: today } } }),
@@ -68,7 +72,13 @@ export async function adminDashboardRoutes(app: FastifyInstance): Promise<void> 
 
     // MRR: normalise every active subscription price to a monthly figure.
     let mrrCents = 0;
-    const byProduct: Record<ProductCode, number> = { FREE: 0, VIP: 0, EXTRA: 0, COMBO: 0, FIX_ODDS: 0 };
+    const byProduct: Record<ProductCode, number> = {
+      FREE: 0,
+      VIP: 0,
+      EXTRA: 0,
+      COMBO: 0,
+      FIX_ODDS: 0,
+    };
     for (const subscription of activeSubscriptions) {
       const months =
         subscription.plan?.interval === 'YEAR'

@@ -3,7 +3,12 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { MessageKey } from '@profit-tips/ui';
-import type { NotificationDTO, NotificationPreferences, Paginated, UserDTO } from '@profit-tips/types';
+import type {
+  NotificationDTO,
+  NotificationPreferences,
+  Paginated,
+  UserDTO,
+} from '@profit-tips/types';
 import { formatRelative } from '@profit-tips/ui';
 import { theme } from '@/lib/theme';
 import { api } from '@/lib/api';
@@ -35,7 +40,9 @@ export default function NotificationsScreen(): ReactNode {
   const { user, refresh } = useAuth();
   const queryClient = useQueryClient();
 
-  const [prefs, setPrefs] = useState<NotificationPreferences | null>(user?.notificationPrefs ?? null);
+  const [prefs, setPrefs] = useState<NotificationPreferences | null>(
+    user?.notificationPrefs ?? null,
+  );
   useEffect(() => {
     if (user) setPrefs(user.notificationPrefs);
   }, [user]);
@@ -133,7 +140,12 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.border.subtle,
   },
   notificationHeader: { flexDirection: 'row', alignItems: 'center', gap: spacing[2] },
-  notificationTitle: { flex: 1, color: colors.text.primary, fontSize: fontSize.md, fontWeight: '700' },
+  notificationTitle: {
+    flex: 1,
+    color: colors.text.primary,
+    fontSize: fontSize.md,
+    fontWeight: '700',
+  },
   unreadDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.accent.DEFAULT },
   notificationBody: { marginTop: 2, color: colors.text.secondary, fontSize: fontSize.base },
   notificationTime: { marginTop: spacing[1], color: colors.text.muted, fontSize: fontSize.xs },

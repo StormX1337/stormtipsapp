@@ -87,7 +87,10 @@ export default function HistoryScreen(): ReactNode {
         {query.isPending ? (
           Array.from({ length: 8 }, (_, index) => <Skeleton key={index} height={54} />)
         ) : query.isError ? (
-          <ErrorState message={(query.error as Error).message} onRetry={() => void query.refetch()} />
+          <ErrorState
+            message={(query.error as Error).message}
+            onRetry={() => void query.refetch()}
+          />
         ) : query.data.items.length === 0 ? (
           <EmptyState title={t('feed.emptyTitle')} body={t('feed.emptyBody')} />
         ) : (

@@ -1,13 +1,6 @@
 import { afterAll, describe, expect, it } from 'vitest';
 import { prisma } from '@profit-tips/database';
-import {
-  authHeader,
-  closeApp,
-  createTestUser,
-  deleteTestUser,
-  getApp,
-  login,
-} from './helpers.js';
+import { authHeader, closeApp, createTestUser, deleteTestUser, getApp, login } from './helpers.js';
 
 const createdUsers: string[] = [];
 const createdCoupons: string[] = [];

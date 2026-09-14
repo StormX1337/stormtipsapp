@@ -1,5 +1,13 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
-import { AppState, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  AppState,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -43,7 +51,13 @@ const CTA_KEY: Record<ProductCode, MessageKey> = {
  * unlock strip above the list; the tips themselves arrive already masked from
  * the server, so nothing premium is ever in the client's hands.
  */
-export function ProductFeed({ product, title }: { product: ProductCode; title: string }): ReactNode {
+export function ProductFeed({
+  product,
+  title,
+}: {
+  product: ProductCode;
+  title: string;
+}): ReactNode {
   const { t } = useI18n();
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -162,7 +176,10 @@ export function ProductFeed({ product, title }: { product: ProductCode; title: s
               ))}
             </View>
           ) : feed.isError && !data ? (
-            <ErrorState message={(feed.error as Error).message} onRetry={() => void feed.refetch()} />
+            <ErrorState
+              message={(feed.error as Error).message}
+              onRetry={() => void feed.refetch()}
+            />
           ) : !data || data.groups.length === 0 ? (
             <EmptyState title={t('feed.emptyTitle')} body={t('feed.emptyBody')} />
           ) : (

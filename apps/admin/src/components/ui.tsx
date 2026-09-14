@@ -47,7 +47,11 @@ export function Field({
   hint,
   error,
   ...props
-}: { label: string; hint?: string; error?: string } & InputHTMLAttributes<HTMLInputElement>): ReactNode {
+}: {
+  label: string;
+  hint?: string;
+  error?: string;
+} & InputHTMLAttributes<HTMLInputElement>): ReactNode {
   return (
     <label className="block">
       <span className="label">{label}</span>

@@ -139,7 +139,8 @@ export function candidateSelections(
       marketType: MarketType.ASIAN_HANDICAP,
       selectionKey: 'AWAY',
       line: handicapLine,
-      label: (_home, away) => `ASIAN HANDICAP ${splitLineLabel(handicapLine)} ${away.toUpperCase()}`,
+      label: (_home, away) =>
+        `ASIAN HANDICAP ${splitLineLabel(handicapLine)} ${away.toUpperCase()}`,
     },
     {
       marketKey: 'dnb',
@@ -210,7 +211,9 @@ export function selectionForOutcome(
   );
   const pool = wantWin ? winners : losers;
   if (pool.length > 0) return pick(pool, random);
-  return evaluated.length > 0 ? pick(evaluated, random) : { candidate: candidates[0]!, outcome: 'VOID' };
+  return evaluated.length > 0
+    ? pick(evaluated, random)
+    : { candidate: candidates[0]!, outcome: 'VOID' };
 }
 
 export function confidenceBandFor(confidence: number): 'LOW' | 'MEDIUM' | 'HIGH' | 'VERY_HIGH' {

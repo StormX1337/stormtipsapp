@@ -103,7 +103,11 @@ export default function SubscriptionScreen(): ReactNode {
       ) : items.length === 0 ? (
         <Card style={{ marginTop: spacing[4], gap: spacing[3] }}>
           <Text style={styles.body}>{t('subscription.none')}</Text>
-          <Button label={t('paywall.getCombo')} variant="gold" onPress={() => router.push('/paywall/combo')} />
+          <Button
+            label={t('paywall.getCombo')}
+            variant="gold"
+            onPress={() => router.push('/paywall/combo')}
+          />
         </Card>
       ) : (
         items.map((subscription) => (
@@ -117,7 +121,9 @@ export default function SubscriptionScreen(): ReactNode {
               {subscription.currentPeriodEnd ? (
                 <ListRow
                   label={
-                    subscription.willRenew ? t('subscription.renewsOn') : t('subscription.expiresOn')
+                    subscription.willRenew
+                      ? t('subscription.renewsOn')
+                      : t('subscription.expiresOn')
                   }
                   value={formatDateTime(subscription.currentPeriodEnd, undefined, locale)}
                 />
@@ -137,7 +143,11 @@ export default function SubscriptionScreen(): ReactNode {
             <View style={{ marginTop: spacing[3], gap: spacing[2] }}>
               {subscription.provider === 'STRIPE' ? (
                 <>
-                  <Button label={t('subscription.manage')} variant="outline" onPress={() => void openPortal()} />
+                  <Button
+                    label={t('subscription.manage')}
+                    variant="outline"
+                    onPress={() => void openPortal()}
+                  />
                   {!subscription.cancelAtPeriodEnd ? (
                     <Button
                       label={t('subscription.cancel')}

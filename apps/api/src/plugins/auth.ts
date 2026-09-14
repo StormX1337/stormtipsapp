@@ -1,7 +1,13 @@
 import fp from 'fastify-plugin';
 import type { FastifyInstance, FastifyRequest, preHandlerHookHandler } from 'fastify';
 import { prisma } from '@profit-tips/database';
-import { verifyAccessToken, can, hasRole, type Capability, type TokenConfig } from '@profit-tips/auth';
+import {
+  verifyAccessToken,
+  can,
+  hasRole,
+  type Capability,
+  type TokenConfig,
+} from '@profit-tips/auth';
 import { AppError, ErrorCode, type ProductCode, type UserRole } from '@profit-tips/types';
 import { env } from '../lib/env.js';
 import { entitlements } from '../services/entitlement.service.js';

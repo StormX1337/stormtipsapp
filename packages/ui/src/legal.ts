@@ -42,7 +42,8 @@ const de: Record<LegalSlug, LegalDocument> = {
   terms: {
     slug: 'terms',
     title: 'Allgemeine Geschäftsbedingungen',
-    intro: 'Stand: laufende Fassung. Es gilt die zum Zeitpunkt des Vertragsschlusses gültige Version.',
+    intro:
+      'Stand: laufende Fassung. Es gilt die zum Zeitpunkt des Vertragsschlusses gültige Version.',
     blocks: [
       { type: 'h2', text: '1. Leistungsgegenstand' },
       {

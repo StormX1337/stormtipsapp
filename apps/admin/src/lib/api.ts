@@ -9,7 +9,12 @@ export interface ApiError extends Error {
   details?: unknown;
 }
 
-function createApiError(status: number, code: string, message: string, details?: unknown): ApiError {
+function createApiError(
+  status: number,
+  code: string,
+  message: string,
+  details?: unknown,
+): ApiError {
   const error = new Error(message) as ApiError;
   error.name = 'ApiError';
   error.code = code;
@@ -57,7 +62,9 @@ async function refreshTokens(): Promise<boolean> {
         tokenStore.clear();
         return false;
       }
-      const body = (await response.json()) as { tokens: { accessToken: string; refreshToken: string } };
+      const body = (await response.json()) as {
+        tokens: { accessToken: string; refreshToken: string };
+      };
       tokenStore.set(body.tokens.accessToken, body.tokens.refreshToken);
       return true;
     } catch {

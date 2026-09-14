@@ -143,7 +143,10 @@ export class BillingService {
     ) {
       return invalid('This code does not apply to the selected plan');
     }
-    if (coupon.applicablePlanIds.length > 0 && (!planId || !coupon.applicablePlanIds.includes(planId))) {
+    if (
+      coupon.applicablePlanIds.length > 0 &&
+      (!planId || !coupon.applicablePlanIds.includes(planId))
+    ) {
       return invalid('This code does not apply to the selected plan');
     }
 
@@ -382,7 +385,10 @@ export class BillingService {
 
     const subscriptionId = await this.upsertSubscription(normalized, input.userId);
     if (!subscriptionId) {
-      throw new AppError(ErrorCode.PROVIDER_ERROR, 'Purchase could not be attributed to your account');
+      throw new AppError(
+        ErrorCode.PROVIDER_ERROR,
+        'Purchase could not be attributed to your account',
+      );
     }
 
     if (input.provider === 'GOOGLE') {

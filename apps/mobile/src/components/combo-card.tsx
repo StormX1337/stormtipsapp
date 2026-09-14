@@ -22,7 +22,9 @@ export function ComboCard({ combo }: { combo: ComboDTO }): ReactNode {
             {combo.title}
           </Text>
           {combo.publishAt ? (
-            <Text style={styles.published}>{formatDateTime(combo.publishAt, undefined, locale)}</Text>
+            <Text style={styles.published}>
+              {formatDateTime(combo.publishAt, undefined, locale)}
+            </Text>
           ) : null}
         </View>
         <View style={styles.headerOdds}>
@@ -113,7 +115,12 @@ const styles = StyleSheet.create({
   title: { color: colors.text.primary, fontSize: fontSize.md, fontWeight: '700' },
   published: { marginTop: 2, color: colors.text.muted, fontSize: fontSize.xs },
   headerOdds: { alignItems: 'flex-end' },
-  oddsLabel: { color: colors.text.muted, fontSize: fontSize['2xs'], fontWeight: '600', letterSpacing: 0.5 },
+  oddsLabel: {
+    color: colors.text.muted,
+    fontSize: fontSize['2xs'],
+    fontWeight: '600',
+    letterSpacing: 0.5,
+  },
   oddsValue: {
     color: colors.gold.DEFAULT,
     fontSize: fontSize.xl,

@@ -31,7 +31,13 @@ const PATH_BY_PRODUCT: Record<ProductCode, string> = {
  * the product code and, for premium products, the paywall shown above locked
  * content.
  */
-export function ProductFeed({ product, title }: { product: ProductCode; title: string }): ReactNode {
+export function ProductFeed({
+  product,
+  title,
+}: {
+  product: ProductCode;
+  title: string;
+}): ReactNode {
   const { t } = useI18n();
   const { has, loading: authLoading } = useAuth();
   const [date, setDate] = useState(() => toDateKey(new Date()));

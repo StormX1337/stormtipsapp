@@ -30,13 +30,7 @@ const OUTCOME_TONE: Record<TipOutcome, 'neutral' | 'positive' | 'negative' | 'wa
   HALF_LOST: 'warning',
 };
 
-function SettleDialog({
-  tip,
-  onClose,
-}: {
-  tip: TipDTO | null;
-  onClose: () => void;
-}): ReactNode {
+function SettleDialog({ tip, onClose }: { tip: TipDTO | null; onClose: () => void }): ReactNode {
   const queryClient = useQueryClient();
   const [outcome, setOutcome] = useState<TipOutcome>('WON');
   const [note, setNote] = useState('');
@@ -195,7 +189,9 @@ function TipsContent(): ReactNode {
     {
       key: 'product',
       header: 'Produkt',
-      render: (tip) => <Badge tone={tip.product === 'FREE' ? 'neutral' : 'warning'}>{tip.product}</Badge>,
+      render: (tip) => (
+        <Badge tone={tip.product === 'FREE' ? 'neutral' : 'warning'}>{tip.product}</Badge>
+      ),
     },
     {
       key: 'status',
@@ -214,9 +210,7 @@ function TipsContent(): ReactNode {
       render: (tip) =>
         tip.result ? (
           <span
-            className={
-              'tabular font-bold ' + (tip.result.profit >= 0 ? 'text-won' : 'text-lost')
-            }
+            className={'tabular font-bold ' + (tip.result.profit >= 0 ? 'text-won' : 'text-lost')}
           >
             {tip.result.profit > 0 ? '+' : ''}
             {tip.result.profit.toFixed(2)}
@@ -243,7 +237,12 @@ function TipsContent(): ReactNode {
             <Pencil size={14} aria-hidden />
           </Button>
           {tip.status !== 'PUBLISHED' ? (
-            <Button size="sm" variant="ghost" title="Veröffentlichen" onClick={() => publish.mutate(tip.id)}>
+            <Button
+              size="sm"
+              variant="ghost"
+              title="Veröffentlichen"
+              onClick={() => publish.mutate(tip.id)}
+            >
               <Send size={14} aria-hidden />
             </Button>
           ) : null}
@@ -301,7 +300,10 @@ function TipsContent(): ReactNode {
           }}
           options={[
             { value: '', label: 'Alle' },
-            ...['FREE', 'VIP', 'EXTRA', 'COMBO', 'FIX_ODDS'].map((value) => ({ value, label: value })),
+            ...['FREE', 'VIP', 'EXTRA', 'COMBO', 'FIX_ODDS'].map((value) => ({
+              value,
+              label: value,
+            })),
           ]}
         />
         <Select
@@ -313,7 +315,10 @@ function TipsContent(): ReactNode {
           }}
           options={[
             { value: '', label: 'Alle' },
-            ...['DRAFT', 'SCHEDULED', 'PUBLISHED', 'CANCELLED'].map((value) => ({ value, label: value })),
+            ...['DRAFT', 'SCHEDULED', 'PUBLISHED', 'CANCELLED'].map((value) => ({
+              value,
+              label: value,
+            })),
           ]}
         />
         <Select

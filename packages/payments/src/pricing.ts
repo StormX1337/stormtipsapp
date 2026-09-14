@@ -69,11 +69,7 @@ export function applyDiscount(
 }
 
 /** Next renewal date for a subscription period. */
-export function nextPeriodEnd(
-  from: Date,
-  interval: BillingInterval,
-  intervalCount: number,
-): Date {
+export function nextPeriodEnd(from: Date, interval: BillingInterval, intervalCount: number): Date {
   const next = new Date(from.getTime());
   switch (interval) {
     case 'DAY':

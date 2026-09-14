@@ -4,14 +4,7 @@ import { useState, type ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { Paginated, SubscriptionDTO } from '@profit-tips/types';
 import { api } from '@/lib/api';
-import {
-  Badge,
-  DataTable,
-  ErrorBox,
-  PageHeader,
-  Pagination,
-  type Column,
-} from '@/components/ui';
+import { Badge, DataTable, ErrorBox, PageHeader, Pagination, type Column } from '@/components/ui';
 
 type SubscriptionRow = SubscriptionDTO & { userEmail: string };
 
@@ -109,7 +102,15 @@ export default function SubscriptionsPage(): ReactNode {
             key: 'status',
             header: 'Status',
             render: (row) => (
-              <Badge tone={row.status === 'PROCESSED' ? 'positive' : row.status === 'FAILED' ? 'negative' : 'neutral'}>
+              <Badge
+                tone={
+                  row.status === 'PROCESSED'
+                    ? 'positive'
+                    : row.status === 'FAILED'
+                      ? 'negative'
+                      : 'neutral'
+                }
+              >
                 {row.status}
               </Badge>
             ),
@@ -118,7 +119,9 @@ export default function SubscriptionsPage(): ReactNode {
           {
             key: 'error',
             header: 'Fehler',
-            render: (row) => <span className="text-[11px] text-lost">{row.error?.slice(0, 80) ?? ''}</span>,
+            render: (row) => (
+              <span className="text-[11px] text-lost">{row.error?.slice(0, 80) ?? ''}</span>
+            ),
           },
           {
             key: 'received',

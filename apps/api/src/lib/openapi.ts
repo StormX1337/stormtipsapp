@@ -76,13 +76,22 @@ function operation(
       : {}),
     responses: {
       '200': { description: options.responses?.['200'] ?? 'Success' },
-      '401': { description: 'Unauthenticated', content: { 'application/json': { schema: errorResponse } } },
+      '401': {
+        description: 'Unauthenticated',
+        content: { 'application/json': { schema: errorResponse } },
+      },
       '402': {
         description: 'A subscription is required for this content',
         content: { 'application/json': { schema: errorResponse } },
       },
-      '422': { description: 'Validation failed', content: { 'application/json': { schema: errorResponse } } },
-      '429': { description: 'Rate limited', content: { 'application/json': { schema: errorResponse } } },
+      '422': {
+        description: 'Validation failed',
+        content: { 'application/json': { schema: errorResponse } },
+      },
+      '429': {
+        description: 'Rate limited',
+        content: { 'application/json': { schema: errorResponse } },
+      },
     },
   };
 }
@@ -174,14 +183,20 @@ export function openApiDocument(): JsonSchema {
           body: verifyStorePurchaseSchema,
         }),
       },
-      '/billing/purchases/restore': { post: operation('Restore purchases', 'Billing', { secured: true }) },
+      '/billing/purchases/restore': {
+        post: operation('Restore purchases', 'Billing', { secured: true }),
+      },
       '/polls': { get: operation('Active polls', 'Polls') },
-      '/polls/{id}/vote': { post: operation('Vote in a poll', 'Polls', { secured: true, body: voteSchema }) },
+      '/polls/{id}/vote': {
+        post: operation('Vote in a poll', 'Polls', { secured: true, body: voteSchema }),
+      },
       '/admin/tips': {
         get: operation('List every tip', 'Admin', { secured: true }),
         post: operation('Create a tip', 'Admin', { secured: true, body: createTipSchema }),
       },
-      '/admin/tips/{id}/settle': { post: operation('Settle a tip manually', 'Admin', { secured: true }) },
+      '/admin/tips/{id}/settle': {
+        post: operation('Settle a tip manually', 'Admin', { secured: true }),
+      },
       '/admin/dashboard': { get: operation('Operational dashboard', 'Admin', { secured: true }) },
       '/webhooks/stripe': { post: operation('Stripe webhook (signature verified)', 'Webhooks') },
       '/webhooks/apple': { post: operation('App Store Server Notification V2', 'Webhooks') },

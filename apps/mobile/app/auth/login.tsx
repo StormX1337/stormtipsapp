@@ -89,6 +89,11 @@ export default function LoginScreen(): ReactNode {
 const styles = StyleSheet.create({
   linkRow: { alignSelf: 'center', paddingVertical: spacing[3] },
   link: { color: colors.accent.DEFAULT, fontSize: fontSize.base },
-  footer: { flexDirection: 'row', justifyContent: 'center', gap: spacing[2], marginTop: spacing[4] },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: spacing[2],
+    marginTop: spacing[4],
+  },
   footerText: { color: colors.text.muted, fontSize: fontSize.base },
 });

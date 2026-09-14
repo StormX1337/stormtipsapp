@@ -41,7 +41,10 @@ interface CacheEnvelope<T> {
 
 /** Offline cache with a soft TTL: stale data is still returned when offline. */
 export const cache = {
-  async read<T>(key: string, maxAgeMs = 24 * 3_600_000): Promise<{ value: T; stale: boolean } | null> {
+  async read<T>(
+    key: string,
+    maxAgeMs = 24 * 3_600_000,
+  ): Promise<{ value: T; stale: boolean } | null> {
     try {
       const raw = await AsyncStorage.getItem(`cache.${key}`);
       if (!raw) return null;

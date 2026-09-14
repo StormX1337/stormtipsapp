@@ -11,12 +11,7 @@ import { useI18n } from '@/lib/i18n';
 import { OfflineBanner, ScreenHeader } from '@/components/layout';
 import { ComboCard } from '@/components/combo-card';
 import { Paywall, type PaywallData } from '@/components/paywall';
-import {
-  EmptyState,
-  ErrorState,
-  ResponsibleGamblingNote,
-  Skeleton,
-} from '@/components/primitives';
+import { EmptyState, ErrorState, ResponsibleGamblingNote, Skeleton } from '@/components/primitives';
 import { ClockIcon } from '@/components/icons';
 
 const { colors, fontSize, spacing } = theme;
@@ -109,7 +104,9 @@ export default function ComboScreen(): ReactNode {
               onPress={() => setShowSettled((value) => !value)}
               style={{ alignSelf: 'flex-end', paddingVertical: spacing[2] }}
             >
-              <Text style={{ color: colors.accent.DEFAULT, fontSize: fontSize.sm, fontWeight: '600' }}>
+              <Text
+                style={{ color: colors.accent.DEFAULT, fontSize: fontSize.sm, fontWeight: '600' }}
+              >
                 {showSettled ? t('common.all') : t('status.PENDING')}
               </Text>
             </Pressable>

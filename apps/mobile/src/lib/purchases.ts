@@ -106,8 +106,7 @@ export async function verifyAndFinish(purchase: {
   const module = await loadModule();
 
   // iOS supplies the signed StoreKit 2 transaction; Android the purchase token.
-  const receipt =
-    Platform.OS === 'ios' ? purchase.transactionReceipt : purchase.purchaseToken;
+  const receipt = Platform.OS === 'ios' ? purchase.transactionReceipt : purchase.purchaseToken;
   if (!receipt) {
     throw new Error('Der Kaufbeleg konnte nicht gelesen werden.');
   }

@@ -46,7 +46,10 @@ export function DateStrip({
   useEffect(() => {
     const index = days.findIndex((day) => day.key === value);
     if (index < 0) return;
-    const offset = Math.max(0, index * (sizes.dateChipWidth + spacing[1]) - sizes.dateChipWidth * 2);
+    const offset = Math.max(
+      0,
+      index * (sizes.dateChipWidth + spacing[1]) - sizes.dateChipWidth * 2,
+    );
     scrollRef.current?.scrollTo({ x: offset, animated: false });
   }, [days, value]);
 

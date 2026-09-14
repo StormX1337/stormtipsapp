@@ -91,7 +91,10 @@ export default function OnboardingScreen(): ReactNode {
         {SLIDES.map((slide, dotIndex) => (
           <View
             key={slide.title}
-            style={[styles.dot, dotIndex === index && { backgroundColor: colors.accent.DEFAULT, width: 18 }]}
+            style={[
+              styles.dot,
+              dotIndex === index && { backgroundColor: colors.accent.DEFAULT, width: 18 },
+            ]}
           />
         ))}
       </View>
@@ -148,7 +151,12 @@ const styles = StyleSheet.create({
     lineHeight: fontSize.md * 1.5,
     textAlign: 'center',
   },
-  dots: { flexDirection: 'row', gap: spacing[1.5], justifyContent: 'center', paddingVertical: spacing[5] },
+  dots: {
+    flexDirection: 'row',
+    gap: spacing[1.5],
+    justifyContent: 'center',
+    paddingVertical: spacing[5],
+  },
   dot: { width: 6, height: 6, borderRadius: radii.full, backgroundColor: colors.bg.cardAlt },
   legal: {
     marginTop: spacing[3],

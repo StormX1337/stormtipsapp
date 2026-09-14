@@ -157,7 +157,9 @@ export default function LivePage(): ReactNode {
 
         {liveTips.data && liveTips.data.items.length > 0 ? (
           <section className="mt-2">
-            <h2 className="px-1 pb-2 text-[13px] font-bold">{t('nav.live')} · {t('nav.free')}</h2>
+            <h2 className="px-1 pb-2 text-[13px] font-bold">
+              {t('nav.live')} · {t('nav.free')}
+            </h2>
             <div className="flex flex-col gap-2">
               {liveTips.data.items.map((tip) => (
                 <TipCard key={tip.id} tip={tip} href={`/tips/${tip.id}`} />

@@ -142,9 +142,7 @@ export function serializePayment(
   };
 }
 
-export function serializePromotion(
-  promotion: Prisma.PromotionGetPayload<object>,
-): PromotionDTO {
+export function serializePromotion(promotion: Prisma.PromotionGetPayload<object>): PromotionDTO {
   return {
     id: promotion.id,
     title: promotion.title,

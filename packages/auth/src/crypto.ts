@@ -24,9 +24,12 @@ export function encryptSecret(plaintext: string, hexKey: string): string {
   });
   const ciphertext = Buffer.concat([cipher.update(plaintext, 'utf8'), cipher.final()]);
   const tag = cipher.getAuthTag();
-  return [PREFIX, iv.toString('base64'), tag.toString('base64'), ciphertext.toString('base64')].join(
-    ':',
-  );
+  return [
+    PREFIX,
+    iv.toString('base64'),
+    tag.toString('base64'),
+    ciphertext.toString('base64'),
+  ].join(':');
 }
 
 export function decryptSecret(payload: string, hexKey: string): string {

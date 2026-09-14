@@ -94,7 +94,11 @@ export default function NotificationsPage(): ReactNode {
       key: 'status',
       header: 'Status',
       render: (row) => (
-        <Badge tone={row.status === 'SENT' ? 'positive' : row.status === 'FAILED' ? 'negative' : 'neutral'}>
+        <Badge
+          tone={
+            row.status === 'SENT' ? 'positive' : row.status === 'FAILED' ? 'negative' : 'neutral'
+          }
+        >
           {row.status}
         </Badge>
       ),

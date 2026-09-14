@@ -40,7 +40,9 @@ export class ReferralService {
       code: user.referralCode,
       link: `${env.WEB_PUBLIC_URL}/r/${user.referralCode}`,
       totalReferrals: referrals.length,
-      qualifiedReferrals: referrals.filter((r) => r.status === 'QUALIFIED' || r.status === 'REWARDED').length,
+      qualifiedReferrals: referrals.filter(
+        (r) => r.status === 'QUALIFIED' || r.status === 'REWARDED',
+      ).length,
       rewardedReferrals: referrals.filter((r) => r.status === 'REWARDED').length,
       pendingReferrals: referrals.filter((r) => r.status === 'PENDING').length,
       rewards: rewards.map((reward) => ({
@@ -48,7 +50,9 @@ export class ReferralService {
         type: reward.type,
         status: reward.status,
         days: reward.days,
-        amount: reward.amountCents ? money(reward.amountCents, reward.currency ?? 'EUR', locale) : null,
+        amount: reward.amountCents
+          ? money(reward.amountCents, reward.currency ?? 'EUR', locale)
+          : null,
         grantedAt: reward.grantedAt?.toISOString() ?? null,
       })),
       program: {

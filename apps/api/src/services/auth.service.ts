@@ -77,7 +77,10 @@ export class AuthService {
   private async uniqueReferralCode(): Promise<string> {
     for (let attempt = 0; attempt < 8; attempt += 1) {
       const code = generateReferralCode();
-      const existing = await prisma.user.findUnique({ where: { referralCode: code }, select: { id: true } });
+      const existing = await prisma.user.findUnique({
+        where: { referralCode: code },
+        select: { id: true },
+      });
       if (!existing) return code;
     }
     return generateReferralCode(12);
@@ -311,7 +314,10 @@ export class AuthService {
 
   /** Always resolves — never reveals whether an address is registered. */
   async requestPasswordReset(email: string): Promise<void> {
-    const user = await prisma.user.findUnique({ where: { email }, select: { id: true, email: true } });
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true, email: true },
+    });
     if (!user) return;
 
     const { token, hash } = generateVerificationToken();
@@ -376,7 +382,11 @@ export class AuthService {
     const profile =
       input.provider === 'google'
         ? await verifyGoogleIdToken(input.idToken, [env.GOOGLE_OAUTH_CLIENT_ID ?? ''])
-        : await verifyAppleIdToken(input.idToken, [env.APPLE_OAUTH_CLIENT_ID ?? ''], input.fullName);
+        : await verifyAppleIdToken(
+            input.idToken,
+            [env.APPLE_OAUTH_CLIENT_ID ?? ''],
+            input.fullName,
+          );
 
     const providerField = profile.provider === 'GOOGLE' ? 'googleId' : 'appleId';
     let user = await prisma.user.findFirst({

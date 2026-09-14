@@ -53,7 +53,11 @@ export default function SettingsPage(): ReactNode {
   });
 
   const columns: Column<SettingRow>[] = [
-    { key: 'key', header: 'Schlüssel', render: (row) => <code className="font-mono">{row.key}</code> },
+    {
+      key: 'key',
+      header: 'Schlüssel',
+      render: (row) => <code className="font-mono">{row.key}</code>,
+    },
     {
       key: 'value',
       header: 'Wert',

@@ -86,7 +86,9 @@ export default function SubscriptionPage(): ReactNode {
               <dl className="mt-3 divide-y divide-line-subtle border-t border-line-subtle">
                 <div className="flex justify-between py-2 text-[12.5px]">
                   <dt className="text-ink-muted">
-                    {subscription.willRenew ? t('subscription.renewsOn') : t('subscription.expiresOn')}
+                    {subscription.willRenew
+                      ? t('subscription.renewsOn')
+                      : t('subscription.expiresOn')}
                   </dt>
                   <dd className="font-semibold">
                     {subscription.currentPeriodEnd
@@ -147,7 +149,9 @@ export default function SubscriptionPage(): ReactNode {
               {payments.data.items.map((payment) => (
                 <li key={payment.id} className="flex items-center gap-3 px-3 py-2.5">
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-[12.5px]">{payment.description ?? payment.provider}</p>
+                    <p className="truncate text-[12.5px]">
+                      {payment.description ?? payment.provider}
+                    </p>
                     <p className="text-[11px] text-ink-dim">
                       {payment.paidAt
                         ? formatDateTime(payment.paidAt, undefined, locale)

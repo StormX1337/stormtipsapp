@@ -267,7 +267,8 @@ export const en = {
   'legal.ageNotice': '18+. Betting involves financial risk.',
   'legal.noGuarantee':
     'PROFIT TIPS publishes sports analyses for informational purposes. No result is guaranteed and no outcome can be predicted with certainty.',
-  'legal.helpLine': 'If gambling stops being fun, seek help from a support service in your country.',
+  'legal.helpLine':
+    'If gambling stops being fun, seek help from a support service in your country.',
 
   // onboarding
   'onboarding.1.title': 'Analyses, not promises',

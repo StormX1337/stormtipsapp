@@ -41,16 +41,19 @@ export interface PaywallData {
 }
 
 /** Gold statistic circle; its diameter encodes the metric's importance. */
-export function StatCircle({ value, size = 'md' }: { value: string; size?: 'sm' | 'md' | 'lg' }): ReactNode {
+export function StatCircle({
+  value,
+  size = 'md',
+}: {
+  value: string;
+  size?: 'sm' | 'md' | 'lg';
+}): ReactNode {
   const dimension = sizes.statCircle[size];
   const textSize =
     value.length > 6 ? dimension * 0.2 : value.length > 4 ? dimension * 0.24 : dimension * 0.3;
   return (
     <View
-      style={[
-        styles.circle,
-        { width: dimension, height: dimension, borderRadius: dimension / 2 },
-      ]}
+      style={[styles.circle, { width: dimension, height: dimension, borderRadius: dimension / 2 }]}
     >
       <Text style={[styles.circleText, { fontSize: textSize }]} numberOfLines={1}>
         {value}
@@ -194,7 +197,13 @@ export function BundleCard({
   );
 }
 
-export function PaywallHero({ product, title }: { product: ProductCode; title: string }): ReactNode {
+export function PaywallHero({
+  product,
+  title,
+}: {
+  product: ProductCode;
+  title: string;
+}): ReactNode {
   const Icon = PRODUCT_ICON[product] ?? PRODUCT_ICON.FREE!;
   return (
     <View style={styles.hero}>
@@ -248,7 +257,13 @@ const CTA_KEY: Record<ProductCode, MessageKey> = {
  * the hosted web checkout. Access itself is always granted by the server after
  * it verified the receipt — never by this screen.
  */
-export function Paywall({ data, onPurchased }: { data: PaywallData; onPurchased?: () => void }): ReactNode {
+export function Paywall({
+  data,
+  onPurchased,
+}: {
+  data: PaywallData;
+  onPurchased?: () => void;
+}): ReactNode {
   const { t } = useI18n();
   const router = useRouter();
   const { user, refresh } = useAuth();
@@ -259,7 +274,10 @@ export function Paywall({ data, onPurchased }: { data: PaywallData; onPurchased?
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const bundlePlans = useMemo(() => data.plans.filter((plan) => plan.products.length > 1), [data.plans]);
+  const bundlePlans = useMemo(
+    () => data.plans.filter((plan) => plan.products.length > 1),
+    [data.plans],
+  );
   const singlePlans = useMemo(
     () => data.plans.filter((plan) => plan.products.length === 1).slice(0, 3),
     [data.plans],
@@ -408,7 +426,9 @@ export function Paywall({ data, onPurchased }: { data: PaywallData; onPurchased?
         </Pressable>
       </View>
 
-      <Pressable onPress={() => void Linking.openURL('https://www.bzga.de/service/beratungsstellen/')}>
+      <Pressable
+        onPress={() => void Linking.openURL('https://www.bzga.de/service/beratungsstellen/')}
+      >
         <Text style={styles.helpline}>{t('legal.helpLine')}</Text>
       </Pressable>
     </View>
@@ -484,7 +504,12 @@ const styles = StyleSheet.create({
   },
   planRibbonSpacer: { height: 25, marginTop: spacing[1] },
   planTrial: { color: colors.accent.DEFAULT, fontSize: fontSize['2xs'] },
-  or: { textAlign: 'center', color: colors.text.secondary, fontSize: fontSize.md, fontWeight: '700' },
+  or: {
+    textAlign: 'center',
+    color: colors.text.secondary,
+    fontSize: fontSize.md,
+    fontWeight: '700',
+  },
   bundle: {
     backgroundColor: colors.gold.DEFAULT,
     borderRadius: radii.md,
@@ -494,11 +519,21 @@ const styles = StyleSheet.create({
   },
   bundleSelected: { borderColor: 'rgba(255,255,255,0.75)' },
   bundleBadge: { position: 'absolute', top: -10, right: spacing[3], zIndex: 2 },
-  bundleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing[3] },
+  bundleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing[3],
+  },
   bundleLeft: { flex: 1, minWidth: 0 },
   bundleSave: { color: colors.text.onGold, fontSize: fontSize.sm, fontWeight: '600' },
   bundleIcons: { flexDirection: 'row', gap: spacing[1.5], marginTop: spacing[1] },
-  bundleName: { marginTop: spacing[1], color: colors.text.onGold, fontSize: fontSize.lg, fontWeight: '800' },
+  bundleName: {
+    marginTop: spacing[1],
+    color: colors.text.onGold,
+    fontSize: fontSize.lg,
+    fontWeight: '800',
+  },
   bundleRight: { alignItems: 'flex-end' },
   bundleMonths: { color: colors.text.onGold, fontSize: fontSize.sm, fontWeight: '600' },
   bundlePrice: { color: colors.text.onGold, fontSize: fontSize['2xl'], fontWeight: '800' },
@@ -511,8 +546,17 @@ const styles = StyleSheet.create({
     paddingVertical: spacing[2],
   },
   restore: { alignSelf: 'center', paddingVertical: spacing[2] },
-  restoreText: { color: colors.text.secondary, fontSize: fontSize.base, textDecorationLine: 'underline' },
-  renewNotice: { textAlign: 'center', color: colors.text.muted, fontSize: fontSize.xs, lineHeight: 16 },
+  restoreText: {
+    color: colors.text.secondary,
+    fontSize: fontSize.base,
+    textDecorationLine: 'underline',
+  },
+  renewNotice: {
+    textAlign: 'center',
+    color: colors.text.muted,
+    fontSize: fontSize.xs,
+    lineHeight: 16,
+  },
   benefitsTitle: { color: colors.text.primary, fontSize: fontSize.md, fontWeight: '700' },
   benefitRow: { flexDirection: 'row', gap: spacing[2], marginTop: spacing[2] },
   benefitText: { flex: 1, color: colors.text.secondary, fontSize: fontSize.base, lineHeight: 19 },
@@ -528,6 +572,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   legalLinks: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: spacing[5] },
-  legalLink: { color: colors.text.secondary, fontSize: fontSize.sm, textDecorationLine: 'underline' },
+  legalLink: {
+    color: colors.text.secondary,
+    fontSize: fontSize.sm,
+    textDecorationLine: 'underline',
+  },
   helpline: { textAlign: 'center', color: colors.text.muted, fontSize: fontSize.xs },
 });

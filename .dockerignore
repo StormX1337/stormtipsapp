@@ -1,0 +1,15 @@
+**/node_modules
+**/.next
+**/dist
+**/.expo
+**/coverage
+**/.turbo
+.git
+.github
+**/*.log
+.env
+.env.*
+!.env.example
+apps/mobile
+docs
+infra/postgres-data
