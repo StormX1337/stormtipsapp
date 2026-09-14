@@ -66,11 +66,29 @@ Stripe to call back.
    and `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`. Test keys (`sk_test_…`) charge
    nothing and are the right place to start.
 
-2. **A product and a price per plan.** Products → Add product, then a recurring
-   price whose amount and interval match the plan. Copy the price id
-   (`price_…`) into that plan under Admin → Plans → _Stripe Price ID_. A plan
-   without one cannot be checked out: `POST /billing/checkout` has nothing to
-   charge.
+2. **A product and a price per plan.** One command does all of them:
+
+   ```bash
+   pnpm --filter @storm-tips/database stripe-sync-prices            # shows the plan
+   pnpm --filter @storm-tips/database stripe-sync-prices -- --apply # creates them
+   ```
+
+   It reads the plans from the database, creates the matching product and
+   recurring price in Stripe and writes each `price_…` back onto its plan. It
+   uses the `STRIPE_SECRET_KEY` in `.env`, so the key never leaves the server.
+   Plans that already carry a price id are left alone, and a product from an
+   earlier run is reused rather than duplicated — it is found by the plan's
+   slug in the product's metadata.
+
+   By hand instead: Products → Add product, then a recurring price whose amount
+   and interval match the plan, and paste its id into Admin → Plans →
+   _Stripe Price ID_.
+
+   A plan without a price id cannot be checked out: `POST /billing/checkout`
+   has nothing to charge and says so.
+
+   Stripe prices are immutable. Changing a plan's amount or interval means a
+   new price: clear the plan's Stripe Price ID and run the command again.
 
 3. **The webhook.** Developers → Webhooks → Add endpoint, pointing at
    `https://<your domain>/api/v1/webhooks/stripe`, subscribed to
@@ -92,8 +110,9 @@ Stripe to call back.
    expiry and any CVC. The webhook's delivery attempt is visible in the
    dashboard, and the subscription appears under Admin → Subscriptions.
 
-Switching to live keys later changes nothing but the keys: the price ids are
-per-mode, so create the products again in live mode and update the plans.
+Switching to live keys later changes nothing but the keys: price ids are
+per-mode, so swap in the live key, clear the test ids and run
+`stripe-sync-prices -- --apply` again.
 
 ## Apple (iOS in-app subscriptions)
 
