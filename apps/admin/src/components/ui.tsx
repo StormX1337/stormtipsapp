@@ -77,10 +77,12 @@ export function TextArea({
 export function Select({
   label,
   options,
+  hint,
   ...props
 }: {
   label: string;
   options: { value: string; label: string }[];
+  hint?: string;
 } & SelectHTMLAttributes<HTMLSelectElement>): ReactNode {
   return (
     <label className="block">
@@ -92,6 +94,7 @@ export function Select({
           </option>
         ))}
       </select>
+      {hint ? <span className="mt-1 block text-[11px] text-ink-dim">{hint}</span> : null}
     </label>
   );
 }

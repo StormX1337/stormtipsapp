@@ -73,6 +73,32 @@ Odds movement is recorded in `OddsHistory`; a relative change above
 `ODDS_MOVEMENT_THRESHOLD` (default 5 %) marks a tip as moved, which is what the
 "odds changed" hint in the apps reflects.
 
+## Fixtures the provider does not carry
+
+No feed covers every competition. **Catalogue → Events → Add fixture** in the
+admin console enters one by hand: pick the league, name both teams, set the
+kick-off. A team name that already exists in the league's sport resolves to that
+team, so typing "Arsenal" reaches the Arsenal already in the catalogue instead
+of adding a second one; a name that does not exist creates the team. The same
+route is `POST /admin/catalogue/events`, which also accepts `homeTeamId` /
+`awayTeamId` for a caller that already knows them.
+
+Such a fixture is stored with no `providerEventId`. Every sync selects on
+`providerEventId: { not: null }`, so:
+
+- no fixture, odds or result sync can overwrite or remove it, and
+- **nothing will settle it.** There are no odds to refresh and no result to
+  fetch, so the operator enters the score through the pencil on the events page
+  once the match is played. `settle:due` then settles the tips on it exactly as
+  it would a provider result — that job selects on the event's status, not on
+  where the score came from — so they are settled within the job's ten-minute
+  interval rather than instantly.
+
+A second fixture for the same pairing in the same league on the same day is
+refused with `409`: it is a double submit far more often than a double-header,
+and a duplicate splits the tips across two rows that then settle separately.
+Rows entered this way are marked "entered by hand" in the events table.
+
 ## Adding a provider
 
 1. Implement `SportsDataProvider` (extend `BaseProvider` for the shared HTTP

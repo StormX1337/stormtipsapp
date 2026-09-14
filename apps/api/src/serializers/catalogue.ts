@@ -85,6 +85,16 @@ export function serializeEvent(event: EventWithRelations): EventDTO {
   };
 }
 
+/**
+ * The admin view of a fixture, with the one fact an operator needs that a
+ * customer does not: a fixture with no provider id was typed in here, so no
+ * sync will ever bring it a score. Kept off `EventDTO` so it stays out of the
+ * public feed, where it would only be noise.
+ */
+export function serializeAdminEvent(event: EventWithRelations): EventDTO & { isManual: boolean } {
+  return { ...serializeEvent(event), isManual: event.providerEventId === null };
+}
+
 export function serializeBookmaker(
   bookmaker: Prisma.BookmakerGetPayload<object> | null,
 ): BookmakerDTO | null {

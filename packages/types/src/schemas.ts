@@ -351,6 +351,52 @@ export const upsertTeamSchema = z.object({
   colorSecondary: z.string().max(9).nullish(),
 });
 
+/**
+ * A fixture entered by hand, for a match the data provider does not carry.
+ *
+ * Both sides accept either an existing team id or a plain name — requiring the
+ * operator to create two teams before they can enter one match is the reason
+ * this route would go unused. A name that already exists in the league's sport
+ * resolves to that team rather than creating a second one.
+ *
+ * `providerEventId` stays null on purpose: the odds and result syncs select on
+ * it, so nothing the provider sends can overwrite a fixture typed in here — and
+ * nothing will settle it either. The score is the operator's to enter.
+ */
+export const createManualEventSchema = z
+  .object({
+    leagueId: idSchema,
+    homeTeamId: idSchema.optional(),
+    homeTeamName: z.string().min(2).max(80).optional(),
+    awayTeamId: idSchema.optional(),
+    awayTeamName: z.string().min(2).max(80).optional(),
+    startsAt: z.string().datetime(),
+    venue: z.string().max(120).nullish(),
+    round: z.string().max(60).nullish(),
+    season: z.string().max(20).nullish(),
+  })
+  .refine((value) => Boolean(value.homeTeamId) !== Boolean(value.homeTeamName), {
+    message: 'Give the home team either as an id or as a name, not both',
+    path: ['homeTeamName'],
+  })
+  .refine((value) => Boolean(value.awayTeamId) !== Boolean(value.awayTeamName), {
+    message: 'Give the away team either as an id or as a name, not both',
+    path: ['awayTeamName'],
+  })
+  .refine(
+    (value) => !value.homeTeamId || !value.awayTeamId || value.homeTeamId !== value.awayTeamId,
+    { message: 'A team cannot play itself', path: ['awayTeamId'] },
+  )
+  .refine(
+    (value) =>
+      !value.homeTeamName ||
+      !value.awayTeamName ||
+      value.homeTeamName.trim().toLowerCase() !== value.awayTeamName.trim().toLowerCase(),
+    { message: 'A team cannot play itself', path: ['awayTeamName'] },
+  );
+
+export type CreateManualEventInput = z.infer<typeof createManualEventSchema>;
+
 export const upsertBookmakerSchema = z.object({
   key: z.string().min(2).max(40),
   name: z.string().min(2).max(60),

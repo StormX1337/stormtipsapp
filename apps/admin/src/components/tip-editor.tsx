@@ -249,6 +249,11 @@ export function TipEditor({
               })} · ${event.league.name}: ${event.homeTeam.name} – ${event.awayTeam.name}`,
             })),
           ]}
+          hint={
+            !events.isPending && eventItems.length === 0
+              ? 'No upcoming fixture matches. If the provider does not carry this match, add it by hand under Catalogue → Events.'
+              : undefined
+          }
         />
 
         <div className="grid gap-3 sm:grid-cols-2">
