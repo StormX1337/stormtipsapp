@@ -37,11 +37,6 @@ export default function LegalLayout({ children }: { children: ReactNode }): Reac
         className="mx-auto max-w-3xl px-5 py-8 [&_h2]:mt-8 [&_h2]:text-[16px] [&_h2]:font-bold [&_h3]:mt-6 [&_h3]:text-[14px] [&_h3]:font-bold [&_li]:mb-1.5 [&_p]:mt-3 [&_p]:text-[13.5px] [&_p]:leading-relaxed [&_p]:text-ink-muted [&_ul]:mt-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:text-[13.5px] [&_ul]:text-ink-muted"
       >
         {children}
-        <p className="mt-10 border-t border-line-subtle pt-6 text-[11px] text-ink-dim">
-          Diese Seite dient der Information und ersetzt keine Rechtsberatung. Betreiberangaben,
-          Gerichtsstand und Aufsichtsbehörde sind vor dem Produktivbetrieb durch die tatsächlichen
-          Unternehmensdaten zu ersetzen.
-        </p>
       </main>
     </div>
   );

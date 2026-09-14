@@ -218,6 +218,7 @@ export const en = {
   'notifications.promotions': 'Offers and promotions',
   'notifications.polls': 'Polls',
   'notifications.empty': 'No notifications yet.',
+  'notifications.markAllRead': 'Mark all as read',
 
   // polls
   'poll.title': 'Polls',

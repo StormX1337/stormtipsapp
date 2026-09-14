@@ -14,6 +14,7 @@ export default tseslint.config(
       '**/coverage/**',
       '**/generated/**',
       '**/.expo/**',
+      '**/next-env.d.ts',
       '**/*.config.js',
       'packages/database/prisma/migrations/**',
     ],

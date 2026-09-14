@@ -17,6 +17,7 @@
     "@fastify/helmet": "^13.0.1",
     "@fastify/rate-limit": "^10.3.0",
     "@fastify/websocket": "^11.2.0",
+    "@node-rs/argon2": "^2.0.2",
     "@profit-tips/auth": "workspace:*",
     "@profit-tips/config": "workspace:*",
     "@profit-tips/database": "workspace:*",

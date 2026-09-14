@@ -12,6 +12,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@node-rs/argon2": "^2.0.2",
     "@profit-tips/api": "workspace:*",
     "@profit-tips/config": "workspace:*",
     "@profit-tips/database": "workspace:*",

@@ -11,7 +11,9 @@ export default defineConfig({
   splitting: false,
   // Workspace packages ship TypeScript source, so they are bundled in.
   noExternal: [/^@profit-tips\//],
-  external: ['@prisma/client', '.prisma'],
+  // Native addons (and Prisma's generated client) must stay external: esbuild
+  // cannot inline a platform-specific .node binary.
+  external: ['@prisma/client', '.prisma', '@node-rs/argon2'],
   banner: {
     // Some CJS dependencies expect `require` to exist in the ESM bundle.
     js: "import { createRequire as __createRequire } from 'module'; const require = __createRequire(import.meta.url);",

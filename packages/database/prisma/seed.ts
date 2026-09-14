@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * Development seed.
  *
@@ -13,7 +12,7 @@
  *
  * Refuses to run against NODE_ENV=production.
  */
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient, type Prisma } from '@prisma/client';
 import { MockProvider, CATALOGUE_BOOKMAKERS, CATALOGUE_COUNTRIES, CATALOGUE_LEAGUES, CATALOGUE_SPORTS } from '@profit-tips/sports';
 import { profitFor, returnFactor, settleCombo } from '@profit-tips/statistics';
 import { generateReferralCode, hashPassword } from '@profit-tips/auth';

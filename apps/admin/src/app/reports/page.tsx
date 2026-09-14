@@ -25,7 +25,8 @@ function toCsv(rows: Record<string, string | number>[]): string {
 }
 
 function download(filename: string, content: string): void {
-  const blob = new Blob([`﻿${content}`], { type: 'text/csv;charset=utf-8' });
+  // UTF-8 BOM so Excel opens the export with the right encoding.
+  const blob = new Blob(['\uFEFF', content], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
   anchor.href = url;

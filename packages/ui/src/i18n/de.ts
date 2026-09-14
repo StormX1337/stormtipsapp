@@ -221,6 +221,7 @@ export const de: Messages = {
   'notifications.promotions': 'Angebote und Aktionen',
   'notifications.polls': 'Umfragen',
   'notifications.empty': 'Noch keine Mitteilungen.',
+  'notifications.markAllRead': 'Alle als gelesen markieren',
 
   // polls
   'poll.title': 'Umfragen',
