@@ -65,7 +65,7 @@ export default function BookmakersPage(): ReactNode {
   const columns: Column<BookmakerRow>[] = [
     {
       key: 'name',
-      header: 'Buchmacher',
+      header: 'Bookmaker',
       render: (row) => (
         <span className="font-black italic" style={{ color: row.color ?? '#9BA5B7' }}>
           {row.name}
@@ -74,16 +74,16 @@ export default function BookmakersPage(): ReactNode {
     },
     {
       key: 'key',
-      header: 'Schlüssel',
+      header: 'Key',
       render: (row) => <code className="text-ink-dim">{row.key}</code>,
     },
-    { key: 'priority', header: 'Priorität', align: 'right', render: (row) => row.priority },
+    { key: 'priority', header: 'Priority', align: 'right', render: (row) => row.priority },
     {
       key: 'active',
       header: 'Status',
       render: (row) => (
         <Badge tone={row.isActive ? 'positive' : 'neutral'}>
-          {row.isActive ? 'AKTIV' : 'INAKTIV'}
+          {row.isActive ? 'ACTIVE' : 'INACTIVE'}
         </Badge>
       ),
     },
@@ -92,11 +92,11 @@ export default function BookmakersPage(): ReactNode {
   return (
     <>
       <PageHeader
-        title="Buchmacher"
-        description="Der Name wird als Schriftzug in der Markenfarbe gerendert; es werden keine fremden Logos gespeichert."
+        title="Bookmakers"
+        description="The name is rendered as a wordmark in the brand colour — no third-party logos are stored."
         actions={
           <Button onClick={() => setOpen(true)}>
-            <Plus size={15} aria-hidden /> Neuer Buchmacher
+            <Plus size={15} aria-hidden /> New bookmaker
           </Button>
         }
       />
@@ -110,14 +110,14 @@ export default function BookmakersPage(): ReactNode {
       <Modal
         open={open}
         onClose={() => setOpen(false)}
-        title="Buchmacher anlegen"
+        title="Create bookmaker"
         footer={
           <>
             <Button variant="ghost" onClick={() => setOpen(false)}>
-              Abbrechen
+              Cancel
             </Button>
             <Button onClick={() => save.mutate()} disabled={save.isPending}>
-              Speichern
+              Save
             </Button>
           </>
         }
@@ -125,7 +125,7 @@ export default function BookmakersPage(): ReactNode {
         <div className="flex flex-col gap-3">
           {save.isError ? <ErrorBox error={save.error} /> : null}
           <Field
-            label="Schlüssel"
+            label="Key"
             value={form.key}
             onChange={(event) => setForm({ ...form, key: event.target.value })}
           />
@@ -135,7 +135,7 @@ export default function BookmakersPage(): ReactNode {
             onChange={(event) => setForm({ ...form, name: event.target.value })}
           />
           <Field
-            label="Farbe"
+            label="Colour"
             type="color"
             value={form.color}
             onChange={(event) => setForm({ ...form, color: event.target.value })}
@@ -147,13 +147,13 @@ export default function BookmakersPage(): ReactNode {
             placeholder="https://…"
           />
           <Field
-            label="Priorität"
+            label="Priority"
             type="number"
             value={form.priority}
             onChange={(event) => setForm({ ...form, priority: event.target.value })}
           />
           <Toggle
-            label="Aktiv"
+            label="Active"
             checked={form.isActive}
             onChange={(value) => setForm({ ...form, isActive: value })}
           />

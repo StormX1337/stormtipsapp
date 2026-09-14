@@ -17,7 +17,7 @@ export default function LeaguesPage(): ReactNode {
   const columns: Column<LeagueDTO>[] = [
     {
       key: 'name',
-      header: 'Liga',
+      header: 'League',
       render: (league) => (
         <div className="flex items-center gap-2">
           <span aria-hidden>{league.country?.flagEmoji ?? '🏳️'}</span>
@@ -28,16 +28,16 @@ export default function LeaguesPage(): ReactNode {
         </div>
       ),
     },
-    { key: 'sport', header: 'Sportart', render: (league) => league.sport.name },
-    { key: 'country', header: 'Land', render: (league) => league.country?.name ?? '—' },
-    { key: 'priority', header: 'Priorität', align: 'right', render: (league) => league.priority },
+    { key: 'sport', header: 'Sport', render: (league) => league.sport.name },
+    { key: 'country', header: 'Country', render: (league) => league.country?.name ?? '—' },
+    { key: 'priority', header: 'Priority', align: 'right', render: (league) => league.priority },
   ];
 
   return (
     <>
       <PageHeader
-        title="Ligen"
-        description="Die Priorität bestimmt die Reihenfolge der Liga-Blöcke im Feed."
+        title="Leagues"
+        description="Priority decides the order of the league blocks in the feed."
       />
       {leagues.isError ? <ErrorBox error={leagues.error} /> : null}
       <DataTable

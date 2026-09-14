@@ -55,12 +55,12 @@ export default function SettingsPage(): ReactNode {
   const columns: Column<SettingRow>[] = [
     {
       key: 'key',
-      header: 'Schlüssel',
+      header: 'Key',
       render: (row) => <code className="font-mono">{row.key}</code>,
     },
     {
       key: 'value',
-      header: 'Wert',
+      header: 'Value',
       render: (row) => (
         <pre className="max-w-xl overflow-x-auto text-[11px] text-ink-muted">
           {JSON.stringify(row.value, null, 2)}
@@ -69,24 +69,24 @@ export default function SettingsPage(): ReactNode {
     },
     {
       key: 'updated',
-      header: 'Geändert',
+      header: 'Updated',
       align: 'right',
-      render: (row) => new Date(row.updatedAt).toLocaleString('de-DE'),
+      render: (row) => new Date(row.updatedAt).toLocaleString('en-GB'),
     },
   ];
 
   return (
     <>
-      <PageHeader title="Einstellungen" description="Plattformweite Konfiguration." />
+      <PageHeader title="Settings" description="Platform-wide configuration." />
 
       <section className="card mb-5 p-4">
-        <h2 className="mb-3 text-[14px] font-bold">Empfehlungsprogramm</h2>
+        <h2 className="mb-3 text-[14px] font-bold">Referral programme</h2>
         {referral.isError ? <ErrorBox error={referral.error} /> : null}
         {program ? (
           <div className="flex flex-col gap-3">
             <div className="grid gap-3 sm:grid-cols-4">
               <Select
-                label="Prämienart"
+                label="Reward type"
                 value={program.rewardType}
                 onChange={(event) => setProgram({ ...program, rewardType: event.target.value })}
                 options={['FREE_DAYS', 'CREDIT', 'DISCOUNT_COUPON'].map((value) => ({
@@ -95,7 +95,7 @@ export default function SettingsPage(): ReactNode {
                 }))}
               />
               <Field
-                label="Gratistage"
+                label="Free days"
                 type="number"
                 min="0"
                 value={String(program.rewardDays)}
@@ -104,7 +104,7 @@ export default function SettingsPage(): ReactNode {
                 }
               />
               <Field
-                label="Guthaben (Cent)"
+                label="Credit (cents)"
                 type="number"
                 min="0"
                 value={String(program.rewardAmountCents)}
@@ -113,7 +113,7 @@ export default function SettingsPage(): ReactNode {
                 }
               />
               <Field
-                label="Mindestkauf (Cent)"
+                label="Minimum purchase (cents)"
                 type="number"
                 min="0"
                 value={String(program.minPurchaseCents)}
@@ -124,7 +124,7 @@ export default function SettingsPage(): ReactNode {
             </div>
             <div className="flex items-end gap-4">
               <Field
-                label="Gültigkeit (Tage)"
+                label="Valid for (days)"
                 type="number"
                 min="1"
                 value={String(program.expiresInDays)}
@@ -133,12 +133,12 @@ export default function SettingsPage(): ReactNode {
                 }
               />
               <Toggle
-                label="Programm aktiv"
+                label="Programme active"
                 checked={program.isActive}
                 onChange={(value) => setProgram({ ...program, isActive: value })}
               />
               <Button onClick={() => saveProgram.mutate()} disabled={saveProgram.isPending}>
-                Speichern
+                Save
               </Button>
             </div>
             {saveProgram.isError ? <ErrorBox error={saveProgram.error} /> : null}
@@ -146,7 +146,7 @@ export default function SettingsPage(): ReactNode {
         ) : null}
       </section>
 
-      <h2 className="mb-2 text-[14px] font-bold">Gespeicherte Einstellungen</h2>
+      <h2 className="mb-2 text-[14px] font-bold">Stored settings</h2>
       <DataTable
         columns={columns}
         rows={settings.data?.items ?? []}

@@ -100,7 +100,13 @@ catalogues define the same keys. Transactional email follows the same shape in
 
 ## Authoring the second language
 
-Every admin form that owns content has an "Englische Fassung" block: tips and
+The admin console itself is English only — it is a staff tool, not a customer
+surface, so it is not localised and its API client always sends
+`accept-language: en` regardless of the operator's own stored language.
+
+Content is a separate matter: it is authored in German (the default content
+locale), so the base fields of each form are labelled "(German)" and every form
+that owns content carries an "English version" block underneath — tips and
 combos, subscription plans, Fix Odds packages, promotions, polls and
 notification campaigns. Fields left empty simply fall back.
 

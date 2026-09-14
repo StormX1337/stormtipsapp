@@ -40,16 +40,16 @@ export default function TeamsPage(): ReactNode {
         </div>
       ),
     },
-    { key: 'short', header: 'Kurzname', render: (team) => team.shortName ?? '—' },
-    { key: 'code', header: 'Kürzel', render: (team) => team.code ?? '—' },
+    { key: 'short', header: 'Short name', render: (team) => team.shortName ?? '—' },
+    { key: 'code', header: 'Code', render: (team) => team.code ?? '—' },
     {
       key: 'logo',
       header: 'Logo',
       render: (team) =>
         team.logoUrl ? (
-          <span className="text-[11px] text-ink-dim">hinterlegt</span>
+          <span className="text-[11px] text-ink-dim">uploaded</span>
         ) : (
-          <span className="text-[11px] text-ink-dim">Monogramm</span>
+          <span className="text-[11px] text-ink-dim">Monogram</span>
         ),
     },
   ];
@@ -58,7 +58,7 @@ export default function TeamsPage(): ReactNode {
     <>
       <PageHeader
         title="Teams"
-        description="Ohne hinterlegtes Logo rendert die App ein farbiges Monogramm — es werden keine fremden Wappen ausgeliefert."
+        description="Without an uploaded logo the app renders a coloured monogram — no third-party crests are ever shipped."
       />
       {teams.isError ? <ErrorBox error={teams.error} /> : null}
       <DataTable

@@ -45,13 +45,13 @@ export default function ReportsPage(): ReactNode {
   });
 
   const dayColumns: Column<StatisticsDTO['byDay'][number]>[] = [
-    { key: 'date', header: 'Tag', render: (row) => row.date },
-    { key: 'tips', header: 'Analysen', align: 'right', render: (row) => row.tips },
-    { key: 'won', header: 'Gewonnen', align: 'right', render: (row) => row.won },
-    { key: 'lost', header: 'Verloren', align: 'right', render: (row) => row.lost },
+    { key: 'date', header: 'Day', render: (row) => row.date },
+    { key: 'tips', header: 'Analyses', align: 'right', render: (row) => row.tips },
+    { key: 'won', header: 'Won', align: 'right', render: (row) => row.won },
+    { key: 'lost', header: 'Lost', align: 'right', render: (row) => row.lost },
     {
       key: 'profit',
-      header: 'Gewinn',
+      header: 'Profit',
       align: 'right',
       render: (row) => (
         <span className={'tabular ' + (row.profit >= 0 ? 'text-won' : 'text-lost')}>
@@ -61,7 +61,7 @@ export default function ReportsPage(): ReactNode {
     },
     {
       key: 'cumulative',
-      header: 'Kumuliert',
+      header: 'Cumulative',
       align: 'right',
       render: (row) => <span className="tabular font-bold">{row.cumulativeProfit.toFixed(2)}</span>,
     },
@@ -71,7 +71,7 @@ export default function ReportsPage(): ReactNode {
     <>
       <PageHeader
         title="Reports"
-        description="Tages-, Liga- und Marktauswertung mit CSV-Export für die Buchhaltung."
+        description="Daily, league and market breakdowns with a CSV export for accounting."
         actions={
           <Button
             variant="outline"
@@ -82,31 +82,31 @@ export default function ReportsPage(): ReactNode {
                 `storm-tips-${product}-${window}.csv`,
                 toCsv(
                   stats.data.byDay.map((row) => ({
-                    Tag: row.date,
-                    Analysen: row.tips,
-                    Gewonnen: row.won,
-                    Verloren: row.lost,
-                    Gewinn: row.profit.toFixed(2),
-                    Kumuliert: row.cumulativeProfit.toFixed(2),
+                    Day: row.date,
+                    Analyses: row.tips,
+                    Won: row.won,
+                    Lost: row.lost,
+                    Profit: row.profit.toFixed(2),
+                    Cumulative: row.cumulativeProfit.toFixed(2),
                   })),
                 ),
               );
             }}
           >
-            <Download size={14} aria-hidden /> CSV exportieren
+            <Download size={14} aria-hidden /> Export CSV
           </Button>
         }
       />
 
       <div className="mb-3 grid max-w-md gap-2 sm:grid-cols-2">
         <Select
-          label="Produkt"
+          label="Product"
           value={product}
           onChange={(event) => setProduct(event.target.value as ProductCode | 'ALL')}
           options={PRODUCTS.map((value) => ({ value, label: value }))}
         />
         <Select
-          label="Zeitraum"
+          label="Window"
           value={window}
           onChange={(event) => setWindow(event.target.value as StatsWindow)}
           options={WINDOWS.map((value) => ({ value, label: value }))}
@@ -120,21 +120,21 @@ export default function ReportsPage(): ReactNode {
         rows={stats.data?.byDay ?? []}
         loading={stats.isPending}
         rowKey={(row) => row.date}
-        empty="Keine abgerechneten Analysen im Zeitraum"
+        empty="No settled analyses in this window"
       />
 
-      <h2 className="mt-6 mb-2 text-[14px] font-bold">Nach Liga</h2>
+      <h2 className="mt-6 mb-2 text-[14px] font-bold">By league</h2>
       <DataTable
         columns={[
           {
             key: 'league',
-            header: 'Liga',
+            header: 'League',
             render: (row: StatisticsDTO['byLeague'][number]) => row.label,
           },
-          { key: 'tips', header: 'Analysen', align: 'right', render: (row) => row.tips },
+          { key: 'tips', header: 'Analyses', align: 'right', render: (row) => row.tips },
           {
             key: 'winRate',
-            header: 'Trefferquote',
+            header: 'Win rate',
             align: 'right',
             render: (row) => `${row.winRate.toFixed(1)}%`,
           },
@@ -150,7 +150,7 @@ export default function ReportsPage(): ReactNode {
           },
           {
             key: 'profit',
-            header: 'Gewinn',
+            header: 'Profit',
             align: 'right',
             render: (row) => <span className="tabular font-bold">{row.profit.toFixed(2)}</span>,
           },
@@ -160,18 +160,18 @@ export default function ReportsPage(): ReactNode {
         rowKey={(row) => row.key}
       />
 
-      <h2 className="mt-6 mb-2 text-[14px] font-bold">Nach Wettmarkt</h2>
+      <h2 className="mt-6 mb-2 text-[14px] font-bold">By market</h2>
       <DataTable
         columns={[
           {
             key: 'market',
-            header: 'Markt',
+            header: 'Market',
             render: (row: StatisticsDTO['byMarket'][number]) => row.label,
           },
-          { key: 'tips', header: 'Analysen', align: 'right', render: (row) => row.tips },
+          { key: 'tips', header: 'Analyses', align: 'right', render: (row) => row.tips },
           {
             key: 'avgOdds',
-            header: 'Ø Quote',
+            header: 'Avg odds',
             align: 'right',
             render: (row) => row.avgOdds.toFixed(2),
           },
@@ -187,7 +187,7 @@ export default function ReportsPage(): ReactNode {
           },
           {
             key: 'profit',
-            header: 'Gewinn',
+            header: 'Profit',
             align: 'right',
             render: (row) => <span className="tabular font-bold">{row.profit.toFixed(2)}</span>,
           },

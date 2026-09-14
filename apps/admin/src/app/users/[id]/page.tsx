@@ -88,22 +88,22 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
   const entitlementColumns: Column<EntitlementDTO>[] = [
     {
       key: 'product',
-      header: 'Produkt',
+      header: 'Product',
       render: (row) => <Badge tone="warning">{row.product}</Badge>,
     },
     {
       key: 'active',
-      header: 'Aktiv',
+      header: 'Active',
       render: (row) => (
-        <Badge tone={row.active ? 'positive' : 'neutral'}>{row.active ? 'JA' : 'NEIN'}</Badge>
+        <Badge tone={row.active ? 'positive' : 'neutral'}>{row.active ? 'YES' : 'NO'}</Badge>
       ),
     },
-    { key: 'source', header: 'Quelle', render: (row) => row.source },
+    { key: 'source', header: 'Source', render: (row) => row.source },
     {
       key: 'expires',
-      header: 'Läuft ab',
+      header: 'Expires',
       render: (row) =>
-        row.expiresAt ? new Date(row.expiresAt).toLocaleString('de-DE') : 'unbefristet',
+        row.expiresAt ? new Date(row.expiresAt).toLocaleString('en-GB') : 'open-ended',
     },
     {
       key: 'actions',
@@ -112,7 +112,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
       render: (row) =>
         can('ADMIN') && row.active ? (
           <Button size="sm" variant="danger" onClick={() => revoke.mutate(row.product)}>
-            Entziehen
+            Revoke
           </Button>
         ) : null,
     },
@@ -122,29 +122,29 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
     <>
       <PageHeader
         title={user.displayName ?? user.email}
-        description={`${user.email} · registriert ${new Date(user.createdAt).toLocaleDateString('de-DE')}`}
+        description={`${user.email} · signed up ${new Date(user.createdAt).toLocaleDateString('en-GB')}`}
         actions={
           can('ADMIN') ? (
             <>
               <Button variant="outline" onClick={() => setGrantOpen(true)}>
-                Zugang gewähren
+                Grant access
               </Button>
               <Button variant="ghost" onClick={() => logoutAll.mutate()}>
-                Alle Sitzungen beenden
+                End all sessions
               </Button>
               {user.status === 'BANNED' ? (
                 <Button variant="outline" onClick={() => unban.mutate()}>
-                  Entsperren
+                  Unsuspend
                 </Button>
               ) : (
                 <Button
                   variant="danger"
                   onClick={() => {
-                    const reason = window.prompt('Grund der Sperre?') ?? '';
+                    const reason = window.prompt('Reason for the suspension?') ?? '';
                     if (reason) ban.mutate(reason);
                   }}
                 >
-                  Sperren
+                  Suspend
                 </Button>
               )}
             </>
@@ -154,7 +154,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
 
       <section className="mb-4 grid gap-3 sm:grid-cols-4">
         <div className="card px-3 py-3">
-          <p className="label">Rolle</p>
+          <p className="label">Role</p>
           <Badge>{user.role}</Badge>
         </div>
         <div className="card px-3 py-3">
@@ -162,36 +162,36 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
           <Badge tone={user.status === 'ACTIVE' ? 'positive' : 'negative'}>{user.status}</Badge>
         </div>
         <div className="card px-3 py-3">
-          <p className="label">Letzter Login</p>
+          <p className="label">Last sign-in</p>
           <p className="text-[12.5px]">
             {detail.data.lastLoginAt
-              ? new Date(detail.data.lastLoginAt).toLocaleString('de-DE')
+              ? new Date(detail.data.lastLoginAt).toLocaleString('en-GB')
               : '—'}
           </p>
         </div>
         <div className="card px-3 py-3">
-          <p className="label">Empfehlungen</p>
+          <p className="label">Referrals</p>
           <p className="tabular text-[16px] font-bold">{detail.data.referralCount}</p>
         </div>
       </section>
 
-      <h2 className="mb-2 text-[14px] font-bold">Zugänge</h2>
+      <h2 className="mb-2 text-[14px] font-bold">Entitlements</h2>
       <DataTable
         columns={entitlementColumns}
         rows={user.entitlements}
         rowKey={(row) => `${row.product}-${row.source}-${row.expiresAt ?? 'none'}`}
-        empty="Keine Zugänge"
+        empty="No entitlements"
       />
 
-      <h2 className="mt-5 mb-2 text-[14px] font-bold">Abonnements</h2>
+      <h2 className="mt-5 mb-2 text-[14px] font-bold">Subscriptions</h2>
       <DataTable
         columns={[
           {
             key: 'plan',
-            header: 'Tarif',
+            header: 'Plan',
             render: (row) => row.plan?.name ?? row.products.join(' + '),
           },
-          { key: 'provider', header: 'Anbieter', render: (row) => <Badge>{row.provider}</Badge> },
+          { key: 'provider', header: 'Provider', render: (row) => <Badge>{row.provider}</Badge> },
           {
             key: 'status',
             header: 'Status',
@@ -201,25 +201,25 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
           },
           {
             key: 'end',
-            header: 'Periode bis',
+            header: 'Period ends',
             render: (row) =>
               row.currentPeriodEnd
-                ? new Date(row.currentPeriodEnd).toLocaleDateString('de-DE')
+                ? new Date(row.currentPeriodEnd).toLocaleDateString('en-GB')
                 : '—',
           },
         ]}
         rows={subscriptions}
         rowKey={(row) => row.id}
-        empty="Keine Abonnements"
+        empty="No subscriptions"
       />
 
-      <h2 className="mt-5 mb-2 text-[14px] font-bold">Zahlungen</h2>
+      <h2 className="mt-5 mb-2 text-[14px] font-bold">Payments</h2>
       <DataTable
         columns={[
-          { key: 'desc', header: 'Beschreibung', render: (row) => row.description ?? row.provider },
+          { key: 'desc', header: 'Description', render: (row) => row.description ?? row.provider },
           {
             key: 'amount',
-            header: 'Betrag',
+            header: 'Amount',
             align: 'right',
             render: (row) => <span className="tabular">{row.amount.formatted}</span>,
           },
@@ -234,53 +234,53 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
           },
           {
             key: 'date',
-            header: 'Datum',
+            header: 'Date',
             align: 'right',
             render: (row) =>
               row.paidAt
-                ? new Date(row.paidAt).toLocaleString('de-DE')
-                : new Date(row.createdAt).toLocaleString('de-DE'),
+                ? new Date(row.paidAt).toLocaleString('en-GB')
+                : new Date(row.createdAt).toLocaleString('en-GB'),
           },
         ]}
         rows={payments}
         rowKey={(row) => row.id}
-        empty="Keine Zahlungen"
+        empty="No payments"
       />
 
-      <h2 className="mt-5 mb-2 text-[14px] font-bold">Aktive Sitzungen</h2>
+      <h2 className="mt-5 mb-2 text-[14px] font-bold">Active sessions</h2>
       <DataTable
         columns={[
           { key: 'ip', header: 'IP', render: (row) => row.ip ?? '—' },
           {
             key: 'ua',
-            header: 'Gerät',
+            header: 'Device',
             render: (row) => (
               <span className="text-ink-dim">{row.userAgent?.slice(0, 70) ?? '—'}</span>
             ),
           },
           {
             key: 'last',
-            header: 'Zuletzt',
+            header: 'Last used',
             align: 'right',
-            render: (row) => new Date(row.lastUsedAt).toLocaleString('de-DE'),
+            render: (row) => new Date(row.lastUsedAt).toLocaleString('en-GB'),
           },
         ]}
         rows={sessions}
         rowKey={(row) => row.id}
-        empty="Keine aktiven Sitzungen"
+        empty="No active sessions"
       />
 
       <Modal
         open={grantOpen}
         onClose={() => setGrantOpen(false)}
-        title="Zugang gewähren"
+        title="Grant access"
         footer={
           <>
             <Button variant="ghost" onClick={() => setGrantOpen(false)}>
-              Abbrechen
+              Cancel
             </Button>
             <Button onClick={() => grant.mutate()} disabled={grant.isPending}>
-              Gewähren
+              Grant
             </Button>
           </>
         }
@@ -288,7 +288,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
         <div className="flex flex-col gap-3">
           {grant.isError ? <ErrorBox error={grant.error} /> : null}
           <Select
-            label="Produkt"
+            label="Product"
             value={grantProduct}
             onChange={(event) => setGrantProduct(event.target.value)}
             options={['VIP', 'EXTRA', 'COMBO', 'FIX_ODDS'].map((value) => ({
@@ -297,17 +297,17 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
             }))}
           />
           <Field
-            label="Dauer in Tagen"
+            label="Duration in days"
             type="number"
             min="1"
             value={grantDays}
             onChange={(event) => setGrantDays(event.target.value)}
           />
           <Field
-            label="Notiz"
+            label="Note"
             value={grantNote}
             onChange={(event) => setGrantNote(event.target.value)}
-            placeholder="Grund der manuellen Freischaltung"
+            placeholder="Why this access was granted manually"
           />
         </div>
       </Modal>

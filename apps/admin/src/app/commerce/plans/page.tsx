@@ -119,7 +119,7 @@ export default function PlansPage(): ReactNode {
   const columns: Column<SubscriptionPlanDTO>[] = [
     {
       key: 'name',
-      header: 'Tarif',
+      header: 'Plan',
       render: (plan) => (
         <div>
           <p className="font-medium">{plan.name}</p>
@@ -129,7 +129,7 @@ export default function PlansPage(): ReactNode {
     },
     {
       key: 'products',
-      header: 'Produkte',
+      header: 'Products',
       render: (plan) => (
         <div className="flex flex-wrap gap-1">
           {plan.products.map((product) => (
@@ -142,20 +142,20 @@ export default function PlansPage(): ReactNode {
     },
     {
       key: 'price',
-      header: 'Preis',
+      header: 'Price',
       align: 'right',
       render: (plan) => (
         <div>
           <p className="tabular font-bold">{plan.price.formatted}</p>
           {plan.pricePerMonth ? (
-            <p className="text-[11px] text-ink-dim">{plan.pricePerMonth.formatted}/Monat</p>
+            <p className="text-[11px] text-ink-dim">{plan.pricePerMonth.formatted}/month</p>
           ) : null}
         </div>
       ),
     },
     {
       key: 'duration',
-      header: 'Laufzeit',
+      header: 'Term',
       render: (plan) => `${plan.intervalCount} × ${plan.interval}`,
     },
     {
@@ -165,7 +165,7 @@ export default function PlansPage(): ReactNode {
     },
     {
       key: 'store',
-      header: 'Store-IDs',
+      header: 'Store IDs',
       render: (plan) => (
         <div className="text-[11px] text-ink-dim">
           <p>{plan.stripePriceId ?? 'stripe: —'}</p>
@@ -216,7 +216,7 @@ export default function PlansPage(): ReactNode {
             size="sm"
             variant="ghost"
             onClick={() => {
-              if (window.confirm('Tarif deaktivieren bzw. löschen?')) remove.mutate(plan.id);
+              if (window.confirm('Deactivate or delete this plan?')) remove.mutate(plan.id);
             }}
           >
             <Trash2 size={14} aria-hidden />
@@ -229,8 +229,8 @@ export default function PlansPage(): ReactNode {
   return (
     <>
       <PageHeader
-        title="Tarife"
-        description="Preise, Laufzeiten und Store-Produkt-IDs. Alle Werte werden live in der App verwendet."
+        title="Plans"
+        description="Prices, terms and store product IDs. Every value is used live by the app."
         actions={
           <Button
             onClick={() => {
@@ -239,7 +239,7 @@ export default function PlansPage(): ReactNode {
               setOpen(true);
             }}
           >
-            <Plus size={15} aria-hidden /> Neuer Tarif
+            <Plus size={15} aria-hidden /> New plan
           </Button>
         }
       />
@@ -257,14 +257,14 @@ export default function PlansPage(): ReactNode {
         open={open}
         onClose={() => setOpen(false)}
         wide
-        title={form.id ? 'Tarif bearbeiten' : 'Neuer Tarif'}
+        title={form.id ? 'Edit plan' : 'New plan'}
         footer={
           <>
             <Button variant="ghost" onClick={() => setOpen(false)}>
-              Abbrechen
+              Cancel
             </Button>
             <Button onClick={() => save.mutate()} disabled={save.isPending}>
-              Speichern
+              Save
             </Button>
           </>
         }
@@ -280,20 +280,20 @@ export default function PlansPage(): ReactNode {
               placeholder="combo-3m"
             />
             <Field
-              label="Name"
+              label="Name (German)"
               value={form.name}
               onChange={(event) => setForm({ ...form, name: event.target.value })}
             />
           </div>
 
           <Field
-            label="Beschreibung"
+            label="Description (German)"
             value={form.description}
             onChange={(event) => setForm({ ...form, description: event.target.value })}
           />
           <TranslationFields
             locale="en"
-            title="Englische Fassung"
+            title="English version"
             fields={[
               { name: 'name', label: 'Name' },
               { name: 'description', label: 'Description', multiline: true },
@@ -304,7 +304,7 @@ export default function PlansPage(): ReactNode {
           />
 
           <div>
-            <span className="label">Enthaltene Produkte</span>
+            <span className="label">Included products</span>
             <div className="flex flex-wrap gap-3">
               {PRODUCTS.map((product) => (
                 <Toggle
@@ -326,21 +326,21 @@ export default function PlansPage(): ReactNode {
 
           <div className="grid gap-3 sm:grid-cols-4">
             <Field
-              label="Preis (€)"
+              label="Price (€)"
               type="number"
               step="0.01"
               value={form.price}
               onChange={(event) => setForm({ ...form, price: event.target.value })}
             />
             <Field
-              label="Streichpreis (€)"
+              label="Compare-at price (€)"
               type="number"
               step="0.01"
               value={form.compareAtPrice}
               onChange={(event) => setForm({ ...form, compareAtPrice: event.target.value })}
             />
             <Select
-              label="Intervall"
+              label="Interval"
               value={form.interval}
               onChange={(event) => setForm({ ...form, interval: event.target.value })}
               options={['DAY', 'WEEK', 'MONTH', 'YEAR', 'ONE_TIME'].map((value) => ({
@@ -349,7 +349,7 @@ export default function PlansPage(): ReactNode {
               }))}
             />
             <Field
-              label="Anzahl"
+              label="Count"
               type="number"
               min="1"
               value={form.intervalCount}
@@ -359,7 +359,7 @@ export default function PlansPage(): ReactNode {
 
           <div className="grid gap-3 sm:grid-cols-3">
             <Field
-              label="Testtage"
+              label="Trial days"
               type="number"
               min="0"
               value={form.trialDays}
@@ -372,10 +372,10 @@ export default function PlansPage(): ReactNode {
               options={BADGES.map((value) => ({ value, label: value }))}
             />
             <Field
-              label="Hinweistext"
+              label="Highlight (German)"
               value={form.highlight}
               onChange={(event) => setForm({ ...form, highlight: event.target.value })}
-              placeholder="Spare 21,98 €"
+              placeholder="Save €21.98"
             />
           </div>
 
@@ -399,12 +399,12 @@ export default function PlansPage(): ReactNode {
 
           <div className="flex gap-4">
             <Toggle
-              label="Als beliebtester Tarif markieren"
+              label="Mark as the most popular plan"
               checked={form.isPopular}
               onChange={(value) => setForm({ ...form, isPopular: value })}
             />
             <Toggle
-              label="Aktiv"
+              label="Active"
               checked={form.isActive}
               onChange={(value) => setForm({ ...form, isActive: value })}
             />

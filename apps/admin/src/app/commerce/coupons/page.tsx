@@ -102,7 +102,7 @@ export default function CouponsPage(): ReactNode {
     },
     {
       key: 'discount',
-      header: 'Rabatt',
+      header: 'Discount',
       render: (coupon) =>
         coupon.discountType === 'PERCENTAGE'
           ? `${coupon.discountValue} %`
@@ -110,7 +110,7 @@ export default function CouponsPage(): ReactNode {
     },
     {
       key: 'usage',
-      header: 'Einlösungen',
+      header: 'Redemptions',
       align: 'right',
       render: (coupon) => (
         <span className="tabular">
@@ -121,10 +121,10 @@ export default function CouponsPage(): ReactNode {
     },
     {
       key: 'products',
-      header: 'Produkte',
+      header: 'Products',
       render: (coupon) =>
         coupon.applicableProducts.length === 0 ? (
-          <span className="text-ink-dim">alle</span>
+          <span className="text-ink-dim">all</span>
         ) : (
           <div className="flex gap-1">
             {coupon.applicableProducts.map((product) => (
@@ -137,16 +137,16 @@ export default function CouponsPage(): ReactNode {
     },
     {
       key: 'valid',
-      header: 'Gültig bis',
+      header: 'Valid until',
       render: (coupon) =>
-        coupon.validUntil ? new Date(coupon.validUntil).toLocaleDateString('de-DE') : 'unbefristet',
+        coupon.validUntil ? new Date(coupon.validUntil).toLocaleDateString('en-GB') : 'open-ended',
     },
     {
       key: 'active',
       header: 'Status',
       render: (coupon) => (
         <Badge tone={coupon.isActive ? 'positive' : 'neutral'}>
-          {coupon.isActive ? 'AKTIV' : 'INAKTIV'}
+          {coupon.isActive ? 'ACTIVE' : 'INACTIVE'}
         </Badge>
       ),
     },
@@ -166,11 +166,11 @@ export default function CouponsPage(): ReactNode {
   return (
     <>
       <PageHeader
-        title="Gutscheine"
-        description="Rabattcodes mit Limits pro Code und pro Nutzer."
+        title="Coupons"
+        description="Discount codes with limits per code and per user."
         actions={
           <Button onClick={() => setOpen(true)}>
-            <Plus size={15} aria-hidden /> Neuer Code
+            <Plus size={15} aria-hidden /> New code
           </Button>
         }
       />
@@ -195,14 +195,14 @@ export default function CouponsPage(): ReactNode {
       <Modal
         open={open}
         onClose={() => setOpen(false)}
-        title="Neuer Gutschein"
+        title="New coupon"
         footer={
           <>
             <Button variant="ghost" onClick={() => setOpen(false)}>
-              Abbrechen
+              Cancel
             </Button>
             <Button onClick={() => create.mutate()} disabled={create.isPending}>
-              Anlegen
+              Create
             </Button>
           </>
         }
@@ -216,22 +216,22 @@ export default function CouponsPage(): ReactNode {
             placeholder="WELCOME20"
           />
           <Field
-            label="Beschreibung"
+            label="Description"
             value={form.description}
             onChange={(event) => setForm({ ...form, description: event.target.value })}
           />
           <div className="grid gap-3 sm:grid-cols-2">
             <Select
-              label="Art"
+              label="Type"
               value={form.discountType}
               onChange={(event) => setForm({ ...form, discountType: event.target.value })}
               options={[
-                { value: 'PERCENTAGE', label: 'Prozent' },
-                { value: 'FIXED', label: 'Fester Betrag' },
+                { value: 'PERCENTAGE', label: 'Percentage' },
+                { value: 'FIXED', label: 'Fixed amount' },
               ]}
             />
             <Field
-              label={form.discountType === 'PERCENTAGE' ? 'Rabatt (%)' : 'Rabatt (€)'}
+              label={form.discountType === 'PERCENTAGE' ? 'Discount (%)' : 'Discount (€)'}
               type="number"
               step={form.discountType === 'PERCENTAGE' ? '1' : '0.01'}
               value={form.discountValue}
@@ -240,21 +240,21 @@ export default function CouponsPage(): ReactNode {
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
             <Field
-              label="Max. Einlösungen"
+              label="Max redemptions"
               type="number"
               value={form.maxRedemptions}
               onChange={(event) => setForm({ ...form, maxRedemptions: event.target.value })}
-              placeholder="unbegrenzt"
+              placeholder="unlimited"
             />
             <Field
-              label="Pro Nutzer"
+              label="Per user"
               type="number"
               min="1"
               value={form.maxRedemptionsPerUser}
               onChange={(event) => setForm({ ...form, maxRedemptionsPerUser: event.target.value })}
             />
             <Field
-              label="Mindestbestellwert (€)"
+              label="Minimum order (€)"
               type="number"
               step="0.01"
               value={form.minPurchase}
@@ -262,7 +262,7 @@ export default function CouponsPage(): ReactNode {
             />
           </div>
           <div>
-            <span className="label">Gilt für Produkte (leer = alle)</span>
+            <span className="label">Applies to products (empty = all)</span>
             <div className="flex flex-wrap gap-3">
               {['VIP', 'EXTRA', 'COMBO', 'FIX_ODDS'].map((product) => (
                 <Toggle
@@ -282,7 +282,7 @@ export default function CouponsPage(): ReactNode {
             </div>
           </div>
           <Field
-            label="Gültig bis"
+            label="Valid until"
             type="datetime-local"
             value={form.validUntil}
             onChange={(event) => setForm({ ...form, validUntil: event.target.value })}

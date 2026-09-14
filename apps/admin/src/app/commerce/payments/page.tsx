@@ -20,10 +20,10 @@ export default function PaymentsPage(): ReactNode {
   });
 
   const columns: Column<PaymentRow>[] = [
-    { key: 'user', header: 'Nutzer', render: (row) => row.userEmail },
+    { key: 'user', header: 'User', render: (row) => row.userEmail },
     {
       key: 'desc',
-      header: 'Beschreibung',
+      header: 'Description',
       render: (row) => (
         <div>
           <p>{row.description ?? '—'}</p>
@@ -31,10 +31,10 @@ export default function PaymentsPage(): ReactNode {
         </div>
       ),
     },
-    { key: 'provider', header: 'Anbieter', render: (row) => <Badge>{row.provider}</Badge> },
+    { key: 'provider', header: 'Provider', render: (row) => <Badge>{row.provider}</Badge> },
     {
       key: 'amount',
-      header: 'Betrag',
+      header: 'Amount',
       align: 'right',
       render: (row) => <span className="tabular font-bold">{row.amount.formatted}</span>,
     },
@@ -57,10 +57,10 @@ export default function PaymentsPage(): ReactNode {
     },
     {
       key: 'date',
-      header: 'Datum',
+      header: 'Date',
       align: 'right',
       render: (row) =>
-        new Date(row.paidAt ?? row.createdAt).toLocaleString('de-DE', {
+        new Date(row.paidAt ?? row.createdAt).toLocaleString('en-GB', {
           dateStyle: 'short',
           timeStyle: 'short',
         }),
@@ -70,14 +70,14 @@ export default function PaymentsPage(): ReactNode {
   return (
     <>
       <PageHeader
-        title="Zahlungen"
+        title="Payments"
         description={
           payments.data
-            ? `Gesamtumsatz: ${(payments.data.totalRevenueCents / 100).toLocaleString('de-DE', {
+            ? `Total revenue: ${(payments.data.totalRevenueCents / 100).toLocaleString('en-GB', {
                 style: 'currency',
                 currency: 'EUR',
               })}`
-            : 'Alle erfolgreichen und fehlgeschlagenen Transaktionen.'
+            : 'Every successful and failed transaction.'
         }
       />
 

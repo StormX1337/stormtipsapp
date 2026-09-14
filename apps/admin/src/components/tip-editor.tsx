@@ -214,17 +214,17 @@ export function TipEditor({
       open={open}
       onClose={onClose}
       wide
-      title={tip ? 'Tipp bearbeiten' : 'Neuen Tipp anlegen'}
+      title={tip ? 'Edit tip' : 'New tip'}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            Abbrechen
+            Cancel
           </Button>
           <Button
             onClick={() => save.mutate()}
             disabled={save.isPending || !form.eventId || (needsLine && form.line === '')}
           >
-            {save.isPending ? 'Speichern…' : 'Speichern'}
+            {save.isPending ? 'Saving…' : 'Save'}
           </Button>
         </>
       }
@@ -233,8 +233,8 @@ export function TipEditor({
         {save.isError ? <ErrorBox error={save.error} /> : null}
 
         <Field
-          label="Event suchen"
-          placeholder="Team oder Liga"
+          label="Find an event"
+          placeholder="Team or league"
           value={eventSearch}
           onChange={(event) => setEventSearch(event.target.value)}
         />
@@ -244,10 +244,10 @@ export function TipEditor({
           value={form.eventId}
           onChange={(event) => setForm({ ...form, eventId: event.target.value })}
           options={[
-            { value: '', label: events.isPending ? 'Wird geladen…' : 'Bitte wählen' },
+            { value: '', label: events.isPending ? 'Loading…' : 'Select an event' },
             ...filteredEvents.map((event) => ({
               value: event.id,
-              label: `${new Date(event.startsAt).toLocaleString('de-DE', {
+              label: `${new Date(event.startsAt).toLocaleString('en-GB', {
                 day: '2-digit',
                 month: '2-digit',
                 hour: '2-digit',
@@ -259,7 +259,7 @@ export function TipEditor({
 
         <div className="grid gap-3 sm:grid-cols-2">
           <Select
-            label="Wettmarkt"
+            label="Market"
             value={form.marketType}
             onChange={(event) => {
               const marketType = event.target.value;
@@ -274,43 +274,43 @@ export function TipEditor({
             options={Object.values(MarketType).map((value) => ({ value, label: value }))}
           />
           <Select
-            label="Auswahl"
+            label="Selection"
             value={form.selectionKey}
             onChange={(event) => setForm({ ...form, selectionKey: event.target.value })}
             options={
               allowedSelections.length > 0
                 ? allowedSelections.map((value) => ({ value, label: value }))
-                : [{ value: form.selectionKey, label: form.selectionKey || 'frei' }]
+                : [{ value: form.selectionKey, label: form.selectionKey || 'free text' }]
             }
           />
         </div>
 
         {allowedSelections.length === 0 ? (
           <Field
-            label="Auswahl (frei, z. B. 2-1)"
+            label="Selection (free text, e.g. 2-1)"
             value={form.selectionKey}
             onChange={(event) => setForm({ ...form, selectionKey: event.target.value })}
           />
         ) : null}
 
         <Field
-          label="Anzeigetext"
-          hint="Wird dem Nutzer angezeigt und automatisch vorgeschlagen."
+          label="Display label"
+          hint="Shown to the reader; suggested automatically as you edit."
           value={form.selectionLabel}
           onChange={(event) => setForm({ ...form, selectionLabel: event.target.value })}
         />
 
         <div className="grid gap-3 sm:grid-cols-4">
           <Field
-            label={needsLine ? 'Linie *' : 'Linie'}
+            label={needsLine ? 'Line *' : 'Line'}
             type="number"
             step="0.25"
             value={form.line}
             onChange={(event) => setForm({ ...form, line: event.target.value })}
-            error={needsLine && form.line === '' ? 'Pflichtfeld' : undefined}
+            error={needsLine && form.line === '' ? 'Required' : undefined}
           />
           <Field
-            label="Quote"
+            label="Odds"
             type="number"
             step="0.01"
             min="1.01"
@@ -318,14 +318,14 @@ export function TipEditor({
             onChange={(event) => setForm({ ...form, odds: event.target.value })}
           />
           <Field
-            label="Einsatz"
+            label="Stake"
             type="number"
             step="0.5"
             value={form.stake}
             onChange={(event) => setForm({ ...form, stake: event.target.value })}
           />
           <Field
-            label="Konfidenz %"
+            label="Confidence %"
             type="number"
             min="1"
             max="100"
@@ -336,7 +336,7 @@ export function TipEditor({
 
         <div className="grid gap-3 sm:grid-cols-3">
           <Select
-            label="Produkt"
+            label="Product"
             value={form.product}
             onChange={(event) => setForm({ ...form, product: event.target.value })}
             options={PRODUCTS.map((value) => ({ value, label: value }))}
@@ -348,7 +348,7 @@ export function TipEditor({
             options={STATUSES.map((value) => ({ value, label: value }))}
           />
           <Select
-            label="Buchmacher"
+            label="Bookmaker"
             value={form.bookmakerId}
             onChange={(event) => setForm({ ...form, bookmakerId: event.target.value })}
             options={[
@@ -363,35 +363,35 @@ export function TipEditor({
 
         <div className="grid gap-3 sm:grid-cols-2">
           <Field
-            label="Veröffentlichen am"
+            label="Publish at"
             type="datetime-local"
-            hint="Leer = sofort beim Status PUBLISHED"
+            hint="Empty = immediately once the status is PUBLISHED"
             value={form.publishAt}
             onChange={(event) => setForm({ ...form, publishAt: event.target.value })}
           />
           <Field
-            label="Tags (kommagetrennt)"
+            label="Tags (comma-separated)"
             value={form.tags}
             onChange={(event) => setForm({ ...form, tags: event.target.value })}
           />
         </div>
 
         <Toggle
-          label="Live-Tipp"
+          label="Live tip"
           checked={form.isLive}
           onChange={(value) => setForm({ ...form, isLive: value })}
         />
 
         <TextArea
-          label="Analyse"
+          label="Analysis (German)"
           value={form.analysis}
           onChange={(event) => setForm({ ...form, analysis: event.target.value })}
-          placeholder="Begründung der Auswahl…"
+          placeholder="Why this selection…"
         />
 
         <TranslationFields
           locale="en"
-          title="Englische Fassung"
+          title="English version"
           fields={[
             { name: 'title', label: 'Title' },
             { name: 'analysis', label: 'Analysis', multiline: true },

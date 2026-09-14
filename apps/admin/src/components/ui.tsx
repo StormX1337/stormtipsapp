@@ -165,7 +165,7 @@ export function Modal({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Schließen"
+            aria-label="Close"
             className="grid h-7 w-7 place-items-center rounded-sm text-ink-dim hover:bg-bg-card-alt hover:text-ink"
           >
             <X size={16} aria-hidden />
@@ -250,7 +250,7 @@ export interface Column<T> {
 export function DataTable<T>({
   columns,
   rows,
-  empty = 'Keine Einträge',
+  empty = 'No entries',
   loading,
   rowKey,
   onRowClick,
@@ -341,10 +341,10 @@ export function Pagination({
   return (
     <div className="mt-3 flex items-center justify-between gap-3">
       <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => onChange(page - 1)}>
-        Zurück
+        Previous
       </Button>
       <span className="text-[12px] text-ink-dim">
-        Seite {page} von {Math.max(1, totalPages)}
+        Page {page} of {Math.max(1, totalPages)}
       </span>
       <Button
         variant="outline"
@@ -352,7 +352,7 @@ export function Pagination({
         disabled={page >= totalPages}
         onClick={() => onChange(page + 1)}
       >
-        Weiter
+        Next
       </Button>
     </div>
   );
@@ -397,7 +397,7 @@ export function TranslationFields({
           </span>
         </span>
         <span className="text-[11px] text-ink-dim">
-          {filled > 0 ? `${filled}/${fields.length}` : 'leer'} · {open ? '▲' : '▼'}
+          {filled > 0 ? `${filled}/${fields.length}` : 'empty'} · {open ? '▲' : '▼'}
         </span>
       </button>
 

@@ -34,9 +34,9 @@ export default function SubscriptionsPage(): ReactNode {
   });
 
   const columns: Column<SubscriptionRow>[] = [
-    { key: 'user', header: 'Nutzer', render: (row) => row.userEmail },
-    { key: 'plan', header: 'Tarif', render: (row) => row.plan?.name ?? row.products.join(' + ') },
-    { key: 'provider', header: 'Anbieter', render: (row) => <Badge>{row.provider}</Badge> },
+    { key: 'user', header: 'User', render: (row) => row.userEmail },
+    { key: 'plan', header: 'Plan', render: (row) => row.plan?.name ?? row.products.join(' + ') },
+    { key: 'provider', header: 'Provider', render: (row) => <Badge>{row.provider}</Badge> },
     {
       key: 'status',
       header: 'Status',
@@ -56,21 +56,24 @@ export default function SubscriptionsPage(): ReactNode {
     },
     {
       key: 'renew',
-      header: 'Verlängert',
-      render: (row) => (row.willRenew ? 'ja' : 'nein'),
+      header: 'Renews',
+      render: (row) => (row.willRenew ? 'yes' : 'no'),
     },
     {
       key: 'end',
-      header: 'Periode bis',
+      header: 'Period ends',
       align: 'right',
       render: (row) =>
-        row.currentPeriodEnd ? new Date(row.currentPeriodEnd).toLocaleDateString('de-DE') : '—',
+        row.currentPeriodEnd ? new Date(row.currentPeriodEnd).toLocaleDateString('en-GB') : '—',
     },
   ];
 
   return (
     <>
-      <PageHeader title="Abonnements" description="Alle Abos über Stripe, Apple und Google." />
+      <PageHeader
+        title="Subscriptions"
+        description="Every subscription across Stripe, Apple and Google."
+      />
 
       {subscriptions.isError ? <ErrorBox error={subscriptions.error} /> : null}
 
@@ -89,15 +92,15 @@ export default function SubscriptionsPage(): ReactNode {
         />
       ) : null}
 
-      <h2 className="mt-6 mb-2 text-[14px] font-bold">Letzte Webhooks</h2>
+      <h2 className="mt-6 mb-2 text-[14px] font-bold">Recent webhooks</h2>
       <p className="mb-2 text-[12px] text-ink-muted">
-        Jedes Ereignis wird vor der Verarbeitung erfasst; ein erneuter Zustellversuch wird dadurch
-        wirkungslos.
+        Every event is recorded before it is processed, which makes a redelivery of the same event a
+        no-op.
       </p>
       <DataTable
         columns={[
-          { key: 'provider', header: 'Anbieter', render: (row) => <Badge>{row.provider}</Badge> },
-          { key: 'type', header: 'Typ', render: (row) => row.type },
+          { key: 'provider', header: 'Provider', render: (row) => <Badge>{row.provider}</Badge> },
+          { key: 'type', header: 'Type', render: (row) => row.type },
           {
             key: 'status',
             header: 'Status',
@@ -115,25 +118,25 @@ export default function SubscriptionsPage(): ReactNode {
               </Badge>
             ),
           },
-          { key: 'attempts', header: 'Versuche', align: 'right', render: (row) => row.attempts },
+          { key: 'attempts', header: 'Attempts', align: 'right', render: (row) => row.attempts },
           {
             key: 'error',
-            header: 'Fehler',
+            header: 'Error',
             render: (row) => (
               <span className="text-[11px] text-lost">{row.error?.slice(0, 80) ?? ''}</span>
             ),
           },
           {
             key: 'received',
-            header: 'Empfangen',
+            header: 'Received',
             align: 'right',
-            render: (row) => new Date(row.receivedAt).toLocaleString('de-DE'),
+            render: (row) => new Date(row.receivedAt).toLocaleString('en-GB'),
           },
         ]}
         rows={webhooks.data?.items ?? []}
         loading={webhooks.isPending}
         rowKey={(row) => row.id}
-        empty="Noch keine Webhooks empfangen"
+        empty="No webhooks received yet"
       />
     </>
   );

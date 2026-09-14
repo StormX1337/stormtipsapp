@@ -75,7 +75,7 @@ export default function PollsPage(): ReactNode {
   const columns: Column<PollDTO>[] = [
     {
       key: 'question',
-      header: 'Frage',
+      header: 'Question',
       render: (poll) => (
         <div>
           <p className="font-medium">{poll.question}</p>
@@ -83,7 +83,7 @@ export default function PollsPage(): ReactNode {
         </div>
       ),
     },
-    { key: 'kind', header: 'Art', render: (poll) => <Badge>{poll.kind}</Badge> },
+    { key: 'kind', header: 'Kind', render: (poll) => <Badge>{poll.kind}</Badge> },
     {
       key: 'status',
       header: 'Status',
@@ -91,11 +91,11 @@ export default function PollsPage(): ReactNode {
         <Badge tone={poll.status === 'ACTIVE' ? 'positive' : 'neutral'}>{poll.status}</Badge>
       ),
     },
-    { key: 'votes', header: 'Stimmen', align: 'right', render: (poll) => poll.totalVotes },
+    { key: 'votes', header: 'Votes', align: 'right', render: (poll) => poll.totalVotes },
     {
       key: 'ends',
-      header: 'Endet',
-      render: (poll) => (poll.endsAt ? new Date(poll.endsAt).toLocaleString('de-DE') : '—'),
+      header: 'Ends',
+      render: (poll) => (poll.endsAt ? new Date(poll.endsAt).toLocaleString('en-GB') : '—'),
     },
     {
       key: 'actions',
@@ -106,7 +106,7 @@ export default function PollsPage(): ReactNode {
           size="sm"
           variant="ghost"
           onClick={() => {
-            if (window.confirm('Umfrage löschen?')) remove.mutate(poll.id);
+            if (window.confirm('Delete this poll?')) remove.mutate(poll.id);
           }}
         >
           <Trash2 size={14} aria-hidden />
@@ -118,11 +118,11 @@ export default function PollsPage(): ReactNode {
   return (
     <>
       <PageHeader
-        title="Umfragen"
-        description="Nutzerabstimmungen mit Live-Auswertung."
+        title="Polls"
+        description="Reader votes with a live breakdown."
         actions={
           <Button onClick={() => setOpen(true)}>
-            <Plus size={15} aria-hidden /> Neue Umfrage
+            <Plus size={15} aria-hidden /> New poll
           </Button>
         }
       />
@@ -143,11 +143,11 @@ export default function PollsPage(): ReactNode {
       <Modal
         open={open}
         onClose={() => setOpen(false)}
-        title="Neue Umfrage"
+        title="New poll"
         footer={
           <>
             <Button variant="ghost" onClick={() => setOpen(false)}>
-              Abbrechen
+              Cancel
             </Button>
             <Button
               onClick={() => create.mutate()}
@@ -157,7 +157,7 @@ export default function PollsPage(): ReactNode {
                 form.options.filter((option) => option.trim()).length < 2
               }
             >
-              Anlegen
+              Create
             </Button>
           </>
         }
@@ -165,18 +165,18 @@ export default function PollsPage(): ReactNode {
         <div className="flex flex-col gap-3">
           {create.isError ? <ErrorBox error={create.error} /> : null}
           <Field
-            label="Frage"
+            label="Question (German)"
             value={form.question}
             onChange={(event) => setForm({ ...form, question: event.target.value })}
           />
           <Field
-            label="Beschreibung"
+            label="Description (German)"
             value={form.description}
             onChange={(event) => setForm({ ...form, description: event.target.value })}
           />
           <TranslationFields
             locale="en"
-            title="Englische Fassung"
+            title="English version"
             fields={[
               { name: 'question', label: 'Question' },
               { name: 'description', label: 'Description', multiline: true },
@@ -187,7 +187,7 @@ export default function PollsPage(): ReactNode {
 
           <div className="grid gap-3 sm:grid-cols-3">
             <Select
-              label="Art"
+              label="Kind"
               value={form.kind}
               onChange={(event) => setForm({ ...form, kind: event.target.value })}
               options={[
@@ -206,7 +206,7 @@ export default function PollsPage(): ReactNode {
               options={['DRAFT', 'ACTIVE', 'CLOSED'].map((value) => ({ value, label: value }))}
             />
             <Field
-              label="Endet am"
+              label="Ends at"
               type="datetime-local"
               value={form.endsAt}
               onChange={(event) => setForm({ ...form, endsAt: event.target.value })}
@@ -214,7 +214,7 @@ export default function PollsPage(): ReactNode {
           </div>
 
           <div>
-            <span className="label">Antwortoptionen</span>
+            <span className="label">Answer options</span>
             <div className="flex flex-col gap-2">
               {form.options.map((option, index) => (
                 <input
@@ -237,18 +237,18 @@ export default function PollsPage(): ReactNode {
               disabled={form.options.length >= 10}
               onClick={() => setForm({ ...form, options: [...form.options, ''] })}
             >
-              <Plus size={13} aria-hidden /> Option hinzufügen
+              <Plus size={13} aria-hidden /> Add option
             </Button>
           </div>
 
           <div className="flex gap-4">
             <Toggle
-              label="Mehrfachauswahl"
+              label="Allow multiple answers"
               checked={form.allowMultiple}
               onChange={(value) => setForm({ ...form, allowMultiple: value })}
             />
             <Toggle
-              label="Ergebnisse vor der Stimmabgabe zeigen"
+              label="Show results before voting"
               checked={form.showResultsBeforeVote}
               onChange={(value) => setForm({ ...form, showResultsBeforeVote: value })}
             />

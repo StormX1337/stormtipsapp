@@ -1,5 +1,8 @@
 import { apiBase, serverApiBase } from './config';
 
+/** The console is not localised; see the `accept-language` header below. */
+const ADMIN_LOCALE = 'en';
+
 const ACCESS_TOKEN_KEY = 'st.admin.accessToken';
 const REFRESH_TOKEN_KEY = 'st.admin.refreshToken';
 
@@ -95,6 +98,10 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
 
   const requestHeaders: Record<string, string> = {
     accept: 'application/json',
+    // The console is English-only, so it always asks the API for English
+    // content — independent of the signed-in operator's own language, which
+    // governs the customer-facing apps.
+    'accept-language': ADMIN_LOCALE,
     ...(headers as Record<string, string>),
   };
   if (body !== undefined) requestHeaders['content-type'] = 'application/json';
@@ -140,7 +147,7 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
 /** Server-side fetch (React Server Components) — never sends a user token. */
 export async function apiPublic<T>(path: string, revalidate = 60): Promise<T> {
   const response = await fetch(`${serverApiBase}${path}`, {
-    headers: { accept: 'application/json' },
+    headers: { accept: 'application/json', 'accept-language': ADMIN_LOCALE },
     next: { revalidate },
   });
   if (!response.ok) {

@@ -52,61 +52,66 @@ interface NavSection {
 /** Sidebar structure — mirrors the operational areas of the product. */
 const SECTIONS: NavSection[] = [
   {
-    title: 'Übersicht',
+    title: 'Overview',
     items: [
       { href: '/', label: 'Dashboard', Icon: LayoutDashboard },
-      { href: '/statistics', label: 'Statistik', Icon: BarChart3 },
+      { href: '/statistics', label: 'Statistics', Icon: BarChart3 },
       { href: '/reports', label: 'Reports', Icon: FileText },
     ],
   },
   {
-    title: 'Inhalte',
+    title: 'Content',
     items: [
-      { href: '/tips', label: 'Tipps', Icon: ListChecks },
+      { href: '/tips', label: 'Tips', Icon: ListChecks },
       { href: '/tips?product=VIP', label: 'VIP', Icon: Crown },
       { href: '/tips?product=EXTRA', label: 'Extra', Icon: Zap },
       { href: '/combos', label: 'Combo', Icon: Ticket },
-      { href: '/tips?live=true', label: 'Live-Tipps', Icon: Radio },
-      { href: '/polls', label: 'Umfragen', Icon: Vote },
+      { href: '/tips?live=true', label: 'Live tips', Icon: Radio },
+      { href: '/polls', label: 'Polls', Icon: Vote },
     ],
   },
   {
-    title: 'Katalog',
+    title: 'Catalogue',
     items: [
-      { href: '/catalogue/sports', label: 'Sportarten', Icon: Trophy, minRole: 'ADMIN' },
-      { href: '/catalogue/leagues', label: 'Ligen', Icon: Globe2, minRole: 'ADMIN' },
+      { href: '/catalogue/sports', label: 'Sports', Icon: Trophy, minRole: 'ADMIN' },
+      { href: '/catalogue/leagues', label: 'Leagues', Icon: Globe2, minRole: 'ADMIN' },
       { href: '/catalogue/teams', label: 'Teams', Icon: Building2, minRole: 'ADMIN' },
-      { href: '/catalogue/bookmakers', label: 'Buchmacher', Icon: BadgePercent, minRole: 'ADMIN' },
+      { href: '/catalogue/bookmakers', label: 'Bookmakers', Icon: BadgePercent, minRole: 'ADMIN' },
       {
         href: '/catalogue/events',
-        label: 'Events & Quoten',
+        label: 'Events & odds',
         Icon: CalendarRange,
         minRole: 'ADMIN',
       },
     ],
   },
   {
-    title: 'Kommerz',
+    title: 'Commerce',
     items: [
-      { href: '/commerce/plans', label: 'Tarife', Icon: CreditCard, minRole: 'ADMIN' },
+      { href: '/commerce/plans', label: 'Plans', Icon: CreditCard, minRole: 'ADMIN' },
       { href: '/commerce/fix-odds', label: 'FIX Odds', Icon: Target, minRole: 'ADMIN' },
-      { href: '/commerce/coupons', label: 'Gutscheine', Icon: BadgePercent, minRole: 'ADMIN' },
-      { href: '/commerce/promotions', label: 'Aktionen', Icon: Sparkles, minRole: 'ADMIN' },
-      { href: '/commerce/subscriptions', label: 'Abos', Icon: ShieldCheck, minRole: 'ADMIN' },
-      { href: '/commerce/payments', label: 'Zahlungen', Icon: CreditCard, minRole: 'ADMIN' },
+      { href: '/commerce/coupons', label: 'Coupons', Icon: BadgePercent, minRole: 'ADMIN' },
+      { href: '/commerce/promotions', label: 'Promotions', Icon: Sparkles, minRole: 'ADMIN' },
+      {
+        href: '/commerce/subscriptions',
+        label: 'Subscriptions',
+        Icon: ShieldCheck,
+        minRole: 'ADMIN',
+      },
+      { href: '/commerce/payments', label: 'Payments', Icon: CreditCard, minRole: 'ADMIN' },
     ],
   },
   {
-    title: 'Nutzer',
-    items: [{ href: '/users', label: 'Nutzer', Icon: Users }],
+    title: 'People',
+    items: [{ href: '/users', label: 'Users', Icon: Users }],
   },
   {
     title: 'System',
     items: [
-      { href: '/notifications', label: 'Push-Mitteilungen', Icon: Bell, minRole: 'ADMIN' },
-      { href: '/providers', label: 'API-Provider', Icon: Plug, minRole: 'SUPER_ADMIN' },
-      { href: '/settings', label: 'Einstellungen', Icon: Settings, minRole: 'SUPER_ADMIN' },
-      { href: '/logs', label: 'Audit-Log', Icon: Activity, minRole: 'ADMIN' },
+      { href: '/notifications', label: 'Push notifications', Icon: Bell, minRole: 'ADMIN' },
+      { href: '/providers', label: 'API providers', Icon: Plug, minRole: 'SUPER_ADMIN' },
+      { href: '/settings', label: 'Settings', Icon: Settings, minRole: 'SUPER_ADMIN' },
+      { href: '/logs', label: 'Audit log', Icon: Activity, minRole: 'ADMIN' },
     ],
   },
 ];
@@ -122,7 +127,7 @@ function LoginScreen(): ReactNode {
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center px-6">
       <div className="mb-6 text-center">
         <p className="text-[20px] font-black tracking-tight text-accent-500">STORM TIPS</p>
-        <p className="text-[12px] text-ink-dim">Verwaltung</p>
+        <p className="text-[12px] text-ink-dim">Admin console</p>
       </div>
       <form
         className="card flex flex-col gap-3 p-5"
@@ -141,7 +146,7 @@ function LoginScreen(): ReactNode {
           </p>
         ) : null}
         <label className="block">
-          <span className="label">E-Mail</span>
+          <span className="label">Email</span>
           <input
             className="input"
             type="email"
@@ -152,7 +157,7 @@ function LoginScreen(): ReactNode {
           />
         </label>
         <label className="block">
-          <span className="label">Passwort</span>
+          <span className="label">Password</span>
           <input
             className="input"
             type="password"
@@ -167,11 +172,11 @@ function LoginScreen(): ReactNode {
           disabled={busy}
           className="mt-1 rounded-sm bg-accent-500 px-4 py-2.5 text-[13px] font-bold text-ink-inverse disabled:opacity-50"
         >
-          {busy ? 'Anmelden…' : 'Anmelden'}
+          {busy ? 'Signing in…' : 'Sign in'}
         </button>
       </form>
       <p className="mt-6 text-center text-[11px] text-ink-dim">
-        Zugriff nur für Moderatoren und Administratoren. Alle Aktionen werden protokolliert.
+        Moderators and administrators only. Every action is written to the audit log.
       </p>
     </main>
   );
@@ -248,7 +253,7 @@ export function AdminShell({ children }: { children: ReactNode }): ReactNode {
       {menuOpen ? (
         <button
           type="button"
-          aria-label="Menü schließen"
+          aria-label="Close menu"
           className="fixed inset-0 z-30 bg-black/60 lg:hidden"
           onClick={() => setMenuOpen(false)}
         />
@@ -258,7 +263,7 @@ export function AdminShell({ children }: { children: ReactNode }): ReactNode {
         <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-line-subtle bg-bg-base/95 px-4 py-2.5 backdrop-blur">
           <button
             type="button"
-            aria-label="Menü"
+            aria-label="Menu"
             onClick={() => setMenuOpen((value) => !value)}
             className="grid h-8 w-8 place-items-center rounded-sm text-ink-muted hover:bg-bg-card lg:hidden"
           >
@@ -274,7 +279,7 @@ export function AdminShell({ children }: { children: ReactNode }): ReactNode {
           <button
             type="button"
             onClick={() => void logout().then(() => router.refresh())}
-            aria-label="Abmelden"
+            aria-label="Sign out"
             className="grid h-8 w-8 place-items-center rounded-sm text-ink-muted hover:bg-bg-card hover:text-ink"
           >
             <LogOut size={16} aria-hidden />

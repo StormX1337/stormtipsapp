@@ -47,13 +47,13 @@ export default function AdminStatisticsPage(): ReactNode {
   const columns: Column<PerformanceRow>[] = [
     {
       key: 'product',
-      header: 'Produkt',
+      header: 'Product',
       render: (row) => <span className="font-semibold">{row.product}</span>,
     },
-    { key: 'tips', header: 'Abgerechnet', align: 'right', render: (row) => row.settledTips },
+    { key: 'tips', header: 'Settled', align: 'right', render: (row) => row.settledTips },
     {
       key: 'record',
-      header: 'Bilanz',
+      header: 'Record',
       align: 'right',
       render: (row) => (
         <span className="tabular">
@@ -64,7 +64,7 @@ export default function AdminStatisticsPage(): ReactNode {
     },
     {
       key: 'winRate',
-      header: 'Trefferquote',
+      header: 'Win rate',
       align: 'right',
       render: (row) => <span className="tabular">{row.winRate.toFixed(1)}%</span>,
     },
@@ -81,13 +81,13 @@ export default function AdminStatisticsPage(): ReactNode {
     },
     {
       key: 'avgOdds',
-      header: 'Ø Quote',
+      header: 'Avg odds',
       align: 'right',
       render: (row) => <span className="tabular">{row.avgOdds.toFixed(2)}</span>,
     },
     {
       key: 'profit',
-      header: 'Gewinn',
+      header: 'Profit',
       align: 'right',
       render: (row) => (
         <span className={'tabular font-bold ' + (row.profit >= 0 ? 'text-won' : 'text-lost')}>
@@ -96,28 +96,28 @@ export default function AdminStatisticsPage(): ReactNode {
         </span>
       ),
     },
-    { key: 'streak', header: 'Beste Serie', align: 'right', render: (row) => row.bestStreak },
+    { key: 'streak', header: 'Best streak', align: 'right', render: (row) => row.bestStreak },
   ];
 
   return (
     <>
       <PageHeader
-        title="Statistik"
-        description="Performance je Produkt, berechnet ausschließlich aus abgerechneten Analysen."
+        title="Statistics"
+        description="Performance per product, computed from settled analyses only."
         actions={
           <Button
             variant="outline"
             onClick={() => recompute.mutate()}
             disabled={recompute.isPending}
           >
-            <RefreshCw size={14} aria-hidden /> Neu berechnen
+            <RefreshCw size={14} aria-hidden /> Recompute
           </Button>
         }
       />
 
       <div className="mb-3 max-w-xs">
         <Select
-          label="Zeitraum"
+          label="Window"
           value={window}
           onChange={(event) => setWindow(event.target.value as StatsWindow)}
           options={WINDOWS.map((value) => ({ value, label: value }))}
@@ -127,7 +127,7 @@ export default function AdminStatisticsPage(): ReactNode {
       {performance.isError ? <ErrorBox error={performance.error} /> : null}
       {recompute.isSuccess ? (
         <p className="mb-3 rounded-sm bg-accent-500/10 px-3 py-2 text-[12px] text-accent-300">
-          Neuberechnung eingereiht.
+          Recompute queued.
         </p>
       ) : null}
 
@@ -138,7 +138,7 @@ export default function AdminStatisticsPage(): ReactNode {
         rowKey={(row) => row.product}
       />
 
-      <h2 className="mt-6 mb-2 text-[14px] font-bold">Produkt-Events (30 Tage)</h2>
+      <h2 className="mt-6 mb-2 text-[14px] font-bold">Product events (30 days)</h2>
       <DataTable
         columns={[
           {
@@ -148,7 +148,7 @@ export default function AdminStatisticsPage(): ReactNode {
           },
           {
             key: 'count',
-            header: 'Anzahl',
+            header: 'Count',
             align: 'right',
             render: (row: { count: number }) => <span className="tabular">{row.count}</span>,
           },
@@ -156,7 +156,7 @@ export default function AdminStatisticsPage(): ReactNode {
         rows={funnel.data?.items ?? []}
         loading={funnel.isPending}
         rowKey={(row) => row.name}
-        empty="Noch keine Analyse-Ereignisse erfasst"
+        empty="No analytics events recorded yet"
       />
     </>
   );

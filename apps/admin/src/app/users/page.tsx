@@ -41,7 +41,7 @@ export default function UsersPage(): ReactNode {
   const columns: Column<AdminUserRow>[] = [
     {
       key: 'user',
-      header: 'Nutzer',
+      header: 'User',
       render: (user) => (
         <Link href={`/users/${user.id}`} className="block hover:text-accent-500">
           <p className="font-medium">{user.displayName ?? '—'}</p>
@@ -49,7 +49,7 @@ export default function UsersPage(): ReactNode {
         </Link>
       ),
     },
-    { key: 'role', header: 'Rolle', render: (user) => <Badge>{user.role}</Badge> },
+    { key: 'role', header: 'Role', render: (user) => <Badge>{user.role}</Badge> },
     {
       key: 'status',
       header: 'Status',
@@ -69,7 +69,7 @@ export default function UsersPage(): ReactNode {
     },
     {
       key: 'products',
-      header: 'Produkte',
+      header: 'Products',
       render: (user) => (
         <div className="flex flex-wrap gap-1">
           {user.entitlements.filter((entitlement) => entitlement.active).length === 0 ? (
@@ -88,7 +88,7 @@ export default function UsersPage(): ReactNode {
     },
     {
       key: 'counts',
-      header: 'Abos / Zahlungen',
+      header: 'Subs / payments',
       align: 'right',
       render: (user) => (
         <span className="tabular text-ink-muted">
@@ -98,10 +98,10 @@ export default function UsersPage(): ReactNode {
     },
     {
       key: 'created',
-      header: 'Registriert',
+      header: 'Signed up',
       align: 'right',
       render: (user) => (
-        <span className="text-ink-dim">{new Date(user.createdAt).toLocaleDateString('de-DE')}</span>
+        <span className="text-ink-dim">{new Date(user.createdAt).toLocaleDateString('en-GB')}</span>
       ),
     },
   ];
@@ -109,16 +109,16 @@ export default function UsersPage(): ReactNode {
   return (
     <>
       <PageHeader
-        title="Nutzer"
-        description="Konten suchen, prüfen, sperren und Zugänge vergeben."
+        title="Users"
+        description="Search accounts, review them, suspend them and grant access."
       />
 
       <div className="mb-3 grid gap-2 sm:grid-cols-4">
         <label className="block">
-          <span className="label">Suche</span>
+          <span className="label">Search</span>
           <input
             className="input"
-            placeholder="E-Mail, Name, Code"
+            placeholder="Email, name, code"
             value={search}
             onChange={(event) => {
               setSearch(event.target.value);
@@ -127,14 +127,14 @@ export default function UsersPage(): ReactNode {
           />
         </label>
         <Select
-          label="Rolle"
+          label="Role"
           value={role}
           onChange={(event) => {
             setRole(event.target.value);
             setPage(1);
           }}
           options={[
-            { value: '', label: 'Alle' },
+            { value: '', label: 'All' },
             ...['USER', 'MODERATOR', 'ADMIN', 'SUPER_ADMIN'].map((value) => ({
               value,
               label: value,
@@ -149,7 +149,7 @@ export default function UsersPage(): ReactNode {
             setPage(1);
           }}
           options={[
-            { value: '', label: 'Alle' },
+            { value: '', label: 'All' },
             ...['ACTIVE', 'PENDING_VERIFICATION', 'BANNED', 'DELETED'].map((value) => ({
               value,
               label: value,
@@ -157,14 +157,14 @@ export default function UsersPage(): ReactNode {
           ]}
         />
         <Select
-          label="Produkt"
+          label="Product"
           value={product}
           onChange={(event) => {
             setProduct(event.target.value);
             setPage(1);
           }}
           options={[
-            { value: '', label: 'Alle' },
+            { value: '', label: 'All' },
             ...['VIP', 'EXTRA', 'COMBO', 'FIX_ODDS'].map((value) => ({ value, label: value })),
           ]}
         />

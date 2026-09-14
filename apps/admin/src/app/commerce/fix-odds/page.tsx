@@ -103,7 +103,7 @@ export default function FixOddsPage(): ReactNode {
   const columns: Column<FixOddsPlanDTO>[] = [
     {
       key: 'name',
-      header: 'Paket',
+      header: 'Package',
       render: (plan) => (
         <div>
           <p className="font-medium">{plan.name}</p>
@@ -113,7 +113,7 @@ export default function FixOddsPage(): ReactNode {
     },
     {
       key: 'odds',
-      header: 'Zielquote',
+      header: 'Target odds',
       align: 'right',
       render: (plan) => (
         <span className="tabular font-bold text-violet-500">
@@ -124,18 +124,18 @@ export default function FixOddsPage(): ReactNode {
     },
     {
       key: 'rules',
-      header: 'Regeln',
+      header: 'Rules',
       render: (plan) => (
         <span className="text-[11.5px] text-ink-muted">
-          ≥ {plan.minConfidence}% Konfidenz · {plan.picksPerPeriod} Picks
+          ≥ {plan.minConfidence}% confidence · {plan.picksPerPeriod} picks
           {plan.allowLive ? ' · Live' : ''}
-          {plan.requiresVip ? ' · VIP nötig' : ''}
+          {plan.requiresVip ? ' · VIP required' : ''}
         </span>
       ),
     },
     {
       key: 'price',
-      header: 'Preis',
+      header: 'Price',
       align: 'right',
       render: (plan) => <span className="tabular font-bold">{plan.price.formatted}</span>,
     },
@@ -184,8 +184,8 @@ export default function FixOddsPage(): ReactNode {
   return (
     <>
       <PageHeader
-        title="FIX Odds Pakete"
-        description="Pakete mit fester Zielquote, Mindest-Konfidenz und definierter Anzahl Auswahlen."
+        title="FIX Odds packages"
+        description="Packages with a fixed target price, a minimum confidence and a set number of selections."
         actions={
           <Button
             onClick={() => {
@@ -194,7 +194,7 @@ export default function FixOddsPage(): ReactNode {
               setOpen(true);
             }}
           >
-            <Plus size={15} aria-hidden /> Neues Paket
+            <Plus size={15} aria-hidden /> New package
           </Button>
         }
       />
@@ -212,14 +212,14 @@ export default function FixOddsPage(): ReactNode {
         open={open}
         onClose={() => setOpen(false)}
         wide
-        title={form.id ? 'Paket bearbeiten' : 'Neues Paket'}
+        title={form.id ? 'Edit package' : 'New package'}
         footer={
           <>
             <Button variant="ghost" onClick={() => setOpen(false)}>
-              Abbrechen
+              Cancel
             </Button>
             <Button onClick={() => save.mutate()} disabled={save.isPending}>
-              Speichern
+              Save
             </Button>
           </>
         }
@@ -233,19 +233,19 @@ export default function FixOddsPage(): ReactNode {
               onChange={(event) => setForm({ ...form, slug: event.target.value })}
             />
             <Field
-              label="Name"
+              label="Name (German)"
               value={form.name}
               onChange={(event) => setForm({ ...form, name: event.target.value })}
             />
           </div>
           <Field
-            label="Beschreibung"
+            label="Description (German)"
             value={form.description}
             onChange={(event) => setForm({ ...form, description: event.target.value })}
           />
           <TranslationFields
             locale="en"
-            title="Englische Fassung"
+            title="English version"
             fields={[
               { name: 'name', label: 'Name' },
               { name: 'description', label: 'Description', multiline: true },
@@ -256,28 +256,28 @@ export default function FixOddsPage(): ReactNode {
 
           <div className="grid gap-3 sm:grid-cols-4">
             <Field
-              label="Preis (€)"
+              label="Price (€)"
               type="number"
               step="0.01"
               value={form.price}
               onChange={(event) => setForm({ ...form, price: event.target.value })}
             />
             <Field
-              label="Zielquote"
+              label="Target odds"
               type="number"
               step="0.05"
               value={form.targetOdds}
               onChange={(event) => setForm({ ...form, targetOdds: event.target.value })}
             />
             <Field
-              label="Maximalquote"
+              label="Maximum odds"
               type="number"
               step="0.05"
               value={form.maxOdds}
               onChange={(event) => setForm({ ...form, maxOdds: event.target.value })}
             />
             <Field
-              label="Min. Konfidenz %"
+              label="Min confidence %"
               type="number"
               min="1"
               max="100"
@@ -287,7 +287,7 @@ export default function FixOddsPage(): ReactNode {
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field
-              label="Picks pro Periode"
+              label="Picks per period"
               type="number"
               min="1"
               value={form.picksPerPeriod}
@@ -307,17 +307,17 @@ export default function FixOddsPage(): ReactNode {
           </div>
           <div className="flex flex-wrap gap-4">
             <Toggle
-              label="Live-Auswahlen erlaubt"
+              label="Live selections allowed"
               checked={form.allowLive}
               onChange={(value) => setForm({ ...form, allowLive: value })}
             />
             <Toggle
-              label="Setzt VIP voraus"
+              label="Requires VIP"
               checked={form.requiresVip}
               onChange={(value) => setForm({ ...form, requiresVip: value })}
             />
             <Toggle
-              label="Aktiv"
+              label="Active"
               checked={form.isActive}
               onChange={(value) => setForm({ ...form, isActive: value })}
             />

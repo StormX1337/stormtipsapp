@@ -92,30 +92,30 @@ export default function DashboardPage(): ReactNode {
   }
 
   const data = dashboard.data;
-  const numberFormat = new Intl.NumberFormat('de-DE');
+  const numberFormat = new Intl.NumberFormat('en-GB');
 
   return (
     <>
       <PageHeader
         title="Dashboard"
-        description="Umsatz, Nutzer und Analyse-Performance der letzten 30 Tage."
+        description="Revenue, users and analysis performance over the last 30 days."
       />
 
       <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Kpi label="Umsatz heute" value={data.revenue.today.formatted} tone="gold" />
-        <Kpi label="Umsatz Monat" value={data.revenue.month.formatted} tone="gold" />
+        <Kpi label="Revenue today" value={data.revenue.today.formatted} tone="gold" />
+        <Kpi label="Revenue this month" value={data.revenue.month.formatted} tone="gold" />
         <Kpi label="MRR" value={data.revenue.mrr.formatted} tone="gold" />
-        <Kpi label="Umsatz gesamt" value={data.revenue.total.formatted} />
+        <Kpi label="Revenue all time" value={data.revenue.total.formatted} />
 
         <Kpi
-          label="Nutzer"
+          label="Users"
           value={numberFormat.format(data.users.total)}
-          hint={`${data.users.new30d} neu (30 T) · ${data.users.active30d} aktiv`}
+          hint={`${data.users.new30d} new (30 d) · ${data.users.active30d} active`}
         />
         <Kpi
-          label="Abonnenten"
+          label="Subscribers"
           value={numberFormat.format(data.subscribers.total)}
-          hint={`${data.subscribers.trialing} im Test`}
+          hint={`${data.subscribers.trialing} on trial`}
           tone="positive"
         />
         <Kpi
@@ -123,30 +123,30 @@ export default function DashboardPage(): ReactNode {
           value={`${data.subscribers.conversionRate.toFixed(1)}%`}
           hint={`Churn ${data.subscribers.churnRate.toFixed(1)}%`}
         />
-        <Kpi label="Gesperrte Konten" value={numberFormat.format(data.users.banned)} />
+        <Kpi label="Suspended accounts" value={numberFormat.format(data.users.banned)} />
 
-        <Kpi label="Tipps veröffentlicht" value={numberFormat.format(data.tips.published)} />
+        <Kpi label="Tips published" value={numberFormat.format(data.tips.published)} />
         <Kpi
-          label="Trefferquote (30 T)"
+          label="Win rate (30 d)"
           value={`${data.tips.winRate.toFixed(1)}%`}
           hint={`${data.tips.won} / ${data.tips.lost}`}
           tone="positive"
         />
         <Kpi
-          label="ROI (30 T)"
+          label="ROI (30 d)"
           value={`${data.tips.roi > 0 ? '+' : ''}${data.tips.roi.toFixed(2)}%`}
           tone={data.tips.roi >= 0 ? 'positive' : 'negative'}
         />
         <Kpi
-          label="Ø Quote"
+          label="Avg odds"
           value={data.tips.avgOdds.toFixed(2)}
-          hint={`${data.tips.pending} offen`}
+          hint={`${data.tips.pending} open`}
         />
       </section>
 
       <section className="mt-4 grid gap-3 lg:grid-cols-2">
         <div className="card p-3">
-          <h2 className="mb-2 text-[13px] font-bold">Umsatz pro Tag</h2>
+          <h2 className="mb-2 text-[13px] font-bold">Revenue per day</h2>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data.charts.revenueByDay} margin={{ top: 4, right: 4, left: -16 }}>
@@ -167,7 +167,7 @@ export default function DashboardPage(): ReactNode {
                 />
                 <Tooltip
                   {...CHART_TOOLTIP}
-                  formatter={(value) => [`${(Number(value ?? 0) / 100).toFixed(2)} €`, 'Umsatz']}
+                  formatter={(value) => [`€${(Number(value ?? 0) / 100).toFixed(2)}`, 'Revenue']}
                   cursor={{ fill: '#1E2430' }}
                 />
                 <Bar dataKey="amountCents" fill="#FFC93C" radius={[3, 3, 0, 0]} />
@@ -177,7 +177,7 @@ export default function DashboardPage(): ReactNode {
         </div>
 
         <div className="card p-3">
-          <h2 className="mb-2 text-[13px] font-bold">Neuanmeldungen</h2>
+          <h2 className="mb-2 text-[13px] font-bold">Sign-ups</h2>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data.charts.signupsByDay} margin={{ top: 4, right: 4, left: -16 }}>
@@ -202,7 +202,7 @@ export default function DashboardPage(): ReactNode {
                   stroke="#28D8F5"
                   strokeWidth={2}
                   dot={false}
-                  name="Anmeldungen"
+                  name="Sign-ups"
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -211,7 +211,7 @@ export default function DashboardPage(): ReactNode {
 
         <div className="card p-3 lg:col-span-2">
           <h2 className="mb-2 text-[13px] font-bold">
-            Kumulierter Gewinn aller Analysen (30 Tage)
+            Cumulative profit across all analyses (30 days)
           </h2>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -240,7 +240,7 @@ export default function DashboardPage(): ReactNode {
                 <Area
                   type="monotone"
                   dataKey="cumulativeProfit"
-                  name="Kumuliert"
+                  name="Cumulative"
                   stroke="#12E17F"
                   strokeWidth={2}
                   fill="url(#adminProfit)"
@@ -251,7 +251,7 @@ export default function DashboardPage(): ReactNode {
         </div>
 
         <div className="card p-3 lg:col-span-2">
-          <h2 className="mb-2 text-[13px] font-bold">Abonnenten je Produkt</h2>
+          <h2 className="mb-2 text-[13px] font-bold">Subscribers per product</h2>
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
@@ -275,7 +275,7 @@ export default function DashboardPage(): ReactNode {
                   allowDecimals={false}
                 />
                 <Tooltip {...CHART_TOOLTIP} cursor={{ fill: '#1E2430' }} />
-                <Bar dataKey="count" name="Abonnenten" radius={[3, 3, 0, 0]}>
+                <Bar dataKey="count" name="Subscribers" radius={[3, 3, 0, 0]}>
                   {['VIP', 'EXTRA', 'COMBO', 'FIX_ODDS'].map((product) => (
                     <Cell
                       key={product}

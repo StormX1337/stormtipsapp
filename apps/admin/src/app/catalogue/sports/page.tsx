@@ -56,21 +56,21 @@ export default function SportsPage(): ReactNode {
   const columns: Column<SportRow>[] = [
     {
       key: 'name',
-      header: 'Sportart',
+      header: 'Sport',
       render: (row) => <span className="font-medium">{row.name}</span>,
     },
     {
       key: 'key',
-      header: 'Schlüssel',
+      header: 'Key',
       render: (row) => <code className="text-ink-dim">{row.key}</code>,
     },
-    { key: 'order', header: 'Reihenfolge', align: 'right', render: (row) => row.sortOrder },
+    { key: 'order', header: 'Sort order', align: 'right', render: (row) => row.sortOrder },
     {
       key: 'active',
       header: 'Status',
       render: (row) => (
         <Badge tone={row.isActive ? 'positive' : 'neutral'}>
-          {row.isActive ? 'AKTIV' : 'INAKTIV'}
+          {row.isActive ? 'ACTIVE' : 'INACTIVE'}
         </Badge>
       ),
     },
@@ -79,11 +79,11 @@ export default function SportsPage(): ReactNode {
   return (
     <>
       <PageHeader
-        title="Sportarten"
-        description="Die Architektur erlaubt beliebig viele Sportarten; jede Liga gehört zu genau einer."
+        title="Sports"
+        description="The model takes any number of sports; every league belongs to exactly one."
         actions={
           <Button onClick={() => setOpen(true)}>
-            <Plus size={15} aria-hidden /> Neue Sportart
+            <Plus size={15} aria-hidden /> New sport
           </Button>
         }
       />
@@ -100,14 +100,14 @@ export default function SportsPage(): ReactNode {
       <Modal
         open={open}
         onClose={() => setOpen(false)}
-        title="Sportart anlegen"
+        title="Create sport"
         footer={
           <>
             <Button variant="ghost" onClick={() => setOpen(false)}>
-              Abbrechen
+              Cancel
             </Button>
             <Button onClick={() => save.mutate()} disabled={save.isPending}>
-              Speichern
+              Save
             </Button>
           </>
         }
@@ -115,7 +115,7 @@ export default function SportsPage(): ReactNode {
         <div className="flex flex-col gap-3">
           {save.isError ? <ErrorBox error={save.error} /> : null}
           <Field
-            label="Schlüssel"
+            label="Key"
             value={form.key}
             onChange={(event) => setForm({ ...form, key: event.target.value })}
             placeholder="handball"
@@ -131,13 +131,13 @@ export default function SportsPage(): ReactNode {
             onChange={(event) => setForm({ ...form, icon: event.target.value })}
           />
           <Field
-            label="Reihenfolge"
+            label="Sort order"
             type="number"
             value={form.sortOrder}
             onChange={(event) => setForm({ ...form, sortOrder: event.target.value })}
           />
           <Toggle
-            label="Aktiv"
+            label="Active"
             checked={form.isActive}
             onChange={(value) => setForm({ ...form, isActive: value })}
           />

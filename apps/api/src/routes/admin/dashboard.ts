@@ -16,7 +16,7 @@ function startOfToday(): Date {
 export async function adminDashboardRoutes(app: FastifyInstance): Promise<void> {
   app.addHook('preHandler', app.requireCapability('statistics:read'));
 
-  app.get('/', async (): Promise<AdminDashboardDTO> => {
+  app.get('/', async (request): Promise<AdminDashboardDTO> => {
     const today = startOfToday();
     const monthStart = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1));
     const thirtyDaysAgo = new Date(Date.now() - 30 * DAY_MS);
@@ -109,10 +109,10 @@ export async function adminDashboardRoutes(app: FastifyInstance): Promise<void> 
 
     return {
       revenue: {
-        today: money(revenueToday._sum.amountCents ?? 0, currency),
-        month: money(revenueMonth._sum.amountCents ?? 0, currency),
-        total: money(revenueTotal._sum.amountCents ?? 0, currency),
-        mrr: money(mrrCents, currency),
+        today: money(revenueToday._sum.amountCents ?? 0, currency, request.locale),
+        month: money(revenueMonth._sum.amountCents ?? 0, currency, request.locale),
+        total: money(revenueTotal._sum.amountCents ?? 0, currency, request.locale),
+        mrr: money(mrrCents, currency, request.locale),
       },
       users: { total: totalUsers, active30d, newToday, new30d, banned },
       subscribers: {

@@ -59,7 +59,7 @@ export default function EventsPage(): ReactNode {
   const columns: Column<EventDTO>[] = [
     {
       key: 'match',
-      header: 'Begegnung',
+      header: 'Fixture',
       render: (event) => (
         <div>
           <p className="font-medium">
@@ -71,8 +71,8 @@ export default function EventsPage(): ReactNode {
     },
     {
       key: 'kickoff',
-      header: 'Anstoß',
-      render: (event) => new Date(event.startsAt).toLocaleString('de-DE'),
+      header: 'Kick-off',
+      render: (event) => new Date(event.startsAt).toLocaleString('en-GB'),
     },
     {
       key: 'status',
@@ -93,7 +93,7 @@ export default function EventsPage(): ReactNode {
     },
     {
       key: 'score',
-      header: 'Ergebnis',
+      header: 'Score',
       align: 'center',
       render: (event) =>
         event.homeScore === null ? (
@@ -111,7 +111,7 @@ export default function EventsPage(): ReactNode {
       render: (event) => (
         <div className="flex justify-end gap-1">
           <Button size="sm" variant="ghost" onClick={() => setOddsFor(event)}>
-            Quoten
+            Odds
           </Button>
           <Button
             size="sm"
@@ -135,18 +135,18 @@ export default function EventsPage(): ReactNode {
   return (
     <>
       <PageHeader
-        title="Events & Quoten"
-        description="Spielplan aus dem Datenanbieter. Eine manuelle Korrektur löst die Neuabrechnung betroffener Tipps aus."
+        title="Events & odds"
+        description="Fixtures from the data provider. A manual correction re-settles every tip it affects."
         actions={
           <>
             <Button variant="outline" onClick={() => resync.mutate('fixtures')}>
-              <RefreshCw size={14} aria-hidden /> Spielplan
+              <RefreshCw size={14} aria-hidden /> Fixtures
             </Button>
             <Button variant="outline" onClick={() => resync.mutate('odds')}>
-              <RefreshCw size={14} aria-hidden /> Quoten
+              <RefreshCw size={14} aria-hidden /> Odds
             </Button>
             <Button variant="outline" onClick={() => resync.mutate('results')}>
-              <RefreshCw size={14} aria-hidden /> Ergebnisse
+              <RefreshCw size={14} aria-hidden /> Results
             </Button>
           </>
         }
@@ -155,7 +155,7 @@ export default function EventsPage(): ReactNode {
       {events.isError ? <ErrorBox error={events.error} /> : null}
       {resync.isSuccess ? (
         <p className="mb-3 rounded-sm bg-accent-500/10 px-3 py-2 text-[12px] text-accent-300">
-          Synchronisation wurde eingereiht — der Worker führt sie in Kürze aus.
+          Sync queued — the worker will run it shortly.
         </p>
       ) : null}
 
@@ -177,14 +177,14 @@ export default function EventsPage(): ReactNode {
       <Modal
         open={Boolean(editing)}
         onClose={() => setEditing(null)}
-        title="Ergebnis korrigieren"
+        title="Correct the result"
         footer={
           <>
             <Button variant="ghost" onClick={() => setEditing(null)}>
-              Abbrechen
+              Cancel
             </Button>
             <Button onClick={() => saveResult.mutate()} disabled={saveResult.isPending}>
-              Speichern
+              Save
             </Button>
           </>
         }
@@ -196,14 +196,14 @@ export default function EventsPage(): ReactNode {
           </p>
           <div className="grid grid-cols-2 gap-3">
             <Field
-              label="Tore Heim"
+              label="Home goals"
               type="number"
               min="0"
               value={result.homeScore}
               onChange={(event) => setResult({ ...result, homeScore: event.target.value })}
             />
             <Field
-              label="Tore Auswärts"
+              label="Away goals"
               type="number"
               min="0"
               value={result.awayScore}
@@ -226,20 +226,20 @@ export default function EventsPage(): ReactNode {
         open={Boolean(oddsFor)}
         onClose={() => setOddsFor(null)}
         wide
-        title={`Quoten: ${oddsFor?.homeTeam.name ?? ''} – ${oddsFor?.awayTeam.name ?? ''}`}
+        title={`Odds: ${oddsFor?.homeTeam.name ?? ''} – ${oddsFor?.awayTeam.name ?? ''}`}
       >
         <DataTable
           columns={[
-            { key: 'book', header: 'Buchmacher', render: (row: OddDTO) => row.bookmaker.name },
-            { key: 'market', header: 'Markt', render: (row: OddDTO) => row.marketType },
+            { key: 'book', header: 'Bookmaker', render: (row: OddDTO) => row.bookmaker.name },
+            { key: 'market', header: 'Market', render: (row: OddDTO) => row.marketType },
             {
               key: 'selection',
-              header: 'Auswahl',
+              header: 'Selection',
               render: (row: OddDTO) => `${row.selection}${row.line ? ` ${row.line}` : ''}`,
             },
             {
               key: 'open',
-              header: 'Eröffnung',
+              header: 'Opening',
               align: 'right',
               render: (row: OddDTO) => (
                 <span className="tabular">{row.openingPrice.toFixed(2)}</span>
@@ -247,7 +247,7 @@ export default function EventsPage(): ReactNode {
             },
             {
               key: 'price',
-              header: 'Aktuell',
+              header: 'Current',
               align: 'right',
               render: (row: OddDTO) => (
                 <span className="tabular font-bold">{row.price.toFixed(2)}</span>
@@ -255,7 +255,7 @@ export default function EventsPage(): ReactNode {
             },
             {
               key: 'movement',
-              header: 'Bewegung',
+              header: 'Movement',
               render: (row: OddDTO) => (
                 <Badge
                   tone={
@@ -274,7 +274,7 @@ export default function EventsPage(): ReactNode {
           rows={odds.data?.items ?? []}
           loading={odds.isPending}
           rowKey={(row) => row.id}
-          empty="Keine Quoten gespeichert"
+          empty="No odds stored"
         />
       </Modal>
     </>

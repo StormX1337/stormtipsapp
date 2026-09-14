@@ -78,7 +78,7 @@ export default function PromotionsPage(): ReactNode {
   const columns: Column<PromotionDTO>[] = [
     {
       key: 'title',
-      header: 'Aktion',
+      header: 'Promotion',
       render: (promotion) => (
         <div className="flex items-center gap-3">
           <span
@@ -105,19 +105,19 @@ export default function PromotionsPage(): ReactNode {
     },
     {
       key: 'audience',
-      header: 'Zielgruppe',
+      header: 'Audience',
       render: (promotion) => <Badge>{promotion.audience}</Badge>,
     },
     {
       key: 'product',
-      header: 'Produkt',
+      header: 'Product',
       render: (promotion) => promotion.product ?? <span className="text-ink-dim">—</span>,
     },
     {
       key: 'ends',
-      header: 'Endet',
+      header: 'Ends',
       render: (promotion) =>
-        promotion.endsAt ? new Date(promotion.endsAt).toLocaleDateString('de-DE') : 'unbefristet',
+        promotion.endsAt ? new Date(promotion.endsAt).toLocaleDateString('en-GB') : 'open-ended',
     },
     {
       key: 'actions',
@@ -128,7 +128,7 @@ export default function PromotionsPage(): ReactNode {
           size="sm"
           variant="ghost"
           onClick={() => {
-            if (window.confirm('Aktion löschen?')) remove.mutate(promotion.id);
+            if (window.confirm('Delete this promotion?')) remove.mutate(promotion.id);
           }}
         >
           <Trash2 size={14} aria-hidden />
@@ -140,11 +140,11 @@ export default function PromotionsPage(): ReactNode {
   return (
     <>
       <PageHeader
-        title="Aktionen"
-        description="Werbebanner im Feed und auf den Paywalls. Zielgruppen werden serverseitig gefiltert."
+        title="Promotions"
+        description="Banners in the feed and on the paywalls. Audiences are filtered server-side."
         actions={
           <Button onClick={() => setOpen(true)}>
-            <Plus size={15} aria-hidden /> Neue Aktion
+            <Plus size={15} aria-hidden /> New promotion
           </Button>
         }
       />
@@ -162,17 +162,17 @@ export default function PromotionsPage(): ReactNode {
         open={open}
         onClose={() => setOpen(false)}
         wide
-        title="Neue Aktion"
+        title="New promotion"
         footer={
           <>
             <Button variant="ghost" onClick={() => setOpen(false)}>
-              Abbrechen
+              Cancel
             </Button>
             <Button
               onClick={() => create.mutate()}
               disabled={create.isPending || form.title.length < 2}
             >
-              Anlegen
+              Create
             </Button>
           </>
         }
@@ -180,18 +180,18 @@ export default function PromotionsPage(): ReactNode {
         <div className="flex flex-col gap-3">
           {create.isError ? <ErrorBox error={create.error} /> : null}
           <Field
-            label="Titel"
+            label="Title (German)"
             value={form.title}
             onChange={(event) => setForm({ ...form, title: event.target.value })}
           />
           <Field
-            label="Untertitel"
+            label="Subtitle (German)"
             value={form.subtitle}
             onChange={(event) => setForm({ ...form, subtitle: event.target.value })}
           />
           <TranslationFields
             locale="en"
-            title="Englische Fassung"
+            title="English version"
             fields={[
               { name: 'title', label: 'Title' },
               { name: 'subtitle', label: 'Subtitle', multiline: true },
@@ -203,12 +203,12 @@ export default function PromotionsPage(): ReactNode {
 
           <div className="grid gap-3 sm:grid-cols-2">
             <Field
-              label="Button-Text"
+              label="CTA label (German)"
               value={form.ctaLabel}
               onChange={(event) => setForm({ ...form, ctaLabel: event.target.value })}
             />
             <Field
-              label="Deep-Link"
+              label="Deep link"
               value={form.deepLink}
               onChange={(event) => setForm({ ...form, deepLink: event.target.value })}
             />
@@ -226,7 +226,7 @@ export default function PromotionsPage(): ReactNode {
               )}
             />
             <Select
-              label="Zielgruppe"
+              label="Audience"
               value={form.audience}
               onChange={(event) => setForm({ ...form, audience: event.target.value })}
               options={[
@@ -239,7 +239,7 @@ export default function PromotionsPage(): ReactNode {
               ].map((value) => ({ value, label: value }))}
             />
             <Select
-              label="Produkt"
+              label="Product"
               value={form.product}
               onChange={(event) => setForm({ ...form, product: event.target.value })}
               options={[
@@ -250,32 +250,32 @@ export default function PromotionsPage(): ReactNode {
           </div>
           <div className="grid gap-3 sm:grid-cols-4">
             <Field
-              label="Farbverlauf von"
+              label="Gradient from"
               type="color"
               value={form.gradientFrom}
               onChange={(event) => setForm({ ...form, gradientFrom: event.target.value })}
             />
             <Field
-              label="Farbverlauf bis"
+              label="Gradient to"
               type="color"
               value={form.gradientTo}
               onChange={(event) => setForm({ ...form, gradientTo: event.target.value })}
             />
             <Field
-              label="Priorität"
+              label="Priority"
               type="number"
               value={form.priority}
               onChange={(event) => setForm({ ...form, priority: event.target.value })}
             />
             <Field
-              label="Endet am"
+              label="Ends at"
               type="datetime-local"
               value={form.endsAt}
               onChange={(event) => setForm({ ...form, endsAt: event.target.value })}
             />
           </div>
           <Toggle
-            label="Aktiv"
+            label="Active"
             checked={form.isActive}
             onChange={(value) => setForm({ ...form, isActive: value })}
           />

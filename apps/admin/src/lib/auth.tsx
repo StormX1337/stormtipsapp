@@ -56,7 +56,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }): ReactN
       body: { email, password },
     });
     if (ROLE_RANK[response.user.role] < ROLE_RANK.MODERATOR) {
-      throw new Error('Dieses Konto hat keinen Zugriff auf die Verwaltung.');
+      throw new Error('This account has no access to the admin console.');
     }
     tokenStore.set(response.tokens.accessToken, response.tokens.refreshToken);
     setUser(response.user);

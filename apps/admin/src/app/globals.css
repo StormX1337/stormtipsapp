@@ -117,8 +117,12 @@
 }
 
 @keyframes pt-shimmer {
-  0% { background-position: -400px 0; }
-  100% { background-position: 400px 0; }
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
 }
 .skeleton {
   background: linear-gradient(90deg, #181d27 0%, #1e2430 40%, #181d27 80%);

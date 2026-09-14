@@ -67,17 +67,17 @@ function ComboCreator({ open, onClose }: { open: boolean; onClose: () => void })
       open={open}
       onClose={onClose}
       wide
-      title="Neue Kombination"
+      title="New combo"
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            Abbrechen
+            Cancel
           </Button>
           <Button
             onClick={() => create.mutate()}
             disabled={create.isPending || selected.length < 2 || title.length < 2}
           >
-            Anlegen ({selected.length})
+            Create ({selected.length})
           </Button>
         </>
       }
@@ -87,26 +87,26 @@ function ComboCreator({ open, onClose }: { open: boolean; onClose: () => void })
 
         <div className="grid gap-3 sm:grid-cols-2">
           <Field
-            label="Titel"
+            label="Title"
             value={title}
             onChange={(event) => setTitle(event.target.value)}
-            placeholder="3er-Kombi Samstag"
+            placeholder="Saturday treble"
           />
           <Select
-            label="Produkt"
+            label="Product"
             value={product}
             onChange={(event) => setProduct(event.target.value)}
             options={['COMBO', 'VIP', 'EXTRA'].map((value) => ({ value, label: value }))}
           />
           <Field
-            label="Einsatz"
+            label="Stake"
             type="number"
             step="0.5"
             value={stake}
             onChange={(event) => setStake(event.target.value)}
           />
           <Field
-            label="Veröffentlichen am"
+            label="Publish at"
             type="datetime-local"
             value={publishAt}
             onChange={(event) => setPublishAt(event.target.value)}
@@ -114,14 +114,14 @@ function ComboCreator({ open, onClose }: { open: boolean; onClose: () => void })
         </div>
 
         <TextArea
-          label="Analyse"
+          label="Analysis"
           value={analysis}
           onChange={(event) => setAnalysis(event.target.value)}
         />
 
         <div>
           <p className="label">
-            Auswahlen ({selected.length}) — Gesamtquote{' '}
+            Selections ({selected.length}) — total odds{' '}
             <span className="tabular font-bold text-gold-400">
               {selected.length > 0 ? totalOdds.toFixed(2) : '—'}
             </span>
@@ -179,17 +179,17 @@ export default function CombosPage(): ReactNode {
   const columns: Column<ComboDTO>[] = [
     {
       key: 'title',
-      header: 'Kombination',
+      header: 'Combo',
       render: (combo) => (
         <div>
           <p className="font-medium">{combo.title}</p>
-          <p className="text-[11px] text-ink-dim">{combo.items.length} Auswahlen</p>
+          <p className="text-[11px] text-ink-dim">{combo.items.length} selections</p>
         </div>
       ),
     },
     {
       key: 'odds',
-      header: 'Gesamtquote',
+      header: 'Total odds',
       align: 'right',
       render: (combo) => (
         <span className="tabular font-bold text-gold-400">
@@ -199,7 +199,7 @@ export default function CombosPage(): ReactNode {
     },
     {
       key: 'product',
-      header: 'Produkt',
+      header: 'Product',
       render: (combo) => <Badge tone="warning">{combo.product}</Badge>,
     },
     {
@@ -224,7 +224,7 @@ export default function CombosPage(): ReactNode {
     },
     {
       key: 'profit',
-      header: 'Gewinn',
+      header: 'Profit',
       align: 'right',
       render: (combo) =>
         combo.profit === null ? (
@@ -243,7 +243,7 @@ export default function CombosPage(): ReactNode {
       render: (combo) =>
         combo.status !== 'PUBLISHED' ? (
           <Button size="sm" variant="ghost" onClick={() => publish.mutate(combo.id)}>
-            <Send size={14} aria-hidden /> Veröffentlichen
+            <Send size={14} aria-hidden /> Publish
           </Button>
         ) : null,
     },
@@ -252,11 +252,11 @@ export default function CombosPage(): ReactNode {
   return (
     <>
       <PageHeader
-        title="Kombinationen"
-        description="Kombi-Wetten zusammenstellen; die Abrechnung erfolgt automatisch aus den Einzelergebnissen."
+        title="Combos"
+        description="Build accumulators; settlement follows automatically from the individual results."
         actions={
           <Button onClick={() => setCreatorOpen(true)}>
-            <Plus size={15} aria-hidden /> Neue Kombi
+            <Plus size={15} aria-hidden /> New combo
           </Button>
         }
       />

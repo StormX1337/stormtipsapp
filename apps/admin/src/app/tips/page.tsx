@@ -51,14 +51,14 @@ function SettleDialog({ tip, onClose }: { tip: TipDTO | null; onClose: () => voi
     <Modal
       open={Boolean(tip)}
       onClose={onClose}
-      title="Tipp manuell abrechnen"
+      title="Settle tip manually"
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            Abbrechen
+            Cancel
           </Button>
           <Button onClick={() => settle.mutate()} disabled={settle.isPending}>
-            Abrechnen
+            Settle
           </Button>
         </>
       }
@@ -70,7 +70,7 @@ function SettleDialog({ tip, onClose }: { tip: TipDTO | null; onClose: () => voi
           {tip?.event.awayTeam.name}
         </p>
         <Select
-          label="Ergebnis"
+          label="Outcome"
           value={outcome}
           onChange={(event) => setOutcome(event.target.value as TipOutcome)}
           options={['WON', 'LOST', 'VOID', 'HALF_WON', 'HALF_LOST'].map((value) => ({
@@ -79,17 +79,17 @@ function SettleDialog({ tip, onClose }: { tip: TipDTO | null; onClose: () => voi
           }))}
         />
         <label className="block">
-          <span className="label">Notiz</span>
+          <span className="label">Note</span>
           <input
             className="input"
             value={note}
             onChange={(event) => setNote(event.target.value)}
-            placeholder="Warum wurde manuell abgerechnet?"
+            placeholder="Why was this settled by hand?"
           />
         </label>
         <p className="text-[11px] text-ink-dim">
-          Die manuelle Abrechnung wird mit deinem Konto protokolliert und kann nur durch
-          Zurücksetzen rückgängig gemacht werden.
+          A manual settlement is recorded against your account and can only be undone by resetting
+          the tip.
         </p>
       </div>
     </Modal>
@@ -152,7 +152,7 @@ function TipsContent(): ReactNode {
           </p>
           <p className="text-[11px] text-ink-dim">
             {tip.league.name} ·{' '}
-            {new Date(tip.event.startsAt).toLocaleString('de-DE', {
+            {new Date(tip.event.startsAt).toLocaleString('en-GB', {
               day: '2-digit',
               month: '2-digit',
               hour: '2-digit',
@@ -164,7 +164,7 @@ function TipsContent(): ReactNode {
     },
     {
       key: 'selection',
-      header: 'Auswahl',
+      header: 'Selection',
       render: (tip) => (
         <div>
           <p className="font-semibold text-accent-500">{tip.selectionLabel}</p>
@@ -177,7 +177,7 @@ function TipsContent(): ReactNode {
     },
     {
       key: 'odds',
-      header: 'Quote',
+      header: 'Odds',
       align: 'right',
       render: (tip) => (
         <span className="tabular font-bold">
@@ -188,7 +188,7 @@ function TipsContent(): ReactNode {
     },
     {
       key: 'product',
-      header: 'Produkt',
+      header: 'Product',
       render: (tip) => (
         <Badge tone={tip.product === 'FREE' ? 'neutral' : 'warning'}>{tip.product}</Badge>
       ),
@@ -205,7 +205,7 @@ function TipsContent(): ReactNode {
     },
     {
       key: 'profit',
-      header: 'Gewinn',
+      header: 'Profit',
       align: 'right',
       render: (tip) =>
         tip.result ? (
@@ -228,7 +228,7 @@ function TipsContent(): ReactNode {
           <Button
             size="sm"
             variant="ghost"
-            title="Bearbeiten"
+            title="Edit"
             onClick={() => {
               setEditing(tip);
               setEditorOpen(true);
@@ -240,19 +240,19 @@ function TipsContent(): ReactNode {
             <Button
               size="sm"
               variant="ghost"
-              title="Veröffentlichen"
+              title="Publish"
               onClick={() => publish.mutate(tip.id)}
             >
               <Send size={14} aria-hidden />
             </Button>
           ) : null}
           {can('ADMIN') && !tip.result ? (
-            <Button size="sm" variant="ghost" title="Abrechnen" onClick={() => setSettling(tip)}>
+            <Button size="sm" variant="ghost" title="Settle" onClick={() => setSettling(tip)}>
               <Check size={14} aria-hidden />
             </Button>
           ) : null}
           {tip.status === 'PUBLISHED' && !tip.result ? (
-            <Button size="sm" variant="ghost" title="Absagen" onClick={() => cancel.mutate(tip.id)}>
+            <Button size="sm" variant="ghost" title="Cancel" onClick={() => cancel.mutate(tip.id)}>
               <X size={14} aria-hidden />
             </Button>
           ) : null}
@@ -260,9 +260,9 @@ function TipsContent(): ReactNode {
             <Button
               size="sm"
               variant="ghost"
-              title="Löschen"
+              title="Delete"
               onClick={() => {
-                if (window.confirm('Tipp endgültig löschen?')) remove.mutate(tip.id);
+                if (window.confirm('Delete this tip permanently?')) remove.mutate(tip.id);
               }}
             >
               <Trash2 size={14} aria-hidden />
@@ -276,8 +276,8 @@ function TipsContent(): ReactNode {
   return (
     <>
       <PageHeader
-        title={live ? 'Live-Tipps' : 'Tipps'}
-        description="Analysen anlegen, veröffentlichen, abrechnen und prüfen."
+        title={live ? 'Live tips' : 'Tips'}
+        description="Create, publish, settle and review analyses."
         actions={
           <Button
             onClick={() => {
@@ -285,21 +285,21 @@ function TipsContent(): ReactNode {
               setEditorOpen(true);
             }}
           >
-            <Plus size={15} aria-hidden /> Neuer Tipp
+            <Plus size={15} aria-hidden /> New tip
           </Button>
         }
       />
 
       <div className="mb-3 grid gap-2 sm:grid-cols-4">
         <Select
-          label="Produkt"
+          label="Product"
           value={product}
           onChange={(event) => {
             setProduct(event.target.value);
             setPage(1);
           }}
           options={[
-            { value: '', label: 'Alle' },
+            { value: '', label: 'All' },
             ...['FREE', 'VIP', 'EXTRA', 'COMBO', 'FIX_ODDS'].map((value) => ({
               value,
               label: value,
@@ -314,7 +314,7 @@ function TipsContent(): ReactNode {
             setPage(1);
           }}
           options={[
-            { value: '', label: 'Alle' },
+            { value: '', label: 'All' },
             ...['DRAFT', 'SCHEDULED', 'PUBLISHED', 'CANCELLED'].map((value) => ({
               value,
               label: value,
@@ -322,14 +322,14 @@ function TipsContent(): ReactNode {
           ]}
         />
         <Select
-          label="Ergebnis"
+          label="Outcome"
           value={outcome}
           onChange={(event) => {
             setOutcome(event.target.value);
             setPage(1);
           }}
           options={[
-            { value: '', label: 'Alle' },
+            { value: '', label: 'All' },
             ...['PENDING', 'LIVE', 'WON', 'LOST', 'VOID', 'HALF_WON', 'HALF_LOST'].map((value) => ({
               value,
               label: value,
@@ -337,11 +337,11 @@ function TipsContent(): ReactNode {
           ]}
         />
         <label className="block">
-          <span className="label">Suche</span>
+          <span className="label">Search</span>
           <input
             className="input"
             value={search}
-            placeholder="Team, Auswahl…"
+            placeholder="Team, selection…"
             onChange={(event) => {
               setSearch(event.target.value);
               setPage(1);
@@ -357,7 +357,7 @@ function TipsContent(): ReactNode {
         rows={rows}
         loading={tips.isPending}
         rowKey={(tip) => tip.id}
-        empty="Keine Tipps gefunden"
+        empty="No tips found"
       />
 
       {tips.data ? (

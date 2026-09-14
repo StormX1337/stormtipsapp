@@ -99,8 +99,8 @@ export default function ProvidersPage(): ReactNode {
     onSuccess: (result) =>
       setHealth(
         result.ok
-          ? `Verbindung erfolgreich (${result.latencyMs} ms)${result.fellBack ? ' — Fallback auf Mock-Provider!' : ''}`
-          : `Fehlgeschlagen: ${result.message ?? 'unbekannt'}`,
+          ? `Connection succeeded (${result.latencyMs} ms)${result.fellBack ? ' — fell back to the mock provider!' : ''}`
+          : `Failed: ${result.message ?? 'unknown'}`,
       ),
   });
 
@@ -119,15 +119,15 @@ export default function ProvidersPage(): ReactNode {
         </div>
       ),
     },
-    { key: 'kind', header: 'Art', render: (row) => <Badge>{row.kind}</Badge> },
+    { key: 'kind', header: 'Kind', render: (row) => <Badge>{row.kind}</Badge> },
     {
       key: 'key',
-      header: 'API-Key',
+      header: 'API key',
       render: (row) =>
         row.hasApiKey ? (
           <span className="font-mono text-[11px] text-ink-dim">{row.apiKeyPreview}</span>
         ) : (
-          <span className="text-[11px] text-ink-dim">nicht gesetzt</span>
+          <span className="text-[11px] text-ink-dim">not set</span>
         ),
     },
     {
@@ -141,18 +141,18 @@ export default function ProvidersPage(): ReactNode {
       render: (row) => (
         <div className="flex flex-col gap-1">
           <Badge tone={row.isActive ? 'positive' : 'neutral'}>
-            {row.isActive ? 'AKTIV' : 'INAKTIV'}
+            {row.isActive ? 'ACTIVE' : 'INACTIVE'}
           </Badge>
-          {row.lastError ? <Badge tone="negative">FEHLER</Badge> : null}
+          {row.lastError ? <Badge tone="negative">ERROR</Badge> : null}
         </div>
       ),
     },
     {
       key: 'lastSync',
-      header: 'Letzter Sync',
+      header: 'Last sync',
       render: (row) => (
         <div>
-          <p>{row.lastSyncAt ? new Date(row.lastSyncAt).toLocaleString('de-DE') : '—'}</p>
+          <p>{row.lastSyncAt ? new Date(row.lastSyncAt).toLocaleString('en-GB') : '—'}</p>
           {row.lastError ? (
             <p className="text-[11px] text-lost">{row.lastError.slice(0, 60)}</p>
           ) : null}
@@ -165,7 +165,7 @@ export default function ProvidersPage(): ReactNode {
       align: 'right',
       render: (row) => (
         <Button size="sm" variant="ghost" onClick={() => test.mutate(row.slug)}>
-          <Activity size={14} aria-hidden /> Testen
+          <Activity size={14} aria-hidden /> Test
         </Button>
       ),
     },
@@ -174,12 +174,12 @@ export default function ProvidersPage(): ReactNode {
   return (
     <>
       <PageHeader
-        title="API-Provider"
-        description="Datenanbieter konfigurieren. Schlüssel werden AES-256-GCM verschlüsselt gespeichert und nie zurückgegeben."
+        title="API providers"
+        description="Configure the data providers. Keys are stored AES-256-GCM encrypted and never returned."
         actions={
           <>
             <Button variant="outline" onClick={() => sync.mutate('fixtures')}>
-              <RefreshCw size={14} aria-hidden /> Sync starten
+              <RefreshCw size={14} aria-hidden /> Run sync
             </Button>
             <Button onClick={() => setOpen(true)}>
               <Plus size={15} aria-hidden /> Provider
@@ -203,12 +203,12 @@ export default function ProvidersPage(): ReactNode {
       />
 
       <section className="mt-5 card p-4">
-        <h2 className="mb-2 text-[14px] font-bold">Unterstützte Anbieter</h2>
+        <h2 className="mb-2 text-[14px] font-bold">Supported providers</h2>
         <ul className="flex flex-col gap-1 text-[12.5px] text-ink-muted">
           {(providers.data?.available ?? []).map((entry) => (
             <li key={entry.slug}>
               <span className="font-semibold text-ink">{entry.name}</span> — {entry.slug}
-              {entry.requiresApiKey ? ' · API-Key erforderlich' : ' · kein Schlüssel nötig'}
+              {entry.requiresApiKey ? ' · API key required' : ' · no key needed'}
               {entry.docsUrl ? (
                 <>
                   {' · '}
@@ -218,7 +218,7 @@ export default function ProvidersPage(): ReactNode {
                     rel="noreferrer"
                     className="text-accent-500 hover:underline"
                   >
-                    Doku
+                    Docs
                   </a>
                 </>
               ) : null}
@@ -231,14 +231,14 @@ export default function ProvidersPage(): ReactNode {
         open={open}
         onClose={() => setOpen(false)}
         wide
-        title="Provider konfigurieren"
+        title="Configure provider"
         footer={
           <>
             <Button variant="ghost" onClick={() => setOpen(false)}>
-              Abbrechen
+              Cancel
             </Button>
             <Button onClick={() => save.mutate()} disabled={save.isPending}>
-              Speichern
+              Save
             </Button>
           </>
         }
@@ -247,7 +247,7 @@ export default function ProvidersPage(): ReactNode {
           {save.isError ? <ErrorBox error={save.error} /> : null}
           <div className="grid gap-3 sm:grid-cols-2">
             <Select
-              label="Anbieter"
+              label="Provider"
               value={form.slug}
               onChange={(event) => {
                 const slug = event.target.value;
@@ -260,7 +260,7 @@ export default function ProvidersPage(): ReactNode {
               }))}
             />
             <Select
-              label="Art"
+              label="Kind"
               value={form.kind}
               onChange={(event) => setForm({ ...form, kind: event.target.value })}
               options={['SPORTS', 'ODDS', 'PUSH', 'EMAIL'].map((value) => ({
@@ -270,34 +270,34 @@ export default function ProvidersPage(): ReactNode {
             />
           </div>
           <Field
-            label="Basis-URL"
+            label="Base URL"
             value={form.baseUrl}
             onChange={(event) => setForm({ ...form, baseUrl: event.target.value })}
             placeholder="https://api.sportsgameodds.com/v2"
           />
           <Field
-            label="API-Key"
+            label="API key"
             type="password"
             value={form.apiKey}
             onChange={(event) => setForm({ ...form, apiKey: event.target.value })}
-            hint="Leer lassen, um den gespeicherten Schlüssel unverändert zu behalten."
+            hint="Leave empty to keep the stored key unchanged."
           />
           <div className="grid gap-3 sm:grid-cols-3">
             <Field
-              label="Priorität"
+              label="Priority"
               type="number"
               value={form.priority}
               onChange={(event) => setForm({ ...form, priority: event.target.value })}
             />
             <Field
-              label="Polling-Intervall (s)"
+              label="Poll interval (s)"
               type="number"
               min="10"
               value={form.pollIntervalSeconds}
               onChange={(event) => setForm({ ...form, pollIntervalSeconds: event.target.value })}
             />
             <Field
-              label="Rate-Limit / Minute"
+              label="Rate limit / minute"
               type="number"
               min="1"
               value={form.rateLimitPerMinute}
@@ -305,12 +305,12 @@ export default function ProvidersPage(): ReactNode {
             />
           </div>
           <Field
-            label="Aktive Sportarten (kommagetrennt)"
+            label="Enabled sports (comma-separated)"
             value={form.enabledSports}
             onChange={(event) => setForm({ ...form, enabledSports: event.target.value })}
           />
           <Toggle
-            label="Aktiv"
+            label="Active"
             checked={form.isActive}
             onChange={(value) => setForm({ ...form, isActive: value })}
           />

@@ -86,7 +86,7 @@ export default function NotificationsPage(): ReactNode {
   const columns: Column<NotificationRow>[] = [
     {
       key: 'title',
-      header: 'Mitteilung',
+      header: 'Notification',
       render: (row) => (
         <div>
           <p className="font-medium">{row.title}</p>
@@ -94,7 +94,7 @@ export default function NotificationsPage(): ReactNode {
         </div>
       ),
     },
-    { key: 'type', header: 'Typ', render: (row) => <Badge>{row.type}</Badge> },
+    { key: 'type', header: 'Type', render: (row) => <Badge>{row.type}</Badge> },
     {
       key: 'status',
       header: 'Status',
@@ -110,36 +110,36 @@ export default function NotificationsPage(): ReactNode {
     },
     {
       key: 'sent',
-      header: 'Gesendet',
+      header: 'Sent',
       align: 'right',
       render: (row) =>
         row.sentAt
-          ? new Date(row.sentAt).toLocaleString('de-DE')
-          : new Date(row.createdAt).toLocaleString('de-DE'),
+          ? new Date(row.sentAt).toLocaleString('en-GB')
+          : new Date(row.createdAt).toLocaleString('en-GB'),
     },
   ];
 
   return (
     <>
       <PageHeader
-        title="Push-Mitteilungen"
-        description="Die Zustellung übernimmt der Worker; Nutzer ohne Einwilligung für diesen Typ werden automatisch übersprungen."
+        title="Push notifications"
+        description="The worker handles delivery; anyone who has not opted in to this type is skipped automatically."
       />
 
       <section className="mb-5 grid gap-4 lg:grid-cols-[minmax(0,1fr)_260px]">
         <div className="card p-4">
-          <h2 className="mb-3 text-[14px] font-bold">Neue Mitteilung</h2>
+          <h2 className="mb-3 text-[14px] font-bold">New notification</h2>
           <div className="flex flex-col gap-3">
             {send.isError ? <ErrorBox error={send.error} /> : null}
             {send.isSuccess ? (
               <p className="rounded-sm bg-accent-500/10 px-3 py-2 text-[12px] text-accent-300">
-                Eingereiht — geschätzte Empfänger: {send.data.estimatedRecipients}
+                Queued — estimated recipients: {send.data.estimatedRecipients}
               </p>
             ) : null}
 
             <div className="grid gap-3 sm:grid-cols-2">
               <Select
-                label="Typ"
+                label="Type"
                 value={form.type}
                 onChange={(event) => setForm({ ...form, type: event.target.value })}
                 options={['SYSTEM', 'PROMOTION', 'NEW_TIP', 'NEW_VIP_TIP', 'NEW_COMBO', 'POLL'].map(
@@ -147,7 +147,7 @@ export default function NotificationsPage(): ReactNode {
                 )}
               />
               <Field
-                label="Geplant für"
+                label="Scheduled for"
                 type="datetime-local"
                 value={form.scheduledAt}
                 onChange={(event) => setForm({ ...form, scheduledAt: event.target.value })}
@@ -155,20 +155,20 @@ export default function NotificationsPage(): ReactNode {
             </div>
 
             <Field
-              label="Titel"
+              label="Title (German)"
               maxLength={80}
               value={form.title}
               onChange={(event) => setForm({ ...form, title: event.target.value })}
             />
             <TextArea
-              label="Text"
+              label="Body (German)"
               maxLength={240}
               value={form.body}
               onChange={(event) => setForm({ ...form, body: event.target.value })}
             />
             <TranslationFields
               locale="en"
-              title="Englische Fassung"
+              title="English version"
               fields={[
                 { name: 'title', label: 'Title' },
                 { name: 'body', label: 'Body', multiline: true },
@@ -178,14 +178,14 @@ export default function NotificationsPage(): ReactNode {
             />
 
             <Field
-              label="Deep-Link"
+              label="Deep link"
               value={form.deepLink}
               onChange={(event) => setForm({ ...form, deepLink: event.target.value })}
               placeholder="stormtips://combo"
             />
 
             <div>
-              <span className="label">Zielgruppe (leer = alle mit passender Einwilligung)</span>
+              <span className="label">Audience (empty = everyone who opted in to this type)</span>
               <div className="flex flex-wrap gap-3">
                 {['VIP', 'EXTRA', 'COMBO', 'FIX_ODDS'].map((product) => (
                   <Toggle
@@ -203,7 +203,7 @@ export default function NotificationsPage(): ReactNode {
                   />
                 ))}
                 <Toggle
-                  label="Nur Free-Nutzer"
+                  label="Free users only"
                   checked={form.onlyFreeUsers}
                   onChange={(value) => setForm({ ...form, onlyFreeUsers: value })}
                 />
@@ -214,20 +214,20 @@ export default function NotificationsPage(): ReactNode {
               onClick={() => send.mutate()}
               disabled={send.isPending || form.title.length < 2 || form.body.length < 2}
             >
-              <Send size={15} aria-hidden /> Senden
+              <Send size={15} aria-hidden /> Send
             </Button>
 
             <p className="text-[11px] text-ink-dim">
-              Kein Versprechen garantierter Gewinne — Mitteilungen unterliegen denselben Regeln wie
-              die App-Texte.
+              No promises of guaranteed profit — notifications follow the same content rules as the
+              app copy.
             </p>
           </div>
         </div>
 
         <div className="card p-4">
-          <h2 className="mb-3 text-[14px] font-bold">Registrierte Geräte</h2>
+          <h2 className="mb-3 text-[14px] font-bold">Registered devices</h2>
           {devices.isPending ? (
-            <p className="text-[12px] text-ink-dim">Wird geladen…</p>
+            <p className="text-[12px] text-ink-dim">Loading…</p>
           ) : (
             <ul className="flex flex-col gap-2">
               {(devices.data?.items ?? []).map((stat) => (
@@ -237,20 +237,20 @@ export default function NotificationsPage(): ReactNode {
                 >
                   <span className="text-ink-muted">
                     {stat.platform} · {stat.provider}
-                    {stat.isActive ? '' : ' (inaktiv)'}
+                    {stat.isActive ? '' : ' (inactive)'}
                   </span>
                   <span className="tabular font-bold">{stat.count}</span>
                 </li>
               ))}
               {(devices.data?.items ?? []).length === 0 ? (
-                <li className="text-[12px] text-ink-dim">Noch keine Geräte registriert.</li>
+                <li className="text-[12px] text-ink-dim">No devices registered yet.</li>
               ) : null}
             </ul>
           )}
         </div>
       </section>
 
-      <h2 className="mb-2 text-[14px] font-bold">Verlauf</h2>
+      <h2 className="mb-2 text-[14px] font-bold">History</h2>
       <DataTable
         columns={columns}
         rows={history.data?.items ?? []}
