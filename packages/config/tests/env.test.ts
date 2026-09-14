@@ -20,6 +20,16 @@ describe('environment schema', () => {
     expect(env.STATISTICS_STAKE).toBe(10);
   });
 
+  /**
+   * The product shipped two languages once. A leftover value must not stop the
+   * process — a config key that no longer carries a meaning is not a boot error.
+   */
+  it('folds a locale it no longer ships onto the one it does', () => {
+    expect(loadEnv({ ...base, DEFAULT_LOCALE: 'de' }).DEFAULT_LOCALE).toBe('en');
+    expect(loadEnv({ ...base, DEFAULT_LOCALE: 'en-GB' }).DEFAULT_LOCALE).toBe('en');
+    expect(loadEnv({ ...base, DEFAULT_LOCALE: 'nonsense' }).DEFAULT_LOCALE).toBe('en');
+  });
+
   it('requires the secrets the application cannot run without', () => {
     for (const key of [
       'DATABASE_URL',

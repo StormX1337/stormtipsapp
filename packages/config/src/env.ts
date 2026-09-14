@@ -40,6 +40,9 @@ const csv = z
 
 const hex64 = z.string().regex(/^[0-9a-fA-F]{64}$/, 'must be 64 hexadecimal characters (32 bytes)');
 
+/** Interface languages the product ships; mirrors SUPPORTED_LOCALES in @storm-tips/types. */
+const SHIPPED_LOCALES = ['en'] as const;
+
 export const envSchema = z.object({
   // core
   NODE_ENV: z.enum(['development', 'test', 'staging', 'production']).default('development'),
@@ -123,7 +126,19 @@ export const envSchema = z.object({
 
   // product defaults
   DEFAULT_CURRENCY: z.enum(['EUR', 'USD', 'GBP']).default('EUR'),
-  DEFAULT_LOCALE: z.enum(['en']).default('en'),
+  /**
+   * The product ships English only. A value left over from when it shipped two
+   * languages folds onto the one it has rather than stopping the process: a
+   * configuration key that no longer carries a meaning is not a reason to
+   * refuse to boot. Adding a locale to SHIPPED_LOCALES makes it accepted again.
+   */
+  DEFAULT_LOCALE: z
+    .string()
+    .default('en')
+    .transform((value) => {
+      const short = value.split('-')[0]?.toLowerCase() ?? '';
+      return (SHIPPED_LOCALES as readonly string[]).includes(short) ? short : SHIPPED_LOCALES[0];
+    }),
   DEFAULT_TIMEZONE: z.string().default('Europe/Berlin'),
   STATISTICS_STAKE: z.coerce.number().positive().default(10),
   ODDS_MOVEMENT_THRESHOLD: z.coerce.number().positive().default(0.05),

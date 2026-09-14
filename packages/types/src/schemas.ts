@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { toSupportedLocale } from './localization.js';
 import {
   BillingInterval,
   ConfidenceBand,
@@ -56,11 +57,20 @@ export const emailSchema = z.string().email().max(254).toLowerCase().trim();
 
 // ── auth ─────────────────────────────────────────────────────────────────────
 
+/**
+ * A client's language preference.
+ *
+ * The product ships English only, but an app build from when it shipped two
+ * still sends the old value — folding it is kinder than rejecting the whole
+ * request over a field that no longer changes anything.
+ */
+const languageSchema = z.string().max(8).transform(toSupportedLocale).optional();
+
 export const registerSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
   displayName: z.string().min(2).max(60).optional(),
-  language: z.enum(['en']).optional(),
+  language: languageSchema,
   countryCode: z.string().length(2).toUpperCase().optional(),
   timezone: z.string().max(64).optional(),
   referralCode: z.string().min(4).max(32).optional(),
@@ -129,7 +139,7 @@ export const updateProfileSchema = z.object({
     .nullish(),
   avatarUrl: z.string().url().max(500).nullish(),
   countryCode: z.string().length(2).toUpperCase().nullish(),
-  language: z.enum(['en']).optional(),
+  language: languageSchema,
   timezone: z.string().max(64).optional(),
   currency: z.enum(['EUR', 'USD', 'GBP']).optional(),
   marketingOptIn: z.boolean().optional(),
