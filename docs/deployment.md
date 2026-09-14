@@ -108,19 +108,43 @@ sudo ufw deny 3000/tcp && sudo ufw deny 3001/tcp && sudo ufw deny 4000/tcp
 
 ### 3. Certificate and proxy
 
+This is a circle that has to be broken in the right order: the full config
+refuses to load without a certificate, and certbot's webroot challenge needs a
+web server already answering on port 80 for the domain. So port 80 is served
+first by an HTTP-only bootstrap, and the full config goes in afterwards.
+
 ```bash
 sudo apt-get install -y nginx certbot
 sudo mkdir -p /var/www/certbot
-sudo certbot certonly --webroot -w /var/www/certbot \
-  -d tips.stormclient.xyz -d admin.tips.stormclient.xyz
 
-sudo cp infra/nginx/tips.stormclient.xyz.conf /etc/nginx/sites-available/tips
+# 3a. Serve the challenge directory — and nothing else — under both hostnames.
+sudo cp infra/nginx/acme-bootstrap.conf /etc/nginx/sites-available/tips
 sudo ln -sf /etc/nginx/sites-available/tips /etc/nginx/sites-enabled/tips
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t && sudo systemctl reload nginx
+
+# 3b. Prove it is reachable from the internet before spending a rate limit.
+echo ok | sudo tee /var/www/certbot/.well-known/acme-challenge/ping >/dev/null
+curl -s http://tips.stormclient.xyz/.well-known/acme-challenge/ping        # ok
+curl -s http://admin.tips.stormclient.xyz/.well-known/acme-challenge/ping  # ok
+
+# 3c. Now the certificate.
+sudo certbot certonly --webroot -w /var/www/certbot \
+  -d tips.stormclient.xyz -d admin.tips.stormclient.xyz
+
+# 3d. Swap in the real config, which can now find the certificate.
+sudo cp infra/nginx/tips.stormclient.xyz.conf /etc/nginx/sites-available/tips
+sudo nginx -t && sudo systemctl reload nginx
 ```
 
-Certbot installs its own renewal timer; `systemctl list-timers certbot` shows it.
+If 3b returns 404, port 80 is still being answered by something else — check
+`ls /etc/nginx/sites-enabled/` and that `systemctl reload nginx` actually
+succeeded. A failed reload leaves the _previous_ config serving, which is
+exactly how a stale default site ends up 404ing the challenge.
+
+Certbot installs its own renewal timer; `systemctl list-timers certbot` shows
+it. Renewals need no bootstrap: the full config keeps serving the same challenge
+directory on port 80.
 
 ### 4. Environment
 
