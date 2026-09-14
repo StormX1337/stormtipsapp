@@ -4,10 +4,16 @@
  *
  *   pnpm --filter @storm-tips/database stripe-sync-prices            # dry run
  *   pnpm --filter @storm-tips/database stripe-sync-prices -- --apply
+ *   pnpm --filter @storm-tips/database stripe-sync-prices -- --reset  # forget the ids
  *
  * Runs against whatever STRIPE_SECRET_KEY is in `.env`, so a test key creates
- * test prices and a live key creates live ones. Price ids are per-mode: after
- * switching keys, run it again to fill in the live ids.
+ * test prices and a live key creates live ones.
+ *
+ * Price ids are per-mode: a test id means nothing to a live key and the
+ * checkout fails with "No such price". So switching modes is two steps —
+ * `--reset` to clear the stored ids, then `--apply` to create them in the mode
+ * the current key belongs to. `--reset` touches nothing in Stripe; the prices
+ * it forgets stay there and are found again by slug if you switch back.
  *
  * Idempotent in both directions. A plan that already carries a real price id
  * is left alone, and a product this script created before is reused rather
@@ -34,6 +40,18 @@ const INTERVAL: Record<string, Stripe.PriceCreateParams.Recurring.Interval | nul
 
 async function main(): Promise<void> {
   const apply = process.argv.includes('--apply');
+  const reset = process.argv.includes('--reset');
+
+  if (reset) {
+    const plans = await prisma.subscriptionPlan.updateMany({ data: { stripePriceId: null } });
+    const fix = await prisma.fixOddsPlan.updateMany({ data: { stripePriceId: null } });
+    console.log(
+      `Cleared the stored price id on ${plans.count} plan(s) and ${fix.count} fix odds plan(s).\n` +
+        'Nothing was changed in Stripe. Run with --apply to create them for the current key.',
+    );
+    return;
+  }
+
   const secretKey = process.env.STRIPE_SECRET_KEY;
 
   if (!secretKey || secretKey.includes('replace_me')) {

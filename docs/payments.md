@@ -56,6 +56,36 @@ stripe trigger checkout.session.completed
 
 Copy the `whsec_…` that `stripe listen` prints into `STRIPE_WEBHOOK_SECRET`.
 
+### Testing a purchase first
+
+Stripe keeps test and live completely apart: separate keys, separate webhook
+endpoints, separate prices. Nothing you do in test mode can charge anyone.
+
+1. Switch the dashboard to **Test mode** and take the `sk_test_…` / `pk_test_…`
+   keys from Developers → API keys into `STRIPE_SECRET_KEY`,
+   `STRIPE_PUBLISHABLE_KEY` and `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`.
+
+2. Add a **second webhook endpoint while in test mode**, same URL, same events.
+   Its `whsec_…` differs from the live one — put the test one in
+   `STRIPE_WEBHOOK_SECRET`. An endpoint created in live mode never fires for a
+   test payment, so without this the payment succeeds and no access is granted.
+
+3. Create the prices for this mode. A price id from the other mode means
+   nothing to the current key, so clear them first:
+
+   ```bash
+   pnpm --filter @storm-tips/database stripe-sync-prices -- --reset
+   pnpm --filter @storm-tips/database stripe-sync-prices -- --apply
+   ```
+
+4. Restart, then buy a plan with `4242 4242 4242 4242`, any future expiry, any
+   CVC. Stripe's webhook delivery log shows a 200, and the subscription appears
+   under Admin → Subscriptions.
+
+Going the other way is the same two commands with the live key in place. The
+prices you created in test mode stay in test mode; switching back finds them
+again by slug rather than duplicating them.
+
 ### Going live
 
 The code needs no changes; what it needs is a price to charge and somewhere for

@@ -211,10 +211,20 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
 
     const priceId = plan?.stripePriceId ?? fixPlan?.stripePriceId;
     if (!isUsableStripePriceId(priceId)) {
+      /**
+       * A customer is not the person who can fix this, so they get a plain
+       * apology and the operator gets the instruction in the log. Telling a
+       * paying visitor to go and edit the admin console is worse than useless:
+       * it reads as a broken product and hands them internals besides.
+       */
+      request.log.error(
+        { planSlug: plan?.slug ?? fixPlan?.slug, stored: priceId ?? null },
+        'checkout blocked: no usable Stripe price on this plan — create one in ' +
+          'Stripe and set it under Admin → Plans, or run `stripe-sync-prices`',
+      );
       throw new AppError(
         ErrorCode.PROVIDER_ERROR,
-        'This plan has no Stripe price configured. Create a price in Stripe and ' +
-          'paste its price_… id into the plan under Admin → Plans.',
+        'This plan cannot be purchased at the moment. Please try again later.',
       );
     }
     if (plan && !plan.isActive) throw AppError.validation('This plan is no longer available');
