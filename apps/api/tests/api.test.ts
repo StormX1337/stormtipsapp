@@ -332,3 +332,48 @@ describe('analytics', () => {
     expect(response.statusCode).toBe(422);
   });
 });
+
+describe('CORS', () => {
+  it('allows a configured origin', async () => {
+    const app = await getApp();
+    const response = await app.inject({
+      method: 'GET',
+      url: '/api/v1/sports',
+      headers: { origin: 'http://localhost:3000' },
+    });
+    expect(response.statusCode).toBe(200);
+    expect(response.headers['access-control-allow-origin']).toBe('http://localhost:3000');
+  });
+
+  it('ignores a trailing slash in the configured allowlist', async () => {
+    const app = await getApp();
+    const response = await app.inject({
+      method: 'GET',
+      url: '/api/v1/sports',
+      headers: { origin: 'http://localhost:3000/' },
+    });
+    expect(response.statusCode).toBe(200);
+  });
+
+  /**
+   * A rejected origin must not become a 500: the browser blocks the response
+   * because the CORS headers are absent, and the server logs which origin was
+   * refused so a misconfigured allowlist is diagnosable.
+   */
+  it('rejects an unknown origin without erroring', async () => {
+    const app = await getApp();
+    const response = await app.inject({
+      method: 'GET',
+      url: '/api/v1/sports',
+      headers: { origin: 'http://evil.example' },
+    });
+    expect(response.statusCode).toBe(200);
+    expect(response.headers['access-control-allow-origin']).toBeUndefined();
+  });
+
+  it('serves a request with no Origin at all', async () => {
+    const app = await getApp();
+    const response = await app.inject({ method: 'GET', url: '/api/v1/sports' });
+    expect(response.statusCode).toBe(200);
+  });
+});

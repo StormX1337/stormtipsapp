@@ -33,19 +33,35 @@ export const securityPlugin = fp(async function securityPlugin(app: FastifyInsta
     referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
   });
 
-  const allowed = new Set(env.CORS_ORIGINS);
+  /**
+   * Origins are compared normalised: a browser sends `http://host:3000`, while
+   * an operator often writes `http://host:3000/` in the environment. Treating
+   * those as different is a configuration trap, not a security boundary.
+   */
+  const normaliseOrigin = (value: string): string => value.trim().toLowerCase().replace(/\/+$/, '');
+
+  const allowed = new Set(env.CORS_ORIGINS.map(normaliseOrigin));
+
   await app.register(cors, {
     /**
      * Strict allowlist. Requests with no Origin (server-to-server, mobile apps,
      * curl) are permitted because CORS is a browser protection and those
      * clients are authenticated by bearer token instead.
+     *
+     * A rejected origin is answered without CORS headers, which is what makes
+     * the browser block it. Throwing here instead would turn a misconfigured
+     * allowlist into a 500, hiding the actual cause.
      */
     origin(origin, callback) {
-      if (!origin || allowed.has(origin)) {
+      if (!origin || allowed.has(normaliseOrigin(origin))) {
         callback(null, true);
         return;
       }
-      callback(new Error('Origin not allowed by CORS policy'), false);
+      app.log.warn(
+        { origin, allowed: [...allowed] },
+        'origin rejected — add it to CORS_ORIGINS if this is one of your front-ends',
+      );
+      callback(null, false);
     },
     credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
