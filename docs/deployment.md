@@ -70,6 +70,96 @@ PostgreSQL and Redis are **not** published — only the application containers
 reach them. Keep it that way in production and put the admin console behind an
 IP allowlist or VPN as well.
 
+## Putting it on a domain
+
+Worked example for `tips.stormclient.xyz` on a single host running the apps
+directly (not the compose stack). `infra/nginx/tips.stormclient.xyz.conf` is the
+matching reverse-proxy config; the compose variant is `infra/nginx/nginx.conf`.
+
+The shape: nginx terminates TLS and serves the site on one origin. The browser
+calls `/api` on that same origin, so there is no CORS to configure and the API
+port never has to be reachable from outside. `/ws` is forwarded with the upgrade
+header, which is what a Next.js rewrite cannot do — so realtime streams instead
+of polling.
+
+### 1. DNS
+
+Two A records, both to the host's IPv4 address:
+
+| Type | Name         | Content       | Proxy             |
+| ---- | ------------ | ------------- | ----------------- |
+| A    | `tips`       | the host's IP | off while issuing |
+| A    | `admin.tips` | the host's IP | off while issuing |
+
+Leave the proxy (the orange cloud) **off** until the certificate is issued —
+Cloudflare answers the HTTP-01 challenge with its own edge otherwise. Turn it on
+afterwards and set SSL/TLS mode to **Full (strict)**, which requires the real
+certificate on the origin that step 3 installs.
+
+### 2. Open the ports
+
+Only 80 and 443 belong on the public internet. 3000, 3001 and 4000 stay local:
+nginx reaches them over loopback.
+
+```bash
+sudo ufw allow 80/tcp && sudo ufw allow 443/tcp
+sudo ufw deny 3000/tcp && sudo ufw deny 3001/tcp && sudo ufw deny 4000/tcp
+```
+
+### 3. Certificate and proxy
+
+```bash
+sudo apt-get install -y nginx certbot
+sudo mkdir -p /var/www/certbot
+sudo certbot certonly --webroot -w /var/www/certbot \
+  -d tips.stormclient.xyz -d admin.tips.stormclient.xyz
+
+sudo cp infra/nginx/tips.stormclient.xyz.conf /etc/nginx/sites-available/tips
+sudo ln -sf /etc/nginx/sites-available/tips /etc/nginx/sites-enabled/tips
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+Certbot installs its own renewal timer; `systemctl list-timers certbot` shows it.
+
+### 4. Environment
+
+```dotenv
+WEB_PUBLIC_URL=https://tips.stormclient.xyz
+ADMIN_PUBLIC_URL=https://admin.tips.stormclient.xyz
+API_PUBLIC_URL=https://tips.stormclient.xyz
+
+# Empty: the browser calls /api on the site's own origin.
+NEXT_PUBLIC_API_URL=
+# nginx forwards the upgrade, so realtime can finally be switched on.
+NEXT_PUBLIC_WS_URL=wss://tips.stormclient.xyz/ws
+
+API_INTERNAL_URL=http://localhost:4000
+# Only for `next dev`; drop it once you run production builds.
+ALLOWED_DEV_ORIGINS=tips.stormclient.xyz,admin.tips.stormclient.xyz
+
+# The site is same-origin, so it needs no entry. Expo Go does.
+CORS_ORIGINS=http://localhost:8081
+```
+
+Nothing here is baked into a bundle, so a domain change needs no rebuild.
+
+### 5. Verify
+
+```bash
+curl -I  http://tips.stormclient.xyz            # 301 to https
+curl -s  https://tips.stormclient.xyz/health    # {"status":"ok"}
+curl -s  https://tips.stormclient.xyz/api/v1/billing/paywall/combo | head -c 80
+```
+
+Then open the site, and the console at `https://admin.tips.stormclient.xyz`.
+
+Behind Cloudflare the origin only ever sees Cloudflare's addresses, so the
+config restores the visitor's IP from `CF-Connecting-IP` for the listed
+Cloudflare ranges. Without that the API would rate-limit every visitor as one
+client and write Cloudflare's IP into the audit log. The ranges change rarely;
+they are published at <https://www.cloudflare.com/ips/>.
+
 ## CI/CD
 
 | Workflow                        | Trigger            | Work                                                                                                            |

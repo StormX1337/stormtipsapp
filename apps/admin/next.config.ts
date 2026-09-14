@@ -11,6 +11,17 @@ const config: NextConfig = {
   output: 'standalone',
   outputFileTracingRoot: path.join(import.meta.dirname, '../..'),
   transpilePackages: ['@storm-tips/ui', '@storm-tips/types'],
+  /**
+   * Hosts the dev server accepts cross-origin requests for. `next dev` behind a
+   * reverse proxy is served under the public hostname, not localhost, and
+   * without this Next.js warns on every `/_next/*` request and will refuse them
+   * in a future major. Has no effect on `next start`.
+   */
+  allowedDevOrigins: (process.env.ALLOWED_DEV_ORIGINS ?? '')
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter(Boolean),
+
   eslint: { ignoreDuringBuilds: true },
   webpack(webpackConfig) {
     webpackConfig.resolve.extensionAlias = {

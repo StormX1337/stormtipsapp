@@ -17,6 +17,17 @@ const config: NextConfig = {
     // here would need a second, duplicated ESLint config.
     ignoreDuringBuilds: true,
   },
+  /**
+   * Hosts the dev server accepts cross-origin requests for. `next dev` behind a
+   * reverse proxy is served under the public hostname, not localhost, and
+   * without this Next.js warns on every `/_next/*` request and will refuse them
+   * in a future major. Has no effect on `next start`.
+   */
+  allowedDevOrigins: (process.env.ALLOWED_DEV_ORIGINS ?? '')
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter(Boolean),
+
   images: {
     remotePatterns: [{ protocol: 'https', hostname: '**' }],
   },
