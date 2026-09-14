@@ -12,6 +12,23 @@
  */
 const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? '';
 
+/**
+ * A secret key pasted into the publishable slot would be baked into the client
+ * bundle and served to every visitor. Dropping it degrades checkout to "not
+ * configured", which is recoverable; shipping it is not.
+ */
+function publishableKey(): string {
+  const value = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? '';
+  if (/^(sk|rk)_/.test(value)) {
+    console.error(
+      'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY holds a Stripe SECRET key and was ignored. ' +
+        'Use the pk_ key, and roll the secret key in Stripe → Developers → API keys.',
+    );
+    return '';
+  }
+  return value;
+}
+
 export const config = {
   apiUrl,
   /**
@@ -22,7 +39,7 @@ export const config = {
    */
   wsUrl: process.env.NEXT_PUBLIC_WS_URL ?? '',
   appName: process.env.NEXT_PUBLIC_APP_NAME ?? 'STORM TIPS Admin',
-  stripePublishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? '',
+  stripePublishableKey: publishableKey(),
 } as const;
 
 /** Browser-side base. Relative when the proxy is used. */

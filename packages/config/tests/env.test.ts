@@ -54,6 +54,22 @@ describe('environment schema', () => {
     expect(() => loadEnv({ ...base, ENCRYPTION_KEY: 'g'.repeat(64) })).toThrow(/64 hexadecimal/);
   });
 
+  /**
+   * The publishable key is served to browsers. A secret key pasted into that
+   * slot is the account, so it has to stop the boot rather than ship.
+   */
+  it('refuses a Stripe secret key in the publishable slot', () => {
+    expect(() => loadEnv({ ...base, STRIPE_PUBLISHABLE_KEY: 'sk_live_abc' })).toThrow(
+      /published to browsers/,
+    );
+    expect(() => loadEnv({ ...base, STRIPE_PUBLISHABLE_KEY: 'rk_live_abc' })).toThrow(
+      /published to browsers/,
+    );
+    expect(loadEnv({ ...base, STRIPE_PUBLISHABLE_KEY: 'pk_live_abc' }).STRIPE_PUBLISHABLE_KEY).toBe(
+      'pk_live_abc',
+    );
+  });
+
   it('parses the CORS allowlist into trimmed entries', () => {
     const env = loadEnv({
       ...base,

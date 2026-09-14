@@ -81,7 +81,19 @@ export const envSchema = z.object({
 
   // stripe
   STRIPE_SECRET_KEY: z.string().optional(),
-  STRIPE_PUBLISHABLE_KEY: z.string().optional(),
+  /**
+   * The publishable key is handed to browsers, so a secret key here is not a
+   * typo that fails later — it is the whole account leaked to every visitor.
+   * Refusing to boot is the only safe reading of it.
+   */
+  STRIPE_PUBLISHABLE_KEY: z
+    .string()
+    .optional()
+    .refine((value) => !value || !/^(sk|rk)_/.test(value), {
+      message:
+        'STRIPE_PUBLISHABLE_KEY holds a secret key (sk_/rk_). It is published to browsers — ' +
+        'use the pk_ key from Stripe → Developers → API keys, and roll the secret key that was pasted here.',
+    }),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
   STRIPE_SUCCESS_URL: z.string().url().default('http://localhost:3000/billing/success'),
   STRIPE_CANCEL_URL: z.string().url().default('http://localhost:3000/billing/cancelled'),
