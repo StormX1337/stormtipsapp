@@ -1,5 +1,6 @@
 import { prisma, type Prisma } from '@storm-tips/database';
 import {
+  CATALOGUE_COUNTRIES,
   classifyMovement,
   createProviderWithFallback,
   relativeDelta,
@@ -8,6 +9,7 @@ import {
   type SportsDataProvider,
 } from '@storm-tips/sports';
 import { decryptSecret } from '@storm-tips/auth';
+import { flagEmoji } from '@storm-tips/ui';
 import type { MarketType } from '@storm-tips/types';
 import { env } from '../lib/env.js';
 import { logger } from '../lib/logger.js';
@@ -133,9 +135,19 @@ export class SyncService {
     if (event.countryCode) {
       countryId = cache.countries.get(event.countryCode) ?? null;
       if (!countryId) {
+        /**
+         * Providers send a bare country code. Without this the row is created
+         * with the code as its name and no flag, which is what the apps then
+         * render — a grey "IT" box where a flag belongs.
+         */
+        const known = CATALOGUE_COUNTRIES.find((entry) => entry.code === event.countryCode);
         const country = await prisma.country.upsert({
           where: { code: event.countryCode },
-          create: { code: event.countryCode, name: event.countryCode },
+          create: {
+            code: event.countryCode,
+            name: known?.name ?? event.countryCode,
+            flagEmoji: known?.flagEmoji ?? flagEmoji(event.countryCode),
+          },
           update: {},
         });
         countryId = country.id;

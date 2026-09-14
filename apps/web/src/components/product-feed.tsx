@@ -48,6 +48,18 @@ export function ProductFeed({
   const feed = useQuery({
     queryKey: ['feed', product, date, unlocked],
     queryFn: () => api<TipFeedDTO>(`/tips/${path}?date=${date}`, { auth: true }),
+    /**
+     * Scores and minutes move while a match is on, and the feed used to fetch
+     * once and then sit there — so a fixture stayed 0-0 until the reader
+     * reloaded. Polling only while something is actually in play keeps a day of
+     * finished fixtures from re-fetching for nothing.
+     */
+    refetchInterval: (query) =>
+      query.state.data?.groups.some((group) =>
+        group.tips.some((tip) => tip.event.status === 'LIVE' || tip.event.status === 'HALFTIME'),
+      )
+        ? 30_000
+        : false,
   });
 
   const promotions = useQuery({

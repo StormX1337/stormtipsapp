@@ -1,4 +1,5 @@
 import type { Prisma } from '@storm-tips/database';
+import { flagEmoji } from '@storm-tips/ui';
 import type {
   CountryDTO,
   EventDTO,
@@ -32,7 +33,9 @@ export function serializeCountry(
     id: country.id,
     code: country.code,
     name: country.name,
-    flagEmoji: country.flagEmoji,
+    // Derived from the code when the row has none — provider-created
+    // countries arrive as a bare code with no flag to store.
+    flagEmoji: country.flagEmoji ?? flagEmoji(country.code),
     flagUrl: country.flagUrl,
   };
 }

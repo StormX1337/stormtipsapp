@@ -145,3 +145,34 @@ export function initialsOf(name: string): string {
     .map((part) => part[0]?.toUpperCase() ?? '')
     .join('');
 }
+
+/**
+ * The flag emoji for an ISO 3166-1 alpha-2 country code.
+ *
+ * Regional indicator symbols are computed from the letters themselves, so every
+ * country resolves without shipping an asset or storing anything — which
+ * matters because the provider sync creates country rows from a bare code and
+ * has no flag to store.
+ *
+ * The three UK home nations are not alpha-2 codes; they use subdivision tag
+ * sequences, so they are listed rather than derived.
+ */
+const SUBDIVISION_FLAGS: Record<string, string> = {
+  EN: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+  GBENG: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+  SCT: '🏴󠁧󠁢󠁳󠁣󠁴󠁿',
+  GBSCT: '🏴󠁧󠁢󠁳󠁣󠁴󠁿',
+  WLS: '🏴󠁧󠁢󠁷󠁬󠁳󠁿',
+  GBWLS: '🏴󠁧󠁢󠁷󠁬󠁳󠁿',
+};
+
+export function flagEmoji(code: string | null | undefined): string | null {
+  if (!code) return null;
+  const upper = code.trim().toUpperCase();
+  const listed = SUBDIVISION_FLAGS[upper];
+  if (listed) return listed;
+  if (!/^[A-Z]{2}$/.test(upper)) return null;
+  return String.fromCodePoint(
+    ...[...upper].map((letter) => 0x1f1e6 + (letter.codePointAt(0)! - 65)),
+  );
+}

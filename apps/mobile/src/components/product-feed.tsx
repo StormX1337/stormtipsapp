@@ -78,6 +78,13 @@ export function ProductFeed({
     // Last known feed keeps the screen useful in a tunnel or on a plane.
     initialData: undefined,
     placeholderData: (previous) => previous,
+    // Only while a fixture is actually in play — see the web feed for why.
+    refetchInterval: (query) =>
+      query.state.data?.groups.some((group) =>
+        group.tips.some((tip) => tip.event.status === 'LIVE' || tip.event.status === 'HALFTIME'),
+      )
+        ? 30_000
+        : false,
   });
 
   const [offlineFeed, setOfflineFeed] = useState<TipFeedDTO | null>(null);

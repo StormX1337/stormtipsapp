@@ -85,6 +85,9 @@ export function CountryFlag({
       </span>
     );
   }
+  // A league the provider gave no country for renders nothing rather than "??",
+  // which reads as a fault in the page instead of an absent detail.
+  if (!code) return null;
   return (
     <span
       className={clsx(
@@ -93,7 +96,7 @@ export function CountryFlag({
       )}
       aria-hidden
     >
-      {code ?? '??'}
+      {code}
     </span>
   );
 }
