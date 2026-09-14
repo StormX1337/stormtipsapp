@@ -52,6 +52,20 @@ export default function AccountPage(): ReactNode {
     if (!loading && !user) router.replace('/auth/login?next=/account');
   }, [loading, user, router]);
 
+  /**
+   * The choice is stored on the account as well as locally, because push
+   * notifications and emails are rendered server-side in the stored language.
+   */
+  async function changeLanguage(next: 'de' | 'en'): Promise<void> {
+    setLocale(next);
+    if (!user) return;
+    try {
+      await api('/me', { method: 'PATCH', body: { language: next } });
+    } catch {
+      // The local preference already applied; the next profile edit retries.
+    }
+  }
+
   async function deleteAccount(): Promise<void> {
     if (
       !window.confirm('Konto wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')
@@ -125,7 +139,7 @@ export default function AccountPage(): ReactNode {
                     <button
                       key={code}
                       type="button"
-                      onClick={() => setLocale(code)}
+                      onClick={() => void changeLanguage(code)}
                       aria-pressed={locale === code}
                       className={
                         locale === code

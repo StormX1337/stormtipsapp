@@ -80,8 +80,11 @@ export const jobs = {
     ),
   fanOutNotification: (payload: {
     type: string;
-    title: string;
-    body: string;
+    templateKey?: string;
+    values?: Record<string, string | number>;
+    title?: string;
+    body?: string;
+    translations?: Record<string, { title?: string; body?: string }>;
     data?: Record<string, unknown>;
     deepLink?: string | null;
     imageUrl?: string | null;

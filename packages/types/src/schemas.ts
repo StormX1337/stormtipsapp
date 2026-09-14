@@ -197,6 +197,22 @@ export const statisticsQuerySchema = z.object({
 
 // ── admin: tips ──────────────────────────────────────────────────────────────
 
+/**
+ * Per-locale content overrides submitted by the admin forms, shaped as
+ * `{ en: { name: "…", benefits: ["…"] } }`. A field left empty removes the
+ * override so the row falls back to the authored text rather than rendering
+ * blank.
+ */
+export const translationsSchema = z
+  .record(
+    z.enum(['de', 'en']),
+    z.record(
+      z.string().min(1).max(40),
+      z.union([z.string().max(8000), z.array(z.string().min(1).max(400)).max(20)]),
+    ),
+  )
+  .optional();
+
 const tipBaseSchema = z.object({
   eventId: idSchema,
   marketId: idSchema.optional(),
@@ -221,6 +237,7 @@ const tipBaseSchema = z.object({
   publishAt: z.string().datetime().nullish(),
   expiresAt: z.string().datetime().nullish(),
   fixOddsPlanId: idSchema.nullish(),
+  translations: translationsSchema,
 });
 
 /** Markets whose selection is meaningless without a numeric line. */
@@ -286,6 +303,7 @@ const comboBaseSchema = z.object({
   publishAt: z.string().datetime().nullish(),
   expiresAt: z.string().datetime().nullish(),
   tipIds: z.array(idSchema).min(2).max(15),
+  translations: translationsSchema,
 });
 export const createComboSchema = comboBaseSchema;
 export type CreateComboInput = z.infer<typeof createComboSchema>;
@@ -365,6 +383,7 @@ export const upsertPlanSchema = z.object({
   appleProductId: z.string().max(120).nullish(),
   googleProductId: z.string().max(120).nullish(),
   googleBasePlanId: z.string().max(120).nullish(),
+  translations: translationsSchema,
 });
 export type UpsertPlanInput = z.infer<typeof upsertPlanSchema>;
 
@@ -394,6 +413,7 @@ export const upsertFixOddsPlanSchema = z.object({
   stripePriceId: z.string().max(120).nullish(),
   appleProductId: z.string().max(120).nullish(),
   googleProductId: z.string().max(120).nullish(),
+  translations: translationsSchema,
 });
 
 export const upsertCouponSchema = z.object({
@@ -435,6 +455,7 @@ export const upsertPromotionSchema = z.object({
   endsAt: z.string().datetime().nullish(),
   priority: z.number().int().min(0).max(999).default(100),
   isActive: z.boolean().default(true),
+  translations: translationsSchema,
 });
 
 // ── checkout ─────────────────────────────────────────────────────────────────
@@ -493,6 +514,7 @@ export const upsertPollSchema = z.object({
     )
     .min(2)
     .max(10),
+  translations: translationsSchema,
 });
 
 export const voteSchema = z.object({ optionIds: z.array(idSchema).min(1).max(10) });
@@ -515,6 +537,7 @@ export const sendNotificationSchema = z.object({
     })
     .default({}),
   scheduledAt: z.string().datetime().nullish(),
+  translations: translationsSchema,
 });
 
 // ── admin: users ─────────────────────────────────────────────────────────────

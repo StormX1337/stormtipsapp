@@ -4,9 +4,11 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { getLocales } from 'expo-localization';
 import {
   createTranslator,
@@ -16,6 +18,7 @@ import {
   type TranslateValues,
 } from '@storm-tips/ui';
 import { preferences } from './storage';
+import { setRequestLocale } from './api';
 
 interface I18nValue {
   locale: SupportedLocale;
@@ -35,6 +38,19 @@ export function I18nProvider({ children }: { children: ReactNode }): ReactNode {
       if (stored) setLocaleState(resolveLocale(stored));
     });
   }, []);
+
+  // The API returns editorial content in this language, so anything already
+  // fetched in the previous one has to be refetched.
+  const queryClient = useQueryClient();
+  const firstRun = useRef(true);
+  useEffect(() => {
+    setRequestLocale(locale);
+    if (firstRun.current) {
+      firstRun.current = false;
+      return;
+    }
+    void queryClient.invalidateQueries();
+  }, [locale, queryClient]);
 
   const setLocale = useCallback((next: SupportedLocale) => {
     setLocaleState(next);

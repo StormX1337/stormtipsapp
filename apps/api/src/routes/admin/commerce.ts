@@ -12,6 +12,8 @@ import {
 import { parseBody, parseParams, parseQuery } from '../../lib/validate.js';
 import { assertFound, paginate, skipTake } from '../../lib/http.js';
 import { audit } from '../../lib/audit.js';
+import { adminFixOddsPlan, adminPlan, adminPromotion } from '../../serializers/admin.js';
+import { translationPatch } from '../../lib/translations.js';
 import { cacheInvalidatePattern } from '../../lib/cache.js';
 import {
   serializeFixOddsPlan,
@@ -25,7 +27,7 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
   // ── subscription plans ────────────────────────────────────────────────────
   app.get('/plans', { preHandler: [app.requireCapability('plans:write')] }, async () => {
     const plans = await prisma.subscriptionPlan.findMany({ orderBy: { sortOrder: 'asc' } });
-    return { items: plans.map((plan) => serializePlan(plan)) };
+    return { items: plans.map((plan) => adminPlan(serializePlan(plan), plan)) };
   });
 
   app.post(
@@ -42,7 +44,7 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         after: input,
       });
       reply.status(201);
-      return serializePlan(plan);
+      return adminPlan(serializePlan(plan), plan);
     },
   );
 
@@ -58,7 +60,10 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
       );
       const plan = await prisma.subscriptionPlan.update({
         where: { id },
-        data: normalisePlan(input as never, true),
+        data: {
+          ...(normalisePlan(input as never, true) as Record<string, unknown>),
+          translations: translationPatch(before.translations, input.translations) as never,
+        } as never,
       });
       await cacheInvalidatePattern('plans:*');
       await audit(request, {
@@ -68,7 +73,7 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         before,
         after: input,
       });
-      return serializePlan(plan);
+      return adminPlan(serializePlan(plan), plan);
     },
   );
 
@@ -102,7 +107,7 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
   // ── fix odds plans ────────────────────────────────────────────────────────
   app.get('/fix-odds-plans', { preHandler: [app.requireCapability('plans:write')] }, async () => {
     const plans = await prisma.fixOddsPlan.findMany({ orderBy: { sortOrder: 'asc' } });
-    return { items: plans.map((plan) => serializeFixOddsPlan(plan)) };
+    return { items: plans.map((plan) => adminFixOddsPlan(serializeFixOddsPlan(plan), plan)) };
   });
 
   app.post(
@@ -121,7 +126,7 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         after: input,
       });
       reply.status(201);
-      return serializeFixOddsPlan(plan);
+      return adminFixOddsPlan(serializeFixOddsPlan(plan), plan);
     },
   );
 
@@ -131,14 +136,24 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
     async (request) => {
       const { id } = parseParams(request, idParamSchema);
       const input = parseBody(request, upsertFixOddsPlanSchema.partial());
-      const plan = await prisma.fixOddsPlan.update({ where: { id }, data: input as never });
+      const before = assertFound(
+        await prisma.fixOddsPlan.findUnique({ where: { id } }),
+        'Fix odds plan',
+      );
+      const plan = await prisma.fixOddsPlan.update({
+        where: { id },
+        data: {
+          ...(input as Record<string, unknown>),
+          translations: translationPatch(before.translations, input.translations) as never,
+        } as never,
+      });
       await audit(request, {
         action: 'fixodds.updated',
         entityType: 'FixOddsPlan',
         entityId: id,
         after: input,
       });
-      return serializeFixOddsPlan(plan);
+      return adminFixOddsPlan(serializeFixOddsPlan(plan), plan);
     },
   );
 
@@ -249,7 +264,11 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
   // ── promotions ────────────────────────────────────────────────────────────
   app.get('/promotions', { preHandler: [app.requireCapability('promotions:write')] }, async () => {
     const promotions = await prisma.promotion.findMany({ orderBy: { priority: 'asc' } });
-    return { items: promotions.map(serializePromotion) };
+    return {
+      items: promotions.map((promotion) =>
+        adminPromotion(serializePromotion(promotion), promotion),
+      ),
+    };
   });
 
   app.post(
@@ -272,7 +291,7 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         after: input,
       });
       reply.status(201);
-      return serializePromotion(promotion);
+      return adminPromotion(serializePromotion(promotion), promotion);
     },
   );
 
@@ -282,10 +301,12 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
     async (request) => {
       const { id } = parseParams(request, idParamSchema);
       const input = parseBody(request, upsertPromotionSchema.partial());
+      const before = assertFound(await prisma.promotion.findUnique({ where: { id } }), 'Promotion');
       const promotion = await prisma.promotion.update({
         where: { id },
         data: {
           ...input,
+          translations: translationPatch(before.translations, input.translations),
           startsAt: input.startsAt ? new Date(input.startsAt) : undefined,
           endsAt: input.endsAt ? new Date(input.endsAt) : undefined,
         } as never,
@@ -297,7 +318,7 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         entityId: id,
         after: input,
       });
-      return serializePromotion(promotion);
+      return adminPromotion(serializePromotion(promotion), promotion);
     },
   );
 

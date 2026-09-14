@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { X } from 'lucide-react';
 import {
   useEffect,
+  useState,
   type ButtonHTMLAttributes,
   type InputHTMLAttributes,
   type ReactNode,
@@ -354,5 +355,97 @@ export function Pagination({
         Weiter
       </Button>
     </div>
+  );
+}
+
+/**
+ * Per-locale content fields.
+ *
+ * Content is authored in the primary language in the form above; this block
+ * collects the overrides for a second language. A field left empty is not an
+ * empty translation — the API drops it so the row falls back to the authored
+ * text rather than rendering blank.
+ */
+export function TranslationFields({
+  locale,
+  title,
+  fields,
+  value,
+  onChange,
+}: {
+  locale: string;
+  title: string;
+  fields: { name: string; label: string; multiline?: boolean }[];
+  value: Record<string, string>;
+  onChange: (next: Record<string, string>) => void;
+}): ReactNode {
+  const [open, setOpen] = useState(() => Object.values(value).some((entry) => entry.trim() !== ''));
+  const filled = Object.values(value).filter((entry) => entry.trim() !== '').length;
+
+  return (
+    <section className="rounded-lg border border-line-subtle">
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        aria-expanded={open}
+        className="flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left"
+      >
+        <span className="text-[13px] font-semibold">
+          {title}
+          <span className="ml-2 rounded-sm bg-bg-card-alt px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-ink-dim uppercase">
+            {locale}
+          </span>
+        </span>
+        <span className="text-[11px] text-ink-dim">
+          {filled > 0 ? `${filled}/${fields.length}` : 'leer'} · {open ? '▲' : '▼'}
+        </span>
+      </button>
+
+      {open ? (
+        <div className="flex flex-col gap-3 border-t border-line-subtle p-3">
+          {fields.map((field) =>
+            field.multiline ? (
+              <TextArea
+                key={field.name}
+                label={field.label}
+                value={value[field.name] ?? ''}
+                onChange={(event) => onChange({ ...value, [field.name]: event.target.value })}
+              />
+            ) : (
+              <Field
+                key={field.name}
+                label={field.label}
+                value={value[field.name] ?? ''}
+                onChange={(event) => onChange({ ...value, [field.name]: event.target.value })}
+              />
+            ),
+          )}
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
+/** Strips empty entries so the API keeps the authored text as the fallback. */
+export function translationPayload(
+  locale: string,
+  value: Record<string, string>,
+): Record<string, Record<string, string>> {
+  const fields = Object.fromEntries(
+    Object.entries(value).filter(([, entry]) => entry.trim() !== ''),
+  );
+  return { [locale]: fields };
+}
+
+/** Reads one locale out of a stored translation bundle, for form pre-fill. */
+export function englishOf(
+  translations: Record<string, Record<string, unknown>> | undefined,
+  locale = 'en',
+): Record<string, string> {
+  const fields = translations?.[locale] ?? {};
+  return Object.fromEntries(
+    Object.entries(fields).filter(
+      (entry): entry is [string, string] => typeof entry[1] === 'string',
+    ),
   );
 }

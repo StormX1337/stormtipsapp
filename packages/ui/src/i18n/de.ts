@@ -142,6 +142,8 @@ export const de: Messages = {
   'paywall.sale': 'Aktion',
   'paywall.new': 'Neu',
   'paywall.bestValue': 'Bestes Angebot',
+  'paywall.months.one': '{count} Monat',
+  'paywall.months.other': '{count} Monate',
   'paywall.or': 'oder',
   'paywall.bundle': 'Combo + VIP + Extra',
   'paywall.restore': 'Wiederherstellen',
@@ -270,6 +272,8 @@ export const de: Messages = {
   'legal.ageNotice': '18+. Wetten ist mit finanziellem Risiko verbunden.',
   'legal.noGuarantee':
     'STORM TIPS veröffentlicht Sportanalysen zu Informationszwecken. Es wird kein Ergebnis garantiert und kein Ausgang kann sicher vorhergesagt werden.',
+  'legal.paywallDisclaimer':
+    'STORM TIPS veröffentlicht Sportanalysen zu Informationszwecken. Alle Zahlen sind geprüfte historische Ergebnisse. Kein Ergebnis ist garantiert.',
   'legal.helpLine':
     'Wenn Glücksspiel keinen Spaß mehr macht, wende dich an eine Beratungsstelle in deinem Land.',
 

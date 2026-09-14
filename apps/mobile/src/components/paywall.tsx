@@ -96,11 +96,6 @@ export function StatCirclePanel({ statistics }: { statistics: PaywallStatistics 
   );
 }
 
-function monthLabel(months: number, locale: string): string {
-  if (locale === 'de') return months === 1 ? 'Monat' : 'Monate';
-  return months === 1 ? 'month' : 'months';
-}
-
 /** One of the duration cards (1 / 3 / 6 months). */
 export function PlanCard({
   plan,
@@ -111,7 +106,7 @@ export function PlanCard({
   selected: boolean;
   onSelect: () => void;
 }): ReactNode {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   return (
     <Pressable
       accessibilityRole="button"
@@ -124,7 +119,9 @@ export function PlanCard({
       ]}
     >
       <Text style={styles.planMonths}>
-        {plan.months} {monthLabel(plan.months, locale)}
+        {t(plan.months === 1 ? 'paywall.months.one' : 'paywall.months.other', {
+          count: plan.months,
+        })}
       </Text>
       <Text style={styles.planPrice}>{plan.price.formatted}</Text>
       {plan.pricePerMonth ? (
@@ -153,7 +150,7 @@ export function BundleCard({
   selected: boolean;
   onSelect: () => void;
 }): ReactNode {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   return (
     <Pressable
       accessibilityRole="button"
@@ -188,7 +185,9 @@ export function BundleCard({
         </View>
         <View style={styles.bundleRight}>
           <Text style={styles.bundleMonths}>
-            {plan.months} {monthLabel(plan.months, locale)}
+            {t(plan.months === 1 ? 'paywall.months.one' : 'paywall.months.other', {
+              count: plan.months,
+            })}
           </Text>
           <Text style={styles.bundlePrice}>{plan.price.formatted}</Text>
         </View>

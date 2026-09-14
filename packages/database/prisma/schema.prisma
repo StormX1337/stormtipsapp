@@ -571,6 +571,11 @@ model Market {
   odds Odd[]
   tips Tip[]
 
+  /// Per-locale overrides for this row's human-readable fields, keyed by
+  /// locale: `{ "en": { "name": "…" } }`. A missing locale or field falls back
+  /// to the column itself, so content is never blank in a second language.
+  translations Json @default("{}")
+
   @@index([type])
   @@map("markets")
 }
@@ -688,6 +693,11 @@ model Tip {
   @@index([settledAt])
   @@index([isLive, status])
   @@index([createdById])
+  /// Per-locale overrides for this row's human-readable fields, keyed by
+  /// locale: `{ "en": { "name": "…" } }`. A missing locale or field falls back
+  /// to the column itself, so content is never blank in a second language.
+  translations Json @default("{}")
+
   @@map("tips")
 }
 
@@ -741,6 +751,11 @@ model Combo {
 
   @@index([product, status, publishAt])
   @@index([outcome])
+  /// Per-locale overrides for this row's human-readable fields, keyed by
+  /// locale: `{ "en": { "name": "…" } }`. A missing locale or field falls back
+  /// to the column itself, so content is never blank in a second language.
+  translations Json @default("{}")
+
   @@map("combos")
 }
 
@@ -775,6 +790,11 @@ model Product {
   isActive    Boolean     @default(true)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+
+  /// Per-locale overrides for this row's human-readable fields, keyed by
+  /// locale: `{ "en": { "name": "…" } }`. A missing locale or field falls back
+  /// to the column itself, so content is never blank in a second language.
+  translations Json @default("{}")
 
   @@map("products")
 }
@@ -814,6 +834,11 @@ model SubscriptionPlan {
   promotions    Promotion[]
 
   @@index([isActive, sortOrder])
+  /// Per-locale overrides for this row's human-readable fields, keyed by
+  /// locale: `{ "en": { "name": "…" } }`. A missing locale or field falls back
+  /// to the column itself, so content is never blank in a second language.
+  translations Json @default("{}")
+
   @@map("subscription_plans")
 }
 
@@ -852,6 +877,11 @@ model FixOddsPlan {
   tips Tip[]
 
   @@index([isActive, sortOrder])
+  /// Per-locale overrides for this row's human-readable fields, keyed by
+  /// locale: `{ "en": { "name": "…" } }`. A missing locale or field falls back
+  /// to the column itself, so content is never blank in a second language.
+  translations Json @default("{}")
+
   @@map("fix_odds_plans")
 }
 
@@ -1060,6 +1090,11 @@ model Promotion {
   updatedAt DateTime          @updatedAt
 
   @@index([isActive, startsAt, endsAt])
+  /// Per-locale overrides for this row's human-readable fields, keyed by
+  /// locale: `{ "en": { "name": "…" } }`. A missing locale or field falls back
+  /// to the column itself, so content is never blank in a second language.
+  translations Json @default("{}")
+
   @@map("promotions")
 }
 
@@ -1153,6 +1188,11 @@ model Poll {
   votes   PollVote[]
 
   @@index([status, startsAt])
+  /// Per-locale overrides for this row's human-readable fields, keyed by
+  /// locale: `{ "en": { "name": "…" } }`. A missing locale or field falls back
+  /// to the column itself, so content is never blank in a second language.
+  translations Json @default("{}")
+
   @@map("polls")
 }
 
@@ -1169,6 +1209,11 @@ model PollOption {
   votes PollVote[]
 
   @@index([pollId, sortOrder])
+  /// Per-locale overrides for this row's human-readable fields, keyed by
+  /// locale: `{ "en": { "name": "…" } }`. A missing locale or field falls back
+  /// to the column itself, so content is never blank in a second language.
+  translations Json @default("{}")
+
   @@map("poll_options")
 }
 

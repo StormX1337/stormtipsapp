@@ -1,3 +1,5 @@
+import { getLocales } from 'expo-localization';
+import { resolveLocale } from '@storm-tips/ui';
 import { apiBase } from './config';
 import { secureStorage } from './storage';
 
@@ -45,6 +47,45 @@ export const reachability = {
     return () => reachabilityListeners.delete(listener);
   },
 };
+
+/**
+ * The language the user picked, mirrored here so every request can carry it.
+ * The API needs it to return editorial content in the right language, not just
+ * the interface strings the app translates itself.
+ *
+ * Seeded from the device language at module load: the first queries fire before
+ * any provider effect runs, and a request that went out in the wrong language
+ * would be answered from cache rather than refetched. The stored preference
+ * replaces it as soon as the i18n provider reads it.
+ */
+let requestLocale: string = resolveLocale(getLocales()[0]?.languageCode ?? undefined);
+
+export function setRequestLocale(locale: string): void {
+  requestLocale = locale;
+}
+
+/**
+ * Transport-level failures never reach the server, so they carry no localised
+ * message from it — these are the only strings the client has to translate
+ * itself.
+ */
+const TRANSPORT_MESSAGES: Record<string, { timeout: string; network: string; unknown: string }> = {
+  de: {
+    timeout: 'Zeitüberschreitung',
+    network: 'Netzwerkfehler',
+    unknown: 'Anfrage fehlgeschlagen',
+  },
+  en: {
+    timeout: 'The request timed out',
+    network: 'Network error',
+    unknown: 'The request failed',
+  },
+};
+
+function transportMessage(key: 'timeout' | 'network' | 'unknown'): string {
+  const short = requestLocale.split('-')[0] ?? 'de';
+  return (TRANSPORT_MESSAGES[short] ?? TRANSPORT_MESSAGES.de!)[key];
+}
 
 /** In-memory mirror so the hot path never awaits the Keychain. */
 let accessToken: string | null = null;
@@ -121,6 +162,7 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
 
   const requestHeaders: Record<string, string> = {
     accept: 'application/json',
+    'accept-language': requestLocale,
     ...(headers as Record<string, string>),
   };
   if (body !== undefined) requestHeaders['content-type'] = 'application/json';
@@ -143,7 +185,7 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
     throw apiError(
       0,
       aborted ? 'TIMEOUT' : 'NETWORK_ERROR',
-      aborted ? 'Zeitüberschreitung' : 'Netzwerkfehler',
+      transportMessage(aborted ? 'timeout' : 'network'),
     );
   } finally {
     clearTimeout(timer);
@@ -165,7 +207,7 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
     throw apiError(
       response.status,
       envelope?.error?.code ?? 'UNKNOWN',
-      envelope?.error?.message ?? 'Anfrage fehlgeschlagen',
+      envelope?.error?.message ?? transportMessage('unknown'),
       envelope?.error?.details,
     );
   }

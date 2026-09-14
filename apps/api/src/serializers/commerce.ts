@@ -1,5 +1,6 @@
 import type { Prisma } from '@storm-tips/database';
 import { intervalMonths, pricePerMonthCents, savingsAgainstMonthly } from '@storm-tips/payments';
+import { localizer } from '@storm-tips/types';
 import type {
   FixOddsPlanDTO,
   PaymentDTO,
@@ -39,12 +40,13 @@ export function serializePlan(
         }
       : null;
   const effective = savings ?? compareSavings;
+  const text = localizer(plan, locale);
 
   return {
     id: plan.id,
     slug: plan.slug,
-    name: plan.name,
-    description: plan.description,
+    name: text.text('name', plan.name),
+    description: text.text('description', plan.description),
     products: plan.products as ProductCode[],
     price: money(plan.priceCents, plan.currency, locale),
     compareAtPrice: plan.compareAtPriceCents
@@ -58,7 +60,7 @@ export function serializePlan(
     months,
     trialDays: plan.trialDays,
     badge: plan.badge,
-    highlight: plan.highlight,
+    highlight: text.text('highlight', plan.highlight),
     isPopular: plan.isPopular,
     stripePriceId: plan.stripePriceId,
     appleProductId: plan.appleProductId,
@@ -70,11 +72,12 @@ export function serializeFixOddsPlan(
   plan: Prisma.FixOddsPlanGetPayload<object>,
   locale = 'de',
 ): FixOddsPlanDTO {
+  const text = localizer(plan, locale);
   return {
     id: plan.id,
     slug: plan.slug,
-    name: plan.name,
-    description: plan.description,
+    name: text.text('name', plan.name),
+    description: text.text('description', plan.description),
     price: money(plan.priceCents, plan.currency, locale),
     interval: plan.interval,
     intervalCount: plan.intervalCount,
@@ -90,15 +93,19 @@ export function serializeFixOddsPlan(
   };
 }
 
-export function serializeProduct(product: Prisma.ProductGetPayload<object>): ProductDTO {
+export function serializeProduct(
+  product: Prisma.ProductGetPayload<object>,
+  locale = 'de',
+): ProductDTO {
+  const text = localizer(product, locale);
   return {
     code: product.code as ProductCode,
-    name: product.name,
-    tagline: product.tagline,
-    description: product.description,
+    name: text.text('name', product.name),
+    tagline: text.text('tagline', product.tagline),
+    description: text.text('description', product.description),
     icon: product.icon,
     color: product.color,
-    benefits: product.benefits,
+    benefits: text.list('benefits', product.benefits),
   };
 }
 
@@ -142,14 +149,18 @@ export function serializePayment(
   };
 }
 
-export function serializePromotion(promotion: Prisma.PromotionGetPayload<object>): PromotionDTO {
+export function serializePromotion(
+  promotion: Prisma.PromotionGetPayload<object>,
+  locale = 'de',
+): PromotionDTO {
+  const text = localizer(promotion, locale);
   return {
     id: promotion.id,
-    title: promotion.title,
-    subtitle: promotion.subtitle,
-    body: promotion.body,
+    title: text.text('title', promotion.title),
+    subtitle: text.text('subtitle', promotion.subtitle),
+    body: text.text('body', promotion.body),
     imageUrl: promotion.imageUrl,
-    ctaLabel: promotion.ctaLabel,
+    ctaLabel: text.text('ctaLabel', promotion.ctaLabel),
     ctaUrl: promotion.ctaUrl,
     deepLink: promotion.deepLink,
     badge: promotion.badge,

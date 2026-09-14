@@ -35,6 +35,7 @@ export async function createTestUser(
   overrides: {
     role?: 'USER' | 'MODERATOR' | 'ADMIN' | 'SUPER_ADMIN';
     status?: 'ACTIVE' | 'BANNED';
+    language?: 'de' | 'en';
   } = {},
 ): Promise<TestUser> {
   const email = `test-${randomUUID()}@example.test`;
@@ -46,6 +47,7 @@ export async function createTestUser(
       displayName: 'Test user',
       role: overrides.role ?? 'USER',
       status: overrides.status ?? 'ACTIVE',
+      language: overrides.language ?? 'de',
       referralCode: generateReferralCode(10),
     },
   });

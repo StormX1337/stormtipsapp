@@ -26,6 +26,8 @@ export interface FeedOptions extends PageParams {
   live?: boolean;
   includeSettled?: boolean;
   timezone?: string;
+  /** Language the editorial text is returned in. */
+  locale?: string;
 }
 
 /** Day boundaries for a YYYY-MM-DD key, interpreted in the viewer's timezone. */
@@ -101,7 +103,7 @@ export class TipService {
     for (const tip of tips) {
       const key = tip.leagueId;
       const existing = groups.get(key);
-      const dto = serializeTip(tip, unlocked);
+      const dto = serializeTip(tip, unlocked, options.locale);
       if (existing) {
         existing.tips.push(dto);
       } else {
@@ -143,19 +145,19 @@ export class TipService {
     ]);
 
     return paginate(
-      tips.map((tip) => serializeTip(tip, unlocked)),
+      tips.map((tip) => serializeTip(tip, unlocked, options.locale)),
       total,
       options,
     );
   }
 
-  async byId(id: string, userId: string | null): Promise<TipDTO> {
+  async byId(id: string, userId: string | null, locale?: string): Promise<TipDTO> {
     const tip = await prisma.tip.findUnique({ where: { id }, include: tipInclude });
     if (!tip || tip.status === 'DRAFT' || tip.status === 'CANCELLED') {
       throw AppError.notFound('Tip');
     }
     const unlocked = await entitlements.has(userId, tip.product as ProductCode);
-    return serializeTip(tip, unlocked);
+    return serializeTip(tip, unlocked, locale);
   }
 
   /** Verified results history — settled tips only, newest first. */
@@ -167,6 +169,7 @@ export class TipService {
       outcome?: string;
       leagueId?: string;
       marketType?: string;
+      locale?: string;
     },
     _userId: string | null,
   ): Promise<Paginated<TipDTO>> {
@@ -202,14 +205,19 @@ export class TipService {
     // Settled history is a matter of record: once a tip is settled its
     // selection and result are public, so nothing is masked here.
     return paginate(
-      tips.map((tip) => serializeTip(tip, true)),
+      tips.map((tip) => serializeTip(tip, true, options.locale)),
       total,
       options,
     );
   }
 
   async combos(
-    options: PageParams & { date?: string; timezone?: string; includeSettled?: boolean },
+    options: PageParams & {
+      date?: string;
+      timezone?: string;
+      includeSettled?: boolean;
+      locale?: string;
+    },
     userId: string | null,
   ): Promise<Paginated<ComboDTO>> {
     const unlocked = await entitlements.has(userId, 'COMBO');
@@ -236,21 +244,21 @@ export class TipService {
     ]);
 
     return paginate(
-      combos.map((combo) => serializeCombo(combo, unlocked)),
+      combos.map((combo) => serializeCombo(combo, unlocked, options.locale)),
       total,
       options,
     );
   }
 
-  async comboById(id: string, userId: string | null): Promise<ComboDTO> {
+  async comboById(id: string, userId: string | null, locale?: string): Promise<ComboDTO> {
     const combo = await prisma.combo.findUnique({ where: { id }, include: comboInclude });
     if (!combo || combo.status === 'DRAFT') throw AppError.notFound('Combo');
     const unlocked = await entitlements.has(userId, combo.product as ProductCode);
-    return serializeCombo(combo, unlocked);
+    return serializeCombo(combo, unlocked, locale);
   }
 
   /** Live tips across every product the viewer can see. */
-  async live(userId: string | null): Promise<TipDTO[]> {
+  async live(userId: string | null, locale?: string): Promise<TipDTO[]> {
     const tips = await prisma.tip.findMany({
       where: {
         isLive: true,
@@ -263,7 +271,7 @@ export class TipService {
     });
 
     const products = await entitlements.productsFor(userId);
-    return tips.map((tip) => serializeTip(tip, products.has(tip.product as ProductCode)));
+    return tips.map((tip) => serializeTip(tip, products.has(tip.product as ProductCode), locale));
   }
 
   async invalidateFeedCache(): Promise<void> {

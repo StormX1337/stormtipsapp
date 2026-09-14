@@ -80,8 +80,11 @@ export async function publishDueTipsJob(job: Job): Promise<unknown> {
     });
     await notifications.broadcast({
       type: 'NEW_COMBO',
-      title: 'Neue Combo verfügbar',
-      body: updated.subtitle ?? updated.title,
+      values: {
+        count: updated.items.length,
+        odds: Number(updated.totalOdds ?? 0).toFixed(2),
+        comboId: updated.id,
+      },
       deepLink: `stormtips://combo/${updated.id}`,
       audience: { products: ['COMBO'] },
       dedupeKey: `combo:${updated.id}`,
@@ -137,8 +140,12 @@ export async function kickoffRemindersJob(job: Job): Promise<unknown> {
   for (const tip of tips) {
     await notifications.broadcast({
       type: 'KICKOFF_REMINDER',
-      title: `Anstoß in 30 Minuten`,
-      body: `${tip.event.homeTeam.name} – ${tip.event.awayTeam.name}: ${tip.selectionLabel}`,
+      values: {
+        minutes: 30,
+        match: `${tip.event.homeTeam.name} – ${tip.event.awayTeam.name}`,
+        market: tip.selectionLabel,
+        tipId: tip.id,
+      },
       deepLink: `stormtips://tips/${tip.id}`,
       audience: tip.product === 'FREE' ? {} : { products: [tip.product as ProductCode] },
       dedupeKey: `kickoff:${tip.id}`,
@@ -227,8 +234,13 @@ async function announce(
 
   await notifications.broadcast({
     type: NOTIFICATION_BY_PRODUCT[product] as never,
-    title: full.league.name,
-    body: `${full.event.homeTeam.name} – ${full.event.awayTeam.name}: ${full.selectionLabel}`,
+    templateKey: 'NEW_TIP_MATCH',
+    values: {
+      league: full.league.name,
+      match: `${full.event.homeTeam.name} – ${full.event.awayTeam.name}`,
+      selection: full.selectionLabel,
+      tipId: full.id,
+    },
     deepLink: `stormtips://tips/${full.id}`,
     audience: product === 'FREE' ? {} : { products: [product] },
     dedupeKey: `tip:${full.id}`,

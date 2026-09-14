@@ -50,8 +50,15 @@ export async function sendMail(input: MailInput): Promise<boolean> {
   }
 }
 
-function layout(title: string, body: string, ctaLabel?: string, ctaUrl?: string): string {
-  return `<!doctype html><html lang="de"><head><meta charset="utf-8"><title>${title}</title></head>
+function layout(
+  title: string,
+  body: string,
+  ctaLabel: string | undefined,
+  ctaUrl: string | undefined,
+  footer: string,
+  lang = 'de',
+): string {
+  return `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><title>${title}</title></head>
 <body style="margin:0;padding:0;background:#0A0C10;font-family:-apple-system,Segoe UI,Roboto,sans-serif;color:#fff">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:32px 16px">
     <tr><td align="center">
@@ -66,7 +73,7 @@ function layout(title: string, body: string, ctaLabel?: string, ctaUrl?: string)
             : ''
         }
         <tr><td style="padding-top:28px;font-size:11px;color:#6C7688;line-height:1.6">
-          STORM TIPS veröffentlicht Sportanalysen zu Informationszwecken. Kein Ergebnis ist garantiert. 18+.
+          ${footer}
         </td></tr>
       </table>
     </td></tr>
@@ -74,43 +81,111 @@ function layout(title: string, body: string, ctaLabel?: string, ctaUrl?: string)
 </body></html>`;
 }
 
-export function verificationEmail(token: string): Omit<MailInput, 'to'> {
-  const url = `${env.WEB_PUBLIC_URL}/auth/verify?token=${token}`;
-  return {
-    subject: 'Bestätige deine E-Mail-Adresse',
-    text: `Bestätige deine E-Mail-Adresse: ${url}\n\nDer Link ist 24 Stunden gültig.`,
-    html: layout(
-      'Bestätige deine E-Mail-Adresse',
+interface MailCopy {
+  footer: string;
+  verifySubject: string;
+  verifyBody: string;
+  verifyCta: string;
+  verifyText: (url: string) => string;
+  resetSubject: string;
+  resetBody: string;
+  resetCta: string;
+  resetText: (url: string) => string;
+  expiringSubject: (product: string, days: number) => string;
+  expiringBody: string;
+  expiringCta: string;
+  expiringText: (product: string, days: number) => string;
+}
+
+/** Transactional copy, per locale. Anything unknown falls back to German. */
+const MAIL_COPY: Record<'de' | 'en', MailCopy> = {
+  de: {
+    footer:
+      'STORM TIPS veröffentlicht Sportanalysen zu Informationszwecken. Kein Ergebnis ist garantiert. 18+.',
+    verifySubject: 'Bestätige deine E-Mail-Adresse',
+    verifyBody:
       'Klicke auf den Button, um dein STORM TIPS Konto zu aktivieren. Der Link ist 24 Stunden gültig.',
-      'E-Mail bestätigen',
-      url,
-    ),
-  };
-}
-
-export function passwordResetEmail(token: string): Omit<MailInput, 'to'> {
-  const url = `${env.WEB_PUBLIC_URL}/auth/reset?token=${token}`;
-  return {
-    subject: 'Passwort zurücksetzen',
-    text: `Setze dein Passwort zurück: ${url}\n\nDer Link ist 60 Minuten gültig. Wenn du das nicht angefordert hast, ignoriere diese E-Mail.`,
-    html: layout(
-      'Passwort zurücksetzen',
+    verifyCta: 'E-Mail bestätigen',
+    verifyText: (url: string) =>
+      `Bestätige deine E-Mail-Adresse: ${url}\n\nDer Link ist 24 Stunden gültig.`,
+    resetSubject: 'Passwort zurücksetzen',
+    resetBody:
       'Der Link ist 60 Minuten gültig. Wenn du diese Anfrage nicht gestellt hast, kannst du diese E-Mail ignorieren — dein Passwort bleibt unverändert.',
-      'Neues Passwort setzen',
-      url,
-    ),
+    resetCta: 'Neues Passwort setzen',
+    resetText: (url: string) =>
+      `Setze dein Passwort zurück: ${url}\n\nDer Link ist 60 Minuten gültig. Wenn du das nicht angefordert hast, ignoriere diese E-Mail.`,
+    expiringSubject: (product: string, days: number) =>
+      `Dein ${product}-Zugang endet in ${days} Tagen`,
+    expiringBody: 'Du kannst dein Abo jederzeit in der App verlängern oder kündigen.',
+    expiringCta: 'Abo verwalten',
+    expiringText: (product: string, days: number) =>
+      `Dein ${product}-Zugang endet in ${days} Tagen. Verlängere jederzeit in der App.`,
+  },
+  en: {
+    footer: 'STORM TIPS publishes sports analyses for information. No outcome is guaranteed. 18+.',
+    verifySubject: 'Confirm your email address',
+    verifyBody:
+      'Tap the button to activate your STORM TIPS account. The link is valid for 24 hours.',
+    verifyCta: 'Confirm email',
+    verifyText: (url: string) =>
+      `Confirm your email address: ${url}\n\nThe link is valid for 24 hours.`,
+    resetSubject: 'Reset your password',
+    resetBody:
+      'The link is valid for 60 minutes. If you did not request this you can ignore this email — your password stays unchanged.',
+    resetCta: 'Set a new password',
+    resetText: (url: string) =>
+      `Reset your password: ${url}\n\nThe link is valid for 60 minutes. If you did not request it, ignore this email.`,
+    expiringSubject: (product: string, days: number) =>
+      `Your ${product} access ends in ${days} days`,
+    expiringBody: 'You can renew or cancel your subscription in the app at any time.',
+    expiringCta: 'Manage subscription',
+    expiringText: (product: string, days: number) =>
+      `Your ${product} access ends in ${days} days. Renew any time in the app.`,
+  },
+};
+
+function copyFor(locale: string): MailCopy {
+  const short = locale.split('-')[0]?.toLowerCase() ?? '';
+  return short === 'en' ? MAIL_COPY.en : MAIL_COPY.de;
+}
+
+export function verificationEmail(token: string, locale = 'de'): Omit<MailInput, 'to'> {
+  const url = `${env.WEB_PUBLIC_URL}/auth/verify?token=${token}`;
+  const copy = copyFor(locale);
+  return {
+    subject: copy.verifySubject,
+    text: copy.verifyText(url),
+    html: layout(copy.verifySubject, copy.verifyBody, copy.verifyCta, url, copy.footer, locale),
   };
 }
 
-export function subscriptionExpiringEmail(product: string, days: number): Omit<MailInput, 'to'> {
+export function passwordResetEmail(token: string, locale = 'de'): Omit<MailInput, 'to'> {
+  const url = `${env.WEB_PUBLIC_URL}/auth/reset?token=${token}`;
+  const copy = copyFor(locale);
   return {
-    subject: `Dein ${product}-Zugang endet in ${days} Tagen`,
-    text: `Dein ${product}-Zugang endet in ${days} Tagen. Verlängere jederzeit in der App.`,
+    subject: copy.resetSubject,
+    text: copy.resetText(url),
+    html: layout(copy.resetSubject, copy.resetBody, copy.resetCta, url, copy.footer, locale),
+  };
+}
+
+export function subscriptionExpiringEmail(
+  product: string,
+  days: number,
+  locale = 'de',
+): Omit<MailInput, 'to'> {
+  const copy = copyFor(locale);
+  const subject = copy.expiringSubject(product, days);
+  return {
+    subject,
+    text: copy.expiringText(product, days),
     html: layout(
-      `Dein ${product}-Zugang endet in ${days} Tagen`,
-      'Du kannst dein Abo jederzeit in der App verlängern oder kündigen.',
-      'Abo verwalten',
+      subject,
+      copy.expiringBody,
+      copy.expiringCta,
       `${env.WEB_PUBLIC_URL}/account/subscription`,
+      copy.footer,
+      locale,
     ),
   };
 }

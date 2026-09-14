@@ -223,41 +223,108 @@ export function confidenceBandFor(confidence: number): 'LOW' | 'MEDIUM' | 'HIGH'
   return 'LOW';
 }
 
-const ANALYSIS_OPENERS = [
-  'Die Formkurve spricht klar für diese Auswahl',
-  'Die erwarteten Tore (xG) der letzten fünf Spiele stützen die Auswahl',
-  'Die Ausfallliste des Gegners verschiebt das Kräfteverhältnis',
-  'Die Heimbilanz ist über die Saison konstant stark',
-  'Der Spielplan spricht für eine Rotation beim Gegner',
-  'Die direkten Duelle der letzten drei Jahre sind eindeutig',
+/**
+ * Phrase banks for the generated analyses.
+ *
+ * Each entry carries both languages so one random draw produces a German and
+ * an English sentence that say the same thing — the seeded dataset is
+ * deterministic, and drawing twice would desynchronise it.
+ */
+interface Phrase {
+  de: string;
+  en: string;
+}
+
+const ANALYSIS_OPENERS: Phrase[] = [
+  {
+    de: 'Die Formkurve spricht klar für diese Auswahl',
+    en: 'Recent form argues clearly for this selection',
+  },
+  {
+    de: 'Die erwarteten Tore (xG) der letzten fünf Spiele stützen die Auswahl',
+    en: 'Expected goals (xG) over the last five matches support the selection',
+  },
+  {
+    de: 'Die Ausfallliste des Gegners verschiebt das Kräfteverhältnis',
+    en: "The opponent's injury list shifts the balance",
+  },
+  {
+    de: 'Die Heimbilanz ist über die Saison konstant stark',
+    en: 'The home record has been consistently strong all season',
+  },
+  {
+    de: 'Der Spielplan spricht für eine Rotation beim Gegner',
+    en: 'The fixture list suggests the opponent will rotate',
+  },
+  {
+    de: 'Die direkten Duelle der letzten drei Jahre sind eindeutig',
+    en: 'Head-to-head results over the last three years are one-sided',
+  },
 ];
 
-const ANALYSIS_MIDDLES = [
-  'Der Markt hat die Quote in den letzten 24 Stunden leicht gesenkt, was auf Zuspruch hindeutet.',
-  'Die Quote liegt über unserem fairen Wert — daher sehen wir hier Value.',
-  'Die Defensivwerte der Heimmannschaft sind im Saisonvergleich überdurchschnittlich.',
-  'Beide Teams erzielen im Schnitt mehr als 1,4 Tore pro Spiel.',
-  'Der Gegner hat unter der Woche international gespielt.',
+const ANALYSIS_MIDDLES: Phrase[] = [
+  {
+    de: 'Der Markt hat die Quote in den letzten 24 Stunden leicht gesenkt, was auf Zuspruch hindeutet.',
+    en: 'The market has shortened this price slightly over the last 24 hours, which suggests support.',
+  },
+  {
+    de: 'Die Quote liegt über unserem fairen Wert — daher sehen wir hier Value.',
+    en: 'The price sits above our fair value, which is where we see the value.',
+  },
+  {
+    de: 'Die Defensivwerte der Heimmannschaft sind im Saisonvergleich überdurchschnittlich.',
+    en: "The home side's defensive numbers are above average for the season.",
+  },
+  {
+    de: 'Beide Teams erzielen im Schnitt mehr als 1,4 Tore pro Spiel.',
+    en: 'Both teams average more than 1.4 goals per match.',
+  },
+  {
+    de: 'Der Gegner hat unter der Woche international gespielt.',
+    en: 'The opponent played in Europe midweek.',
+  },
 ];
 
-const ANALYSIS_CLOSERS = [
-  'Wichtig: Es handelt sich um eine Einschätzung, nicht um eine Garantie.',
-  'Setze nur Beträge ein, deren Verlust du verkraften kannst.',
-  'Die Auswahl ist für einen flachen Einsatz von einer Einheit kalkuliert.',
+const ANALYSIS_CLOSERS: Phrase[] = [
+  {
+    de: 'Wichtig: Es handelt sich um eine Einschätzung, nicht um eine Garantie.',
+    en: 'Note: this is an assessment, not a guarantee.',
+  },
+  {
+    de: 'Setze nur Beträge ein, deren Verlust du verkraften kannst.',
+    en: 'Only stake what you can afford to lose.',
+  },
+  {
+    de: 'Die Auswahl ist für einen flachen Einsatz von einer Einheit kalkuliert.',
+    en: 'The selection is calculated for a flat stake of one unit.',
+  },
 ];
 
+/** Both languages of one analysis, produced from a single set of draws. */
 export function buildAnalysis(
   home: string,
   away: string,
   market: string,
   random: () => number,
-): string {
-  return [
-    `${pick(ANALYSIS_OPENERS, random)} in der Partie ${home} – ${away}.`,
-    pick(ANALYSIS_MIDDLES, random),
-    `Unsere Auswahl: ${market}.`,
-    pick(ANALYSIS_CLOSERS, random),
-  ].join(' ');
+): Phrase {
+  const opener = pick(ANALYSIS_OPENERS, random);
+  const middle = pick(ANALYSIS_MIDDLES, random);
+  const closer = pick(ANALYSIS_CLOSERS, random);
+
+  return {
+    de: [
+      `${opener.de} in der Partie ${home} – ${away}.`,
+      middle.de,
+      `Unsere Auswahl: ${market}.`,
+      closer.de,
+    ].join(' '),
+    en: [
+      `${opener.en} in ${home} vs ${away}.`,
+      middle.en,
+      `Our selection: ${market}.`,
+      closer.en,
+    ].join(' '),
+  };
 }
 
 export function startOfUtcDay(date: Date): Date {

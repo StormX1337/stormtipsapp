@@ -6,9 +6,12 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { setRequestLocale } from './api';
 import {
   DEFAULT_LOCALE,
   createTranslator,
@@ -37,9 +40,23 @@ export function I18nProvider({ children }: { children: ReactNode }): ReactNode {
     setLocaleState(resolveLocale(stored ?? navigator.language));
   }, []);
 
+  // The API returns editorial content in this language, so it has to know it
+  // before the first request, the document has to declare it, and anything
+  // already fetched in the previous language has to be refetched.
+  const queryClient = useQueryClient();
+  const firstRun = useRef(true);
+  useEffect(() => {
+    setRequestLocale(locale);
+    document.documentElement.lang = locale;
+    if (firstRun.current) {
+      firstRun.current = false;
+      return;
+    }
+    void queryClient.invalidateQueries();
+  }, [locale, queryClient]);
+
   const setLocale = useCallback((next: SupportedLocale) => {
     window.localStorage.setItem(STORAGE_KEY, next);
-    document.documentElement.lang = next;
     setLocaleState(next);
   }, []);
 

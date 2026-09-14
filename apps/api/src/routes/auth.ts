@@ -83,7 +83,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
 
   app.post('/forgot-password', credentialLimit, async (request, reply) => {
     const { email } = parseBody(request, forgotPasswordSchema);
-    await auth.requestPasswordReset(email);
+    await auth.requestPasswordReset(email, request.locale);
     noStore(reply);
     // Always the same answer — never reveals whether the address is registered.
     return { success: true };
@@ -114,10 +114,10 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
     const { email } = parseBody(request, resendVerificationSchema);
     const user = await prisma.user.findUnique({
       where: { email },
-      select: { id: true, email: true, emailVerifiedAt: true },
+      select: { id: true, email: true, emailVerifiedAt: true, language: true },
     });
     if (user && !user.emailVerifiedAt) {
-      await auth.sendVerificationEmail(user.id, user.email);
+      await auth.sendVerificationEmail(user.id, user.email, user.language ?? request.locale);
     }
     noStore(reply);
     return { success: true };

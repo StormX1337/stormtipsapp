@@ -8,7 +8,14 @@ import {
   type Capability,
   type TokenConfig,
 } from '@storm-tips/auth';
-import { AppError, ErrorCode, type ProductCode, type UserRole } from '@storm-tips/types';
+import {
+  AppError,
+  ErrorCode,
+  toSupportedLocale,
+  type ProductCode,
+  type SupportedLocale,
+  type UserRole,
+} from '@storm-tips/types';
 import { env } from '../lib/env.js';
 import { entitlements } from '../services/entitlement.service.js';
 
@@ -26,6 +33,13 @@ export interface AuthContext {
 declare module 'fastify' {
   interface FastifyRequest {
     auth?: AuthContext;
+    /**
+     * The language this response should be written in. Set for every request,
+     * signed in or not, so anonymous visitors also get localised content.
+     */
+    locale: SupportedLocale;
+    /** True when the request itself asked for a language. */
+    localeExplicit: boolean;
   }
   interface FastifyInstance {
     tokenConfig: TokenConfig;
@@ -85,6 +99,44 @@ async function resolveContext(request: FastifyRequest, config: TokenConfig): Pro
   };
 }
 
+/**
+ * Resolves the response language from the request itself.
+ *
+ * An explicit `?locale=` wins — it is what a language switcher sends — then
+ * `Accept-Language`. Anything unrecognised falls back to the configured
+ * default, so content is never missing for a visitor whose browser asks for a
+ * language we do not ship.
+ *
+ * A signed-in user's stored preference is applied later, in `applyUserLocale`:
+ * instance-level hooks run before route-level `preHandler`s, so `request.auth`
+ * is not populated yet at this point.
+ */
+function localeFromRequest(request: FastifyRequest): {
+  locale: SupportedLocale;
+  explicit: boolean;
+} {
+  const query = (request.query as { locale?: string } | undefined)?.locale;
+  if (query) return { locale: toSupportedLocale(query), explicit: true };
+
+  const header = request.headers['accept-language'];
+  if (typeof header === 'string') {
+    for (const part of header.split(',')) {
+      const tag = part.split(';')[0]?.trim();
+      if (!tag || tag === '*') continue;
+      const resolved = toSupportedLocale(tag);
+      // toSupportedLocale falls back to the default, so only accept a real hit.
+      if (tag.toLowerCase().startsWith(resolved)) return { locale: resolved, explicit: true };
+    }
+  }
+  return { locale: toSupportedLocale(env.DEFAULT_LOCALE), explicit: false };
+}
+
+/** The account's stored language wins unless the request asked for one. */
+function applyUserLocale(request: FastifyRequest): void {
+  if (request.localeExplicit || !request.auth?.language) return;
+  request.locale = toSupportedLocale(request.auth.language);
+}
+
 export const authPlugin = fp(async function authPlugin(app: FastifyInstance) {
   const tokenConfig: TokenConfig = {
     accessSecret: env.JWT_ACCESS_SECRET,
@@ -96,8 +148,19 @@ export const authPlugin = fp(async function authPlugin(app: FastifyInstance) {
   };
   app.decorate('tokenConfig', tokenConfig);
 
+  // Every request carries a locale, resolved after authentication so a signed-in
+  // user's stored preference is available.
+  app.decorateRequest('locale', toSupportedLocale(env.DEFAULT_LOCALE));
+  app.decorateRequest('localeExplicit', false);
+  app.addHook('preHandler', async (request) => {
+    const resolved = localeFromRequest(request);
+    request.locale = resolved.locale;
+    request.localeExplicit = resolved.explicit;
+  });
+
   app.decorate('authenticate', async function authenticate(request) {
     request.auth = await resolveContext(request, tokenConfig);
+    applyUserLocale(request);
   } satisfies preHandlerHookHandler);
 
   /** Populates `request.auth` when a valid token is present, but never rejects. */
@@ -105,6 +168,7 @@ export const authPlugin = fp(async function authPlugin(app: FastifyInstance) {
     if (!bearerToken(request)) return;
     try {
       request.auth = await resolveContext(request, tokenConfig);
+      applyUserLocale(request);
     } catch {
       request.auth = undefined;
     }
@@ -112,7 +176,10 @@ export const authPlugin = fp(async function authPlugin(app: FastifyInstance) {
 
   app.decorate('requireRole', function requireRole(role: UserRole): preHandlerHookHandler {
     return async function roleGuard(request) {
-      if (!request.auth) request.auth = await resolveContext(request, tokenConfig);
+      if (!request.auth) {
+        request.auth = await resolveContext(request, tokenConfig);
+        applyUserLocale(request);
+      }
       if (!hasRole(request.auth.role, role)) {
         throw AppError.forbidden(`This endpoint requires the ${role} role`);
       }

@@ -34,8 +34,17 @@ export function noStore(reply: FastifyReply): FastifyReply {
   return reply.header('cache-control', 'no-store, private');
 }
 
+/**
+ * Marks a response as publicly cacheable.
+ *
+ * `Vary` is not optional here: these payloads carry editorial content in the
+ * requested language, so without it a browser or CDN would happily serve a
+ * German response to an English reader.
+ */
 export function publicCache(reply: FastifyReply, seconds: number): FastifyReply {
-  return reply.header('cache-control', `public, max-age=${seconds}, stale-while-revalidate=30`);
+  return reply
+    .header('cache-control', `public, max-age=${seconds}, stale-while-revalidate=30`)
+    .header('vary', 'accept-language, authorization');
 }
 
 export function assertFound<T>(value: T | null | undefined, entity: string): T {

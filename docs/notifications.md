@@ -22,8 +22,12 @@ event ──► notification:fanout ──► one Notification row per eligible 
 | `POLL`                                                                   | A new poll opens                                |
 | `SYSTEM`                                                                 | Operational message                             |
 
-Copy lives in `packages/notifications/src/templates.ts` in German and English;
-the recipient's `language` decides which is used.
+Copy lives in `packages/notifications/src/templates.ts` in German and English.
+Callers pass a template key and its values rather than a finished string, and
+the fan-out renders the copy once per recipient language, grouping devices
+accordingly — so two users of the same broadcast receive it in their own
+languages. Operator-composed campaigns pass `title`/`body` plus optional
+`translations` instead. See [localization.md](localization.md).
 
 ## Who receives what
 

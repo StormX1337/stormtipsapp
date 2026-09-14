@@ -1,5 +1,5 @@
 import { prisma, type Prisma } from '@storm-tips/database';
-import { PREFERENCE_FOR_TYPE } from '@storm-tips/notifications';
+import { PREFERENCE_FOR_TYPE, renderTemplate, type TemplateKey } from '@storm-tips/notifications';
 import type { NotificationType, ProductCode } from '@storm-tips/types';
 import { jobs } from '../lib/queues.js';
 import { mergePreferences } from '../serializers/user.js';
@@ -60,11 +60,23 @@ export class NotificationService {
       .map((user) => ({ id: user.id, language: user.language }));
   }
 
-  /** Queues a broadcast. `dedupeKey` prevents double fan-out on retries. */
+  /**
+   * Queues a broadcast. `dedupeKey` prevents double fan-out on retries.
+   *
+   * Copy is resolved per recipient, in their own language: pass `values` to
+   * render the shared template, or `title`/`body` (with optional
+   * `translations`) for text an operator composed.
+   */
   async broadcast(input: {
     type: NotificationType;
-    title: string;
-    body: string;
+    /** Template to render, when it differs from the stored notification type. */
+    templateKey?: TemplateKey;
+    /** Placeholder values for the template. */
+    values?: Record<string, string | number>;
+    title?: string;
+    body?: string;
+    /** Operator-composed copy per locale, e.g. `{ en: { title, body } }`. */
+    translations?: Record<string, { title?: string; body?: string }>;
     data?: Record<string, unknown>;
     deepLink?: string | null;
     imageUrl?: string | null;
@@ -74,8 +86,11 @@ export class NotificationService {
   }): Promise<void> {
     await jobs.fanOutNotification({
       type: input.type,
+      templateKey: input.templateKey,
+      values: input.values,
       title: input.title,
       body: input.body,
+      translations: input.translations,
       data: input.data,
       deepLink: input.deepLink ?? null,
       imageUrl: input.imageUrl ?? null,
@@ -90,21 +105,44 @@ export class NotificationService {
     });
   }
 
-  /** Creates a single in-app notification and queues its push delivery. */
+  /**
+   * Creates a single in-app notification and queues its push delivery.
+   *
+   * When `values` is given the copy is rendered from the shared template in the
+   * recipient's own language rather than whatever language the caller happens
+   * to be written in.
+   */
   async notifyUser(input: {
     userId: string;
     type: NotificationType;
-    title: string;
-    body: string;
+    templateKey?: TemplateKey;
+    values?: Record<string, string | number>;
+    title?: string;
+    body?: string;
     data?: Record<string, unknown>;
     deepLink?: string | null;
   }): Promise<string> {
+    let { title, body } = input;
+    if (input.values) {
+      const user = await prisma.user.findUnique({
+        where: { id: input.userId },
+        select: { language: true },
+      });
+      const rendered = renderTemplate(
+        input.templateKey ?? input.type,
+        user?.language ?? 'de',
+        input.values,
+      );
+      title = rendered.title;
+      body = rendered.body;
+    }
+
     const notification = await prisma.notification.create({
       data: {
         userId: input.userId,
         type: input.type,
-        title: input.title,
-        body: input.body,
+        title: title ?? '',
+        body: body ?? '',
         data: (input.data ?? {}) as never,
         deepLink: input.deepLink ?? null,
         status: 'PENDING',

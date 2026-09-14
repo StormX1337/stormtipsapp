@@ -70,8 +70,8 @@ async function notifyResults(): Promise<void> {
     if (counts.won + counts.lost === 0) continue;
     await notifications.broadcast({
       type: 'TIP_RESULT',
-      title: `${product}: ${counts.won} gewonnen, ${counts.lost} verloren`,
-      body: 'Die aktuellen Ergebnisse stehen in deinem Verlauf bereit.',
+      templateKey: 'TIP_RESULT_SUMMARY',
+      values: { product, won: counts.won, lost: counts.lost },
       deepLink: 'stormtips://history',
       audience: product === 'FREE' ? {} : { products: [product as ProductCode] },
       dedupeKey: `results:${product}:${Math.floor(Date.now() / 900_000)}`,

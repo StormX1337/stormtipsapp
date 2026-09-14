@@ -15,6 +15,9 @@ import {
   PageHeader,
   Select,
   Toggle,
+  TranslationFields,
+  englishOf,
+  translationPayload,
   type Column,
 } from '@/components/ui';
 
@@ -59,6 +62,7 @@ export default function FixOddsPage(): ReactNode {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<FixForm>(EMPTY);
+  const [english, setEnglish] = useState<Record<string, string>>({});
 
   const plans = useQuery({
     queryKey: ['admin-fix-odds'],
@@ -81,6 +85,7 @@ export default function FixOddsPage(): ReactNode {
         requiresVip: form.requiresVip,
         isActive: form.isActive,
         badge: form.badge,
+        translations: translationPayload('en', english),
         stripePriceId: form.stripePriceId || null,
         appleProductId: form.appleProductId || null,
         googleProductId: form.googleProductId || null,
@@ -166,6 +171,7 @@ export default function FixOddsPage(): ReactNode {
               appleProductId: '',
               googleProductId: '',
             });
+            setEnglish(englishOf(plan.translations));
             setOpen(true);
           }}
         >
@@ -184,6 +190,7 @@ export default function FixOddsPage(): ReactNode {
           <Button
             onClick={() => {
               setForm(EMPTY);
+              setEnglish({});
               setOpen(true);
             }}
           >
@@ -236,6 +243,17 @@ export default function FixOddsPage(): ReactNode {
             value={form.description}
             onChange={(event) => setForm({ ...form, description: event.target.value })}
           />
+          <TranslationFields
+            locale="en"
+            title="Englische Fassung"
+            fields={[
+              { name: 'name', label: 'Name' },
+              { name: 'description', label: 'Description', multiline: true },
+            ]}
+            value={english}
+            onChange={setEnglish}
+          />
+
           <div className="grid gap-3 sm:grid-cols-4">
             <Field
               label="Preis (€)"

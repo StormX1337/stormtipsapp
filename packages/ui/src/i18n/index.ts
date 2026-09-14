@@ -1,16 +1,16 @@
 import { en, type MessageKey, type Messages } from './en.js';
 import { de } from './de.js';
-import type { SupportedLocale } from '../types.js';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type SupportedLocale } from '@storm-tips/types';
 
 export type { MessageKey, Messages };
 export { en, de };
 
 export const catalogues: Record<SupportedLocale, Messages> = { de, en };
 
-export const DEFAULT_LOCALE: SupportedLocale = 'de';
+export { DEFAULT_LOCALE };
 
 export function isSupportedLocale(value: string): value is SupportedLocale {
-  return value === 'de' || value === 'en';
+  return (SUPPORTED_LOCALES as readonly string[]).includes(value);
 }
 
 export function resolveLocale(candidate?: string | null): SupportedLocale {

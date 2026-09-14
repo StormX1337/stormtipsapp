@@ -16,6 +16,8 @@ import {
   Pagination,
   Select,
   Toggle,
+  TranslationFields,
+  translationPayload,
   type Column,
 } from '@/components/ui';
 
@@ -23,6 +25,7 @@ export default function PollsPage(): ReactNode {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
+  const [english, setEnglish] = useState<Record<string, string>>({});
   const [form, setForm] = useState({
     question: '',
     description: '',
@@ -54,6 +57,7 @@ export default function PollsPage(): ReactNode {
           options: form.options
             .filter((label) => label.trim().length > 0)
             .map((label) => ({ label: label.trim() })),
+          translations: translationPayload('en', english),
         },
       }),
     onSuccess: () => {
@@ -170,6 +174,17 @@ export default function PollsPage(): ReactNode {
             value={form.description}
             onChange={(event) => setForm({ ...form, description: event.target.value })}
           />
+          <TranslationFields
+            locale="en"
+            title="Englische Fassung"
+            fields={[
+              { name: 'question', label: 'Question' },
+              { name: 'description', label: 'Description', multiline: true },
+            ]}
+            value={english}
+            onChange={setEnglish}
+          />
+
           <div className="grid gap-3 sm:grid-cols-3">
             <Select
               label="Art"

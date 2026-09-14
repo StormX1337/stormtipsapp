@@ -409,3 +409,143 @@ export const SEED_COUPONS = [
     applicableProducts: ['VIP'] as ProductCode[],
   },
 ];
+
+// ── translations ─────────────────────────────────────────────────────────────
+//
+// Seed rows keep their authored text in the ordinary columns and carry
+// per-locale overrides here. Products, plans and coupons are authored in
+// German; markets are authored in the English betting terminology the industry
+// uses, so those carry a German override instead. Anything without an entry
+// simply renders its base text in every language.
+
+type TranslationMap = Record<string, Record<string, Record<string, unknown>>>;
+
+export const SEED_PRODUCT_TRANSLATIONS: TranslationMap = {
+  FREE: {
+    en: {
+      name: 'Storm Tips Free',
+      tagline: 'Free analyses every day',
+      description:
+        'Several published analyses every day, each with odds, market and a written rationale.',
+      benefits: [
+        'Several analyses per day',
+        'Odds and the bookmaker they came from',
+        'Complete results history',
+      ],
+    },
+  },
+  COMBO: {
+    en: {
+      name: 'Storm Tips Combo',
+      tagline: 'Curated accumulators',
+      description: 'Daily accumulators, with every selection reasoned individually.',
+      benefits: [
+        'Daily accumulator analyses',
+        'Every selection reasoned individually',
+        'Automatic accumulator settlement',
+        'Verified performance record',
+      ],
+    },
+  },
+  EXTRA: {
+    en: {
+      name: 'Storm Tips Extra',
+      tagline: 'Value and special selections',
+      description: 'Selected value spots, special markets and in-play opportunities.',
+      benefits: [
+        'Value selections at higher odds',
+        'Special markets',
+        'In-play opportunities',
+        'Profit and loss impact per selection',
+      ],
+    },
+  },
+  VIP: {
+    en: {
+      name: 'Storm Tips VIP',
+      tagline: 'Highest confidence',
+      description: 'The highest-confidence selections, each with a detailed analysis.',
+      benefits: [
+        'Highest-confidence analyses',
+        'Detailed expert reasoning',
+        'Published earlier',
+        'Extended statistics',
+        'Live tips',
+      ],
+    },
+  },
+  FIX_ODDS: {
+    en: {
+      name: 'Storm Tips FIX Odds',
+      tagline: 'Packages built around a target price',
+      description: 'Packages aimed consistently at a defined target price.',
+      benefits: [
+        'A defined target price per package',
+        'A fixed number of selections per period',
+        'A defined minimum confidence per selection',
+        'Separate statistics per package',
+      ],
+    },
+  },
+};
+
+export const SEED_PLAN_TRANSLATIONS: TranslationMap = {
+  'combo-1m': {
+    en: { name: 'Combo · 1 month', description: 'Access to every Combo analysis for one month.' },
+  },
+  'combo-3m': {
+    en: { name: 'Combo · 3 months', description: 'Three months of Combo — cheaper per month.' },
+  },
+  'combo-6m': {
+    en: { name: 'Combo · 6 months', description: 'Six months of Combo at the best monthly price.' },
+  },
+  'bundle-1m': {
+    en: {
+      name: 'Combo + VIP + Extra',
+      description: 'Every premium product in one subscription.',
+    },
+  },
+  'vip-1m': {
+    en: {
+      name: 'VIP · 1 month',
+      description: 'Every VIP analysis, live tips and expert commentary.',
+    },
+  },
+  'vip-12m': {
+    en: { name: 'VIP · 12 months', description: 'A year of VIP at a reduced monthly price.' },
+  },
+  'extra-1m': {
+    en: { name: 'Extra · 1 month', description: 'Value and special selections at higher odds.' },
+  },
+};
+
+export const SEED_FIX_ODDS_TRANSLATIONS: TranslationMap = {
+  'fix-odds-basic': {
+    en: {
+      description: 'A conservative package targeting 1.50 at high confidence.',
+    },
+  },
+  'fix-odds-pro': { en: { description: 'A balanced package targeting 2.00.' } },
+  'fix-odds-vip': { en: { description: 'Targeting 3.00 — VIP members only.' } },
+  'fix-odds-combo': {
+    en: { description: 'Accumulators targeting 5.00, for members who accept more variance.' },
+  },
+};
+
+/** Markets are authored in English, so the override here is the German one. */
+export const SEED_MARKET_TRANSLATIONS: TranslationMap = {
+  '1x2': { de: { name: 'Spielausgang' } },
+  'double-chance': { de: { name: 'Doppelte Chance' } },
+  dnb: { de: { name: 'Unentschieden zurück' } },
+  totals: { de: { name: 'Tore über/unter' } },
+  'alt-totals': { de: { name: 'Alternative Torlinie' } },
+  'team-totals': { de: { name: 'Teamtore' } },
+  'asian-handicap': { de: { name: 'Asiatisches Handicap' } },
+  'european-handicap': { de: { name: 'Europäisches Handicap' } },
+  btts: { de: { name: 'Beide Teams treffen' } },
+  'ht-totals': { de: { name: 'Tore 1. Halbzeit' } },
+  corners: { de: { name: 'Eckbälle gesamt' } },
+  cards: { de: { name: 'Karten gesamt' } },
+  'correct-score': { de: { name: 'Genaues Ergebnis' } },
+  'ht-ft': { de: { name: 'Halbzeit / Endstand' } },
+};

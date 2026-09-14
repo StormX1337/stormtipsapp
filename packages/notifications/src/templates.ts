@@ -6,7 +6,14 @@ interface Template {
   deepLink: string;
 }
 
-type Catalogue = Partial<Record<NotificationType, Template>>;
+/**
+ * Template keys are notification types plus a few composed messages that do not
+ * map one-to-one onto a stored type — a settlement summary covers many tips but
+ * is still recorded as `TIP_RESULT`.
+ */
+export type TemplateKey = NotificationType | 'TIP_RESULT_SUMMARY' | 'NEW_TIP_MATCH';
+
+type Catalogue = Partial<Record<TemplateKey, Template>>;
 
 /**
  * Push copy, per locale.
@@ -68,6 +75,16 @@ const DE: Catalogue = {
   PROMOTION: { title: '{title}', body: '{body}', deepLink: 'stormtips://paywall/{product}' },
   POLL: { title: 'Neue Umfrage', body: '{question}', deepLink: 'stormtips://polls/{pollId}' },
   SYSTEM: { title: '{title}', body: '{body}', deepLink: 'stormtips://home' },
+  TIP_RESULT_SUMMARY: {
+    title: '{product}: {won} gewonnen, {lost} verloren',
+    body: 'Die aktuellen Ergebnisse stehen in deinem Verlauf bereit.',
+    deepLink: 'stormtips://history',
+  },
+  NEW_TIP_MATCH: {
+    title: '{league}',
+    body: '{match}: {selection}',
+    deepLink: 'stormtips://tips/{tipId}',
+  },
 };
 
 const EN: Catalogue = {
@@ -124,9 +141,22 @@ const EN: Catalogue = {
   PROMOTION: { title: '{title}', body: '{body}', deepLink: 'stormtips://paywall/{product}' },
   POLL: { title: 'New poll', body: '{question}', deepLink: 'stormtips://polls/{pollId}' },
   SYSTEM: { title: '{title}', body: '{body}', deepLink: 'stormtips://home' },
+  TIP_RESULT_SUMMARY: {
+    title: '{product}: {won} won, {lost} lost',
+    body: 'The latest results are waiting in your history.',
+    deepLink: 'stormtips://history',
+  },
+  NEW_TIP_MATCH: {
+    title: '{league}',
+    body: '{match}: {selection}',
+    deepLink: 'stormtips://tips/{tipId}',
+  },
 };
 
-const CATALOGUES: Record<string, Catalogue> = { de: DE, en: EN };
+/** Exposed so a parity test can assert both languages define the same keys. */
+export const templateCatalogues: Record<string, Catalogue> = { de: DE, en: EN };
+
+const CATALOGUES = templateCatalogues;
 
 function interpolate(template: string, values: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (match, key: string) =>
@@ -135,7 +165,7 @@ function interpolate(template: string, values: Record<string, string | number>):
 }
 
 export function renderTemplate(
-  type: NotificationType,
+  type: TemplateKey,
   locale: string,
   values: Record<string, string | number> = {},
 ): { title: string; body: string; deepLink: string } {

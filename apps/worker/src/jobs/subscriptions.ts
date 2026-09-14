@@ -68,14 +68,13 @@ export async function expiringRemindersJob(job: Job): Promise<unknown> {
       await notifications.notifyUser({
         userId: subscription.userId,
         type: 'SUBSCRIPTION_EXPIRING',
-        title: 'Dein Abo läuft bald ab',
-        body: `Noch ${days} Tage Zugriff auf ${product}.`,
+        values: { days, product },
         deepLink: 'stormtips://subscription',
         data: { days, product },
       });
       await sendMail({
         to: subscription.user.email,
-        ...subscriptionExpiringEmail(product, days),
+        ...subscriptionExpiringEmail(product, days, subscription.user.language),
       });
     }
     results[days] = expiring.length;

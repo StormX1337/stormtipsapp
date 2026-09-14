@@ -1,4 +1,5 @@
 import type { Prisma } from '@storm-tips/database';
+import { DEFAULT_LOCALE, localizer } from '@storm-tips/types';
 import type { PollDTO, PollOptionDTO } from '@storm-tips/types';
 import { eventInclude, serializeEvent } from './catalogue.js';
 import { iso } from './common.js';
@@ -10,24 +11,29 @@ export const pollInclude = {
 
 export type PollWithRelations = Prisma.PollGetPayload<{ include: typeof pollInclude }>;
 
-export function serializePoll(poll: PollWithRelations, myOptionIds: string[] = []): PollDTO {
+export function serializePoll(
+  poll: PollWithRelations,
+  myOptionIds: string[] = [],
+  locale: string = DEFAULT_LOCALE,
+): PollDTO {
   const total = poll.options.reduce((sum, option) => sum + option.voteCount, 0);
   const hasVoted = myOptionIds.length > 0;
   const showResults = hasVoted || poll.showResultsBeforeVote || poll.status === 'CLOSED';
 
   const options: PollOptionDTO[] = poll.options.map((option) => ({
     id: option.id,
-    label: option.label,
+    label: localizer(option, locale).text('label', option.label),
     imageUrl: option.imageUrl,
     voteCount: showResults ? option.voteCount : 0,
     percentage: showResults && total > 0 ? Math.round((option.voteCount / total) * 1000) / 10 : 0,
     isMyVote: myOptionIds.includes(option.id),
   }));
 
+  const text = localizer(poll, locale);
   return {
     id: poll.id,
-    question: poll.question,
-    description: poll.description,
+    question: text.text('question', poll.question),
+    description: text.text('description', poll.description),
     kind: poll.kind,
     status: poll.status,
     imageUrl: poll.imageUrl,

@@ -1,3 +1,4 @@
+import { DEFAULT_LOCALE, resolveLocale } from '@storm-tips/ui';
 import { apiBase } from './config';
 
 const ACCESS_TOKEN_KEY = 'st.accessToken';
@@ -21,6 +22,31 @@ function createApiError(
   error.status = status;
   error.details = details;
   return error;
+}
+
+/**
+ * The language the user picked, mirrored here so every request can carry it.
+ * The API needs it to return editorial content (products, plans, analyses) in
+ * the right language, not just the interface strings the client translates.
+ *
+ * It is resolved at module load rather than from a React effect: the first
+ * queries fire before any provider effect runs, and a request that went out in
+ * the wrong language would be answered from cache rather than refetched.
+ */
+function initialLocale(): string {
+  if (typeof window === 'undefined') return DEFAULT_LOCALE;
+  try {
+    const stored = window.localStorage.getItem('st.locale');
+    return resolveLocale(stored ?? window.navigator.language);
+  } catch {
+    return resolveLocale(window.navigator.language);
+  }
+}
+
+let requestLocale: string = initialLocale();
+
+export function setRequestLocale(locale: string): void {
+  requestLocale = locale;
 }
 
 export const tokenStore = {
@@ -95,6 +121,7 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
 
   const requestHeaders: Record<string, string> = {
     accept: 'application/json',
+    'accept-language': requestLocale,
     ...(headers as Record<string, string>),
   };
   if (body !== undefined) requestHeaders['content-type'] = 'application/json';
@@ -138,9 +165,9 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
 }
 
 /** Server-side fetch (React Server Components) — never sends a user token. */
-export async function apiPublic<T>(path: string, revalidate = 60): Promise<T> {
+export async function apiPublic<T>(path: string, revalidate = 60, locale = 'de'): Promise<T> {
   const response = await fetch(`${apiBase}${path}`, {
-    headers: { accept: 'application/json' },
+    headers: { accept: 'application/json', 'accept-language': locale },
     next: { revalidate },
   });
   if (!response.ok) {

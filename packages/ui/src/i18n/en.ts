@@ -139,6 +139,8 @@ export const en = {
   'paywall.sale': 'Sale',
   'paywall.new': 'New',
   'paywall.bestValue': 'Best value',
+  'paywall.months.one': '{count} month',
+  'paywall.months.other': '{count} months',
   'paywall.or': 'or',
   'paywall.bundle': 'Combo + VIP + Extra',
   'paywall.restore': 'Restore',
@@ -267,6 +269,8 @@ export const en = {
   'legal.ageNotice': '18+. Betting involves financial risk.',
   'legal.noGuarantee':
     'STORM TIPS publishes sports analyses for informational purposes. No result is guaranteed and no outcome can be predicted with certainty.',
+  'legal.paywallDisclaimer':
+    'STORM TIPS publishes sports analyses for information. Every figure is a verified historical result. No outcome is guaranteed.',
   'legal.helpLine':
     'If gambling stops being fun, seek help from a support service in your country.',
 

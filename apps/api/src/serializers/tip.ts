@@ -1,4 +1,5 @@
 import type { Prisma } from '@storm-tips/database';
+import { DEFAULT_LOCALE, localizer } from '@storm-tips/types';
 import type { ComboDTO, ProductCode, TipDTO, TipResultDTO } from '@storm-tips/types';
 import { dec, decOr, iso } from './common.js';
 import {
@@ -50,8 +51,13 @@ function serializeResult(result: TipWithRelations['result']): TipResultDTO | nul
  * analysis, confidence) are stripped **on the server** — a locked tip never
  * leaves the process with its pick inside it.
  */
-export function serializeTip(tip: TipWithRelations, unlocked: boolean): TipDTO {
+export function serializeTip(
+  tip: TipWithRelations,
+  unlocked: boolean,
+  locale: string = DEFAULT_LOCALE,
+): TipDTO {
   const locked = !unlocked;
+  const text = localizer(tip, locale);
   return {
     id: tip.id,
     product: tip.product as ProductCode,
@@ -67,7 +73,7 @@ export function serializeTip(tip: TipWithRelations, unlocked: boolean): TipDTO {
     bookmaker: serializeBookmaker(tip.bookmaker),
 
     marketType: tip.marketType,
-    marketName: tip.market.name,
+    marketName: localizer(tip.market, locale).text('name', tip.market.name),
     selectionLabel: locked ? null : tip.selectionLabel,
     selectionKey: locked ? null : tip.selectionKey,
     line: locked ? null : dec(tip.line),
@@ -81,8 +87,8 @@ export function serializeTip(tip: TipWithRelations, unlocked: boolean): TipDTO {
     confidence: locked ? null : tip.confidence,
     confidenceBand: locked ? null : tip.confidenceBand,
 
-    title: tip.title,
-    analysis: locked ? null : tip.analysis,
+    title: text.text('title', tip.title),
+    analysis: locked ? null : text.text('analysis', tip.analysis),
     imageUrl: tip.imageUrl,
     tags: tip.tags,
 
@@ -95,13 +101,18 @@ export function serializeTip(tip: TipWithRelations, unlocked: boolean): TipDTO {
   };
 }
 
-export function serializeCombo(combo: ComboWithRelations, unlocked: boolean): ComboDTO {
+export function serializeCombo(
+  combo: ComboWithRelations,
+  unlocked: boolean,
+  locale: string = DEFAULT_LOCALE,
+): ComboDTO {
   const totalOdds = dec(combo.totalOdds);
   const stake = decOr(combo.stake, 10);
+  const text = localizer(combo, locale);
   return {
     id: combo.id,
-    title: combo.title,
-    subtitle: combo.subtitle,
+    title: text.text('title', combo.title),
+    subtitle: text.text('subtitle', combo.subtitle),
     product: combo.product as ProductCode,
     status: combo.status,
     outcome: combo.outcome,
@@ -110,9 +121,9 @@ export function serializeCombo(combo: ComboWithRelations, unlocked: boolean): Co
     stake,
     potentialReturn: unlocked && totalOdds ? Math.round(totalOdds * stake * 100) / 100 : null,
     profit: unlocked ? dec(combo.profit) : null,
-    analysis: unlocked ? combo.analysis : null,
+    analysis: unlocked ? text.text('analysis', combo.analysis) : null,
     publishAt: iso(combo.publishAt),
     settledAt: iso(combo.settledAt),
-    items: combo.items.map((item) => serializeTip(item.tip, unlocked)),
+    items: combo.items.map((item) => serializeTip(item.tip, unlocked, locale)),
   };
 }

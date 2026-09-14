@@ -124,7 +124,9 @@ export function PlanCard({
       )}
     >
       <span className="text-[12px] font-semibold text-ink-muted">
-        {plan.months} {plan.months === 1 ? 'Monat' : 'Monate'}
+        {t(plan.months === 1 ? 'paywall.months.one' : 'paywall.months.other', {
+          count: plan.months,
+        })}
       </span>
       <span className="text-[17px] font-extrabold text-ink">{plan.price.formatted}</span>
       {plan.pricePerMonth ? (
@@ -188,7 +190,9 @@ export function BundleCard({
         </div>
         <div className="shrink-0 text-right">
           <p className="text-[12px] font-semibold">
-            {plan.months} {plan.months === 1 ? 'Monat' : 'Monate'}
+            {t(plan.months === 1 ? 'paywall.months.one' : 'paywall.months.other', {
+              count: plan.months,
+            })}
           </p>
           <p className="text-[19px] font-extrabold">{plan.price.formatted}</p>
         </div>

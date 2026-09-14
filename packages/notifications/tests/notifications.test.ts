@@ -4,6 +4,7 @@ import {
   PushService,
   channelForType,
   renderTemplate,
+  templateCatalogues,
   PREFERENCE_FOR_TYPE,
   type PushTarget,
 } from '../src/index.js';
@@ -44,6 +45,39 @@ describe('templates', () => {
 
   it('leaves unknown placeholders intact rather than printing undefined', () => {
     expect(renderTemplate('NEW_TIP', 'de', {}).body).toContain('{league}');
+  });
+
+  it('renders the composed templates the worker relies on, in both languages', () => {
+    const values = { product: 'VIP', won: 4, lost: 1 };
+    expect(renderTemplate('TIP_RESULT_SUMMARY', 'de', values).title).toBe(
+      'VIP: 4 gewonnen, 1 verloren',
+    );
+    expect(renderTemplate('TIP_RESULT_SUMMARY', 'en', values).title).toBe('VIP: 4 won, 1 lost');
+
+    const match = {
+      league: 'Bundesliga',
+      match: 'A – B',
+      selection: 'OVER 2.5 GOALS',
+      tipId: 't1',
+    };
+    for (const locale of ['de', 'en']) {
+      const rendered = renderTemplate('NEW_TIP_MATCH', locale, match);
+      expect(rendered.title).toBe('Bundesliga');
+      expect(rendered.body).toBe('A – B: OVER 2.5 GOALS');
+      expect(rendered.deepLink).toBe('stormtips://tips/t1');
+    }
+  });
+
+  it('keeps every template key defined in both catalogues', () => {
+    const de = templateCatalogues.de!;
+    const en = templateCatalogues.en!;
+    expect(Object.keys(de).sort()).toEqual(Object.keys(en).sort());
+
+    for (const [key, template] of Object.entries(en)) {
+      expect(template.title.trim(), key).not.toBe('');
+      expect(template.body.trim(), key).not.toBe('');
+      expect(template.deepLink, key).toMatch(/^stormtips:\/\//);
+    }
   });
 
   it('never promises guaranteed profit', () => {

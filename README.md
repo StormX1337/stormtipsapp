@@ -91,12 +91,17 @@ pnpm db:studio      # Prisma Studio
   quarter lines.
 - **Results come from a provider, not from a human.** The worker syncs fixtures,
   odds and results, then the settlement engine decides each tip's outcome.
+- **German and English are both complete.** Not just the interface: products,
+  plans, promotions, market names, tip analyses, push notifications and email
+  are all served in the reader's language, falling back to the authored text
+  wherever a translation is missing.
 
 ## Documentation
 
 | Document                                                     | Contents                                    |
 | ------------------------------------------------------------ | ------------------------------------------- |
 | [docs/setup.md](docs/setup.md)                               | Local environment, every variable explained |
+| [docs/localization.md](docs/localization.md)                 | German and English, end to end              |
 | [docs/architecture.md](docs/architecture.md)                 | System design and request lifecycle         |
 | [docs/research.md](docs/research.md)                         | Reference analysis, prior art, sources      |
 | [docs/database.md](docs/database.md)                         | Data model, migrations, seed                |

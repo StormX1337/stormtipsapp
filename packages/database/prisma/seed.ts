@@ -27,9 +27,13 @@ import type { ProductCode } from '@storm-tips/types';
 import {
   SEED_COUPONS,
   SEED_FIX_ODDS_PLANS,
+  SEED_FIX_ODDS_TRANSLATIONS,
   SEED_MARKETS,
+  SEED_MARKET_TRANSLATIONS,
   SEED_PLANS,
+  SEED_PLAN_TRANSLATIONS,
   SEED_PRODUCTS,
+  SEED_PRODUCT_TRANSLATIONS,
 } from './seed-data.js';
 import {
   addDays,
@@ -156,6 +160,7 @@ async function seedCatalogue(): Promise<Catalogue> {
         hasLine: market.hasLine,
         sortOrder: market.sortOrder,
         sportId: sportIds.get('football') ?? null,
+        translations: (SEED_MARKET_TRANSLATIONS[market.key] ?? {}) as Prisma.InputJsonValue,
       },
     });
     marketIds.set(market.key, row.id);
@@ -208,7 +213,12 @@ async function seedCatalogue(): Promise<Catalogue> {
 async function seedCommerce(): Promise<Map<string, string>> {
   console.log('  · products, subscription plans, fix odds plans, coupons, promotions');
   for (const product of SEED_PRODUCTS) {
-    await prisma.product.create({ data: product });
+    await prisma.product.create({
+      data: {
+        ...product,
+        translations: (SEED_PRODUCT_TRANSLATIONS[product.code] ?? {}) as Prisma.InputJsonValue,
+      },
+    });
   }
 
   const planIds = new Map<string, string>();
@@ -232,6 +242,7 @@ async function seedCommerce(): Promise<Map<string, string>> {
         stripePriceId: plan.stripePriceId,
         appleProductId: plan.appleProductId,
         googleProductId: plan.googleProductId,
+        translations: (SEED_PLAN_TRANSLATIONS[plan.slug] ?? {}) as Prisma.InputJsonValue,
       },
     });
     planIds.set(plan.slug, row.id);
@@ -255,6 +266,7 @@ async function seedCommerce(): Promise<Map<string, string>> {
         stripePriceId: plan.stripePriceId,
         appleProductId: plan.appleProductId,
         googleProductId: plan.googleProductId,
+        translations: (SEED_FIX_ODDS_TRANSLATIONS[plan.slug] ?? {}) as Prisma.InputJsonValue,
       },
     });
   }
@@ -282,6 +294,14 @@ async function seedCommerce(): Promise<Map<string, string>> {
         gradientFrom: '#2B1B5E',
         gradientTo: '#8B5CF6',
         priority: 1,
+        translations: {
+          en: {
+            title: 'Ready for more?',
+            subtitle:
+              'Subscribe to our newsletter for more football analyses and special offers every weekend',
+            ctaLabel: 'Subscribe now',
+          },
+        },
       },
       {
         title: 'Combo + VIP + Extra',
@@ -294,6 +314,12 @@ async function seedCommerce(): Promise<Map<string, string>> {
         gradientFrom: '#FFD65C',
         gradientTo: '#FFC93C',
         priority: 2,
+        translations: {
+          en: {
+            subtitle: 'Every premium product in one subscription — save €21.98',
+            ctaLabel: 'Get the bundle',
+          },
+        },
       },
       {
         title: 'Dein VIP-Zugang endet bald',
@@ -306,6 +332,13 @@ async function seedCommerce(): Promise<Map<string, string>> {
         gradientFrom: '#3A2D06',
         gradientTo: '#151821',
         priority: 3,
+        translations: {
+          en: {
+            title: 'Your VIP access ends soon',
+            subtitle: 'Renew now so you do not miss an analysis',
+            ctaLabel: 'Renew',
+          },
+        },
       },
     ],
   });
@@ -626,6 +659,7 @@ function buildTip(
 
   const publishAt = new Date(event.startsAt.getTime() - (2 + random() * 10) * 3_600_000);
   const currentOdds = Math.round(odds * (0.95 + random() * 0.1) * 100) / 100;
+  const analysis = buildAnalysis(event.homeName, event.awayName, label, random);
   const id = createId('tip');
 
   const tip: Prisma.TipCreateManyInput = {
@@ -652,7 +686,8 @@ function buildTip(
     outcome: finished ? (outcome as SettlementOutcome) : 'PENDING',
     isLive: false,
     isStandalone: options.isStandalone ?? true,
-    analysis: buildAnalysis(event.homeName, event.awayName, label, random),
+    analysis: analysis.de,
+    translations: { en: { analysis: analysis.en } },
     tags: [event.leagueKey, candidate.marketKey],
     source: 'STORM TIPS Analyse-Team',
     publishAt,
@@ -870,6 +905,14 @@ async function seedTipsAndCombos(
         profit: settlement ? settlement.profit : null,
         analysis:
           'Kombination aus mehreren Einzelanalysen. Jede Auswahl ist separat begründet; die Kombi-Abrechnung erfolgt automatisch über die Einzelergebnisse.',
+        translations: {
+          en: {
+            title: `${legCount}-leg accumulator · ${day}`,
+            subtitle: `${legs.length} selections · total odds ${totalOdds.toFixed(2)}`,
+            analysis:
+              'An accumulator built from several individual analyses. Every selection is reasoned separately, and the accumulator is settled automatically from the individual results.',
+          },
+        },
         publishAt,
         expiresAt: new Date(Math.min(...legs.map((leg) => (leg.tip.expiresAt as Date).getTime()))),
         settledAt: settlement ? new Date(`${day}T23:00:00.000Z`) : null,
@@ -1059,26 +1102,34 @@ async function seedPolls(events: SeededEvent[], users: SeededUsers): Promise<voi
   const definitions = [
     {
       question: 'Wer gewinnt das Topspiel?',
+      questionEn: 'Who wins the headline match?',
       kind: 'MATCH_WINNER' as const,
       options: ['Heimsieg', 'Unentschieden', 'Auswärtssieg'],
+      optionsEn: ['Home win', 'Draw', 'Away win'],
       eventId: upcoming[0]?.id ?? null,
     },
     {
       question: 'Wie viele Tore fallen am Wochenende im Schnitt?',
+      questionEn: 'How many goals will this weekend average?',
       kind: 'GOALS' as const,
       options: ['Unter 2,5', 'Genau 3', 'Über 3,5'],
+      optionsEn: ['Under 2.5', 'Exactly 3', 'Over 3.5'],
       eventId: null,
     },
     {
       question: 'Welche Liga liefert dir die besten Analysen?',
+      questionEn: 'Which league gives you the best analyses?',
       kind: 'LEAGUE' as const,
       options: ['Premier League', 'Bundesliga', 'LaLiga', 'Serie A'],
+      optionsEn: ['Premier League', 'Bundesliga', 'LaLiga', 'Serie A'],
       eventId: null,
     },
     {
       question: 'Welches Produkt soll als Nächstes ausgebaut werden?',
+      questionEn: 'Which product should we expand next?',
       kind: 'BEST_TIP' as const,
       options: ['VIP', 'Combo', 'Extra', 'Fix Odds'],
+      optionsEn: ['VIP', 'Combo', 'Extra', 'Fix Odds'],
       eventId: null,
     },
   ];
@@ -1093,8 +1144,13 @@ async function seedPolls(events: SeededEvent[], users: SeededUsers): Promise<voi
         startsAt: addDays(new Date(), -3),
         endsAt: index === 3 ? addDays(new Date(), -1) : addDays(new Date(), 4),
         createdById: users.moderator.id,
+        translations: { en: { question: definition.questionEn } },
         options: {
-          create: definition.options.map((label, order) => ({ label, sortOrder: order })),
+          create: definition.options.map((label, order) => ({
+            label,
+            sortOrder: order,
+            translations: { en: { label: definition.optionsEn[order] ?? label } },
+          })),
         },
       },
       include: { options: true },

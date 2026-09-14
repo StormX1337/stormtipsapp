@@ -183,6 +183,13 @@ export interface TipDTO {
   createdAt: string;
 
   result: TipResultDTO | null;
+
+  /**
+   * Per-locale content overrides. Only the admin endpoints return this — the
+   * public serializers omit it so a locked tip cannot leak its analysis through
+   * a translation.
+   */
+  translations?: Record<string, Record<string, unknown>>;
 }
 
 /** Tips grouped under a league header, exactly how the feed is rendered. */
@@ -216,6 +223,13 @@ export interface ComboDTO {
   publishAt: string | null;
   settledAt: string | null;
   items: TipDTO[];
+
+  /**
+   * Per-locale content overrides. Only the admin endpoints return this — the
+   * public serializers omit it so a locked tip cannot leak its analysis through
+   * a translation.
+   */
+  translations?: Record<string, Record<string, unknown>>;
 }
 
 // ── statistics ───────────────────────────────────────────────────────────────
@@ -294,6 +308,13 @@ export interface ProductDTO {
   icon: string | null;
   color: string | null;
   benefits: string[];
+
+  /**
+   * Per-locale content overrides. Only the admin endpoints return this — the
+   * public serializers omit it so a locked tip cannot leak its analysis through
+   * a translation.
+   */
+  translations?: Record<string, Record<string, unknown>>;
 }
 
 export interface SubscriptionPlanDTO {
@@ -318,6 +339,13 @@ export interface SubscriptionPlanDTO {
   stripePriceId: string | null;
   appleProductId: string | null;
   googleProductId: string | null;
+
+  /**
+   * Per-locale content overrides. Only the admin endpoints return this — the
+   * public serializers omit it so a locked tip cannot leak its analysis through
+   * a translation.
+   */
+  translations?: Record<string, Record<string, unknown>>;
 }
 
 export interface FixOddsPlanDTO {
@@ -337,6 +365,13 @@ export interface FixOddsPlanDTO {
   allowLive: boolean;
   requiresVip: boolean;
   badge: PromoBadge;
+
+  /**
+   * Per-locale content overrides. Only the admin endpoints return this — the
+   * public serializers omit it so a locked tip cannot leak its analysis through
+   * a translation.
+   */
+  translations?: Record<string, Record<string, unknown>>;
 }
 
 export interface EntitlementDTO {
@@ -400,6 +435,13 @@ export interface PromotionDTO {
   gradientFrom: string | null;
   gradientTo: string | null;
   endsAt: string | null;
+
+  /**
+   * Per-locale content overrides. Only the admin endpoints return this — the
+   * public serializers omit it so a locked tip cannot leak its analysis through
+   * a translation.
+   */
+  translations?: Record<string, Record<string, unknown>>;
 }
 
 // ── user ─────────────────────────────────────────────────────────────────────
@@ -511,6 +553,13 @@ export interface PollDTO {
   endsAt: string | null;
   event: EventDTO | null;
   options: PollOptionDTO[];
+
+  /**
+   * Per-locale content overrides. Only the admin endpoints return this — the
+   * public serializers omit it so a locked tip cannot leak its analysis through
+   * a translation.
+   */
+  translations?: Record<string, Record<string, unknown>>;
 }
 
 // ── referrals ────────────────────────────────────────────────────────────────
