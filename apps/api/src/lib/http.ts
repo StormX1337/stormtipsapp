@@ -44,7 +44,7 @@ export function noStore(reply: FastifyReply): FastifyReply {
 export function publicCache(reply: FastifyReply, seconds: number): FastifyReply {
   return reply
     .header('cache-control', `public, max-age=${seconds}, stale-while-revalidate=30`)
-    .header('vary', 'accept-language, authorization');
+    .header('vary', 'authorization');
 }
 
 export function assertFound<T>(value: T | null | undefined, entity: string): T {

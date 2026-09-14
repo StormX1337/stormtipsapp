@@ -9,11 +9,10 @@ import {
   type PushTarget,
 } from '../src/index.js';
 
-const target = (token: string, locale = 'de'): PushTarget => ({
+const target = (token: string): PushTarget => ({
   token,
   provider: 'EXPO',
   platform: 'IOS',
-  locale,
 });
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -24,56 +23,38 @@ function jsonResponse(body: unknown, status = 200): Response {
 }
 
 describe('templates', () => {
-  it('renders German copy by default', () => {
-    const rendered = renderTemplate('NEW_VIP_TIP', 'de', {
+  it('renders a template with its values substituted', () => {
+    const rendered = renderTemplate('NEW_VIP_TIP', {
       league: 'Bundesliga',
-      match: 'Elversberg – Bayern',
+      match: 'Elversberg vs Bayern',
       tipId: 'tip-1',
     });
-    expect(rendered.title).toBe('Neue VIP-Analyse');
-    expect(rendered.body).toContain('Elversberg – Bayern');
+    expect(rendered.title).toBe('New VIP analysis');
     expect(rendered.deepLink).toBe('stormtips://vip/tip-1');
   });
 
-  it('renders English copy', () => {
-    expect(renderTemplate('NEW_VIP_TIP', 'en', {}).title).toBe('New VIP analysis');
-  });
-
-  it('falls back to German for an unknown locale', () => {
-    expect(renderTemplate('NEW_COMBO', 'fr', {}).title).toBe('Neue Combo verfügbar');
-  });
-
   it('leaves unknown placeholders intact rather than printing undefined', () => {
-    expect(renderTemplate('NEW_TIP', 'de', {}).body).toContain('{league}');
+    expect(renderTemplate('NEW_TIP', {}).body).toContain('{league}');
   });
 
-  it('renders the composed templates the worker relies on, in both languages', () => {
-    const values = { product: 'VIP', won: 4, lost: 1 };
-    expect(renderTemplate('TIP_RESULT_SUMMARY', 'de', values).title).toBe(
-      'VIP: 4 gewonnen, 1 verloren',
+  it('renders the composed templates the worker relies on', () => {
+    expect(renderTemplate('TIP_RESULT_SUMMARY', { product: 'VIP', won: 4, lost: 1 }).title).toBe(
+      'VIP: 4 won, 1 lost',
     );
-    expect(renderTemplate('TIP_RESULT_SUMMARY', 'en', values).title).toBe('VIP: 4 won, 1 lost');
 
-    const match = {
+    const rendered = renderTemplate('NEW_TIP_MATCH', {
       league: 'Bundesliga',
-      match: 'A – B',
+      match: 'A vs B',
       selection: 'OVER 2.5 GOALS',
       tipId: 't1',
-    };
-    for (const locale of ['de', 'en']) {
-      const rendered = renderTemplate('NEW_TIP_MATCH', locale, match);
-      expect(rendered.title).toBe('Bundesliga');
-      expect(rendered.body).toBe('A – B: OVER 2.5 GOALS');
-      expect(rendered.deepLink).toBe('stormtips://tips/t1');
-    }
+    });
+    expect(rendered.title).toBe('Bundesliga');
+    expect(rendered.body).toBe('A vs B: OVER 2.5 GOALS');
+    expect(rendered.deepLink).toBe('stormtips://tips/t1');
   });
 
-  it('keeps every template key defined in both catalogues', () => {
-    const de = templateCatalogues.de!;
-    const en = templateCatalogues.en!;
-    expect(Object.keys(de).sort()).toEqual(Object.keys(en).sort());
-
-    for (const [key, template] of Object.entries(en)) {
+  it('defines a complete template for every key it ships', () => {
+    for (const [key, template] of Object.entries(templateCatalogues.en!)) {
       expect(template.title.trim(), key).not.toBe('');
       expect(template.body.trim(), key).not.toBe('');
       expect(template.deepLink, key).toMatch(/^stormtips:\/\//);
@@ -81,13 +62,11 @@ describe('templates', () => {
   });
 
   it('never promises guaranteed profit', () => {
-    for (const locale of ['de', 'en']) {
-      for (const type of Object.keys(PREFERENCE_FOR_TYPE)) {
-        const rendered = renderTemplate(type as never, locale, {});
-        expect(`${rendered.title} ${rendered.body}`.toLowerCase()).not.toMatch(
-          /garant|guarantee|sicher(er)? gewinn|risk-?free/,
-        );
-      }
+    for (const type of Object.keys(PREFERENCE_FOR_TYPE)) {
+      const rendered = renderTemplate(type as never, {});
+      expect(`${rendered.title} ${rendered.body}`.toLowerCase()).not.toMatch(
+        /garant|guarantee|sure (thing|win)|risk-?free/,
+      );
     }
   });
 
@@ -170,7 +149,7 @@ describe('ExpoPushTransport', () => {
 });
 
 describe('PushService', () => {
-  it('groups targets by locale and sends localised copy', async () => {
+  it('renders the template once and sends it to every target', async () => {
     const bodies: string[] = [];
     const fetchImpl = vi.fn(async (_url: unknown, init?: RequestInit) => {
       const payload = JSON.parse(String(init?.body)) as { title: string }[];
@@ -180,15 +159,18 @@ describe('PushService', () => {
     const service = new PushService({ fetchImpl: fetchImpl as unknown as typeof fetch });
 
     const result = await service.sendTemplated(
-      [target('a', 'de'), target('b', 'en'), target('c', 'de')],
+      [target('a'), target('b'), target('c')],
       'NEW_COMBO',
-      { count: 3, odds: '4.59', comboId: 'c1' },
+      {
+        count: 3,
+        odds: '4.59',
+        comboId: 'c1',
+      },
     );
 
     expect(result.sent).toBe(3);
-    expect(bodies.sort()).toEqual(['Neue Combo verfügbar', 'New combo available']);
+    expect(bodies).toEqual(['New combo available']);
   });
-
   it('reports targets with no registered transport instead of dropping them', async () => {
     const service = new PushService({ transports: [] });
     const result = await service.send([target('a')], { title: 't', body: 'b' });

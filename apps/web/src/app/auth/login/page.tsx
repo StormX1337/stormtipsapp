@@ -71,15 +71,16 @@ function LoginForm(): ReactNode {
 }
 
 export default function LoginPage(): ReactNode {
+  const t = useT();
   return (
     <AuthCard
-      title="Anmelden"
-      subtitle="Melde dich an, um deine Analysen und dein Abo zu verwalten."
+      title={t('auth.login')}
+      subtitle={t('auth.loginSubtitle')}
       footer={
         <span className="text-ink-muted">
-          Noch kein Konto?{' '}
+          {t('auth.noAccount')}{' '}
           <Link href="/auth/register" className="font-semibold text-accent-500 hover:underline">
-            Konto erstellen
+            {t('auth.register')}
           </Link>
         </span>
       }

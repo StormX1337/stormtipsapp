@@ -22,6 +22,7 @@ import { AppShell } from '@/components/navigation';
 import { StatTile } from '@/components/stat-tiles';
 import { ErrorState, OfflineBanner, ResponsibleGamblingNote } from '@/components/states';
 import { Skeleton } from '@/components/primitives';
+import { intlLocale } from '@storm-tips/ui';
 
 const WINDOWS: StatsWindow[] = ['D7', 'D30', 'D90', 'M6', 'M12', 'ALL'];
 const PRODUCTS: (ProductCode | 'ALL')[] = ['ALL', 'FREE', 'VIP', 'EXTRA', 'COMBO', 'FIX_ODDS'];
@@ -37,7 +38,7 @@ export default function StatisticsPage(): ReactNode {
       api<StatisticsDTO>(`/statistics?product=${product}&window=${window}`, { auth: false }),
   });
 
-  const numberFormat = new Intl.NumberFormat(locale === 'de' ? 'de-DE' : 'en-GB');
+  const numberFormat = new Intl.NumberFormat(intlLocale(locale));
 
   return (
     <AppShell title={t('stats.title')}>

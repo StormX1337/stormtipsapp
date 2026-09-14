@@ -15,15 +15,12 @@ import {
   PageHeader,
   Select,
   Toggle,
-  TranslationFields,
-  translationPayload,
   type Column,
 } from '@/components/ui';
 
 export default function PromotionsPage(): ReactNode {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [english, setEnglish] = useState<Record<string, string>>({});
   const [form, setForm] = useState({
     title: '',
     subtitle: '',
@@ -61,7 +58,6 @@ export default function PromotionsPage(): ReactNode {
           endsAt: form.endsAt ? new Date(form.endsAt).toISOString() : null,
           priority: Number(form.priority),
           isActive: form.isActive,
-          translations: translationPayload('en', english),
         },
       }),
     onSuccess: () => {
@@ -180,30 +176,19 @@ export default function PromotionsPage(): ReactNode {
         <div className="flex flex-col gap-3">
           {create.isError ? <ErrorBox error={create.error} /> : null}
           <Field
-            label="Title (German)"
+            label="Title"
             value={form.title}
             onChange={(event) => setForm({ ...form, title: event.target.value })}
           />
           <Field
-            label="Subtitle (German)"
+            label="Subtitle"
             value={form.subtitle}
             onChange={(event) => setForm({ ...form, subtitle: event.target.value })}
-          />
-          <TranslationFields
-            locale="en"
-            title="English version"
-            fields={[
-              { name: 'title', label: 'Title' },
-              { name: 'subtitle', label: 'Subtitle', multiline: true },
-              { name: 'ctaLabel', label: 'CTA label' },
-            ]}
-            value={english}
-            onChange={setEnglish}
           />
 
           <div className="grid gap-3 sm:grid-cols-2">
             <Field
-              label="CTA label (German)"
+              label="CTA label"
               value={form.ctaLabel}
               onChange={(event) => setForm({ ...form, ctaLabel: event.target.value })}
             />

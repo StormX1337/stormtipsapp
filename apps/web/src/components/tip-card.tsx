@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Lock } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { TipDTO, TipFeedGroupDTO } from '@storm-tips/types';
-import { formatKickoff } from '@storm-tips/ui';
+import { formatKickoff, intlLocale } from '@storm-tips/ui';
 import { useI18n } from '@/lib/i18n';
 import { CountryFlag, OddsBadge, ProductBadge, StatusBadge, TeamCrest } from './primitives';
 
@@ -87,7 +87,7 @@ export function TipCard({ tip, href }: { tip: TipDTO; href?: string }): ReactNod
       {/* Left rail: date over kick-off time, exactly as in the reference feed. */}
       <div className="w-9 shrink-0 pt-0.5 text-left">
         <div className="text-[10px] leading-[1.15] font-medium text-ink-dim">
-          {new Intl.DateTimeFormat(locale === 'de' ? 'de-DE' : 'en-GB', { month: 'short' }).format(
+          {new Intl.DateTimeFormat(intlLocale(locale), { month: 'short' }).format(
             new Date(event.startsAt),
           )}
         </div>

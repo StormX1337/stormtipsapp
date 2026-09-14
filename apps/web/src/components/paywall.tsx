@@ -9,6 +9,7 @@ import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/lib/auth';
 import { api } from '@/lib/api';
 import { Button, PromoBadge } from './primitives';
+import { intlLocale } from '@storm-tips/ui';
 
 export interface PaywallStatistics {
   days: number;
@@ -50,7 +51,7 @@ export function StatCircle({
 
 export function StatCirclePanel({ statistics }: { statistics: PaywallStatistics }): ReactNode {
   const { t, locale } = useI18n();
-  const numberFormat = new Intl.NumberFormat(locale === 'de' ? 'de-DE' : 'en-GB');
+  const numberFormat = new Intl.NumberFormat(intlLocale(locale));
 
   const rows: { label: string; value: string; size: 'sm' | 'md' | 'lg' }[] = [
     {

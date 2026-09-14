@@ -8,7 +8,6 @@ export interface AudienceFilter {
   products?: ProductCode[];
   userIds?: string[];
   onlyFreeUsers?: boolean;
-  locale?: string;
 }
 
 /**
@@ -27,7 +26,6 @@ export class NotificationService {
       status: 'ACTIVE',
       deletedAt: null,
       ...(filter.userIds?.length ? { id: { in: filter.userIds } } : {}),
-      ...(filter.locale ? { language: filter.locale } : {}),
       ...(filter.products?.length
         ? {
             entitlements: {
@@ -63,9 +61,8 @@ export class NotificationService {
   /**
    * Queues a broadcast. `dedupeKey` prevents double fan-out on retries.
    *
-   * Copy is resolved per recipient, in their own language: pass `values` to
-   * render the shared template, or `title`/`body` (with optional
-   * `translations`) for text an operator composed.
+   * Pass `values` to render the shared template, or `title`/`body` for text an
+   * operator composed.
    */
   async broadcast(input: {
     type: NotificationType;
@@ -75,8 +72,6 @@ export class NotificationService {
     values?: Record<string, string | number>;
     title?: string;
     body?: string;
-    /** Operator-composed copy per locale, e.g. `{ en: { title, body } }`. */
-    translations?: Record<string, { title?: string; body?: string }>;
     data?: Record<string, unknown>;
     deepLink?: string | null;
     imageUrl?: string | null;
@@ -90,7 +85,6 @@ export class NotificationService {
       values: input.values,
       title: input.title,
       body: input.body,
-      translations: input.translations,
       data: input.data,
       deepLink: input.deepLink ?? null,
       imageUrl: input.imageUrl ?? null,
@@ -98,7 +92,6 @@ export class NotificationService {
         products: input.audience.products,
         userIds: input.audience.userIds,
         onlyFreeUsers: input.audience.onlyFreeUsers,
-        locale: input.audience.locale,
       },
       scheduledAt: input.scheduledAt?.toISOString() ?? null,
       dedupeKey: input.dedupeKey,
@@ -124,15 +117,7 @@ export class NotificationService {
   }): Promise<string> {
     let { title, body } = input;
     if (input.values) {
-      const user = await prisma.user.findUnique({
-        where: { id: input.userId },
-        select: { language: true },
-      });
-      const rendered = renderTemplate(
-        input.templateKey ?? input.type,
-        user?.language ?? 'de',
-        input.values,
-      );
+      const rendered = renderTemplate(input.templateKey ?? input.type, input.values);
       title = rendered.title;
       body = rendered.body;
     }

@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import type { ReactNode } from 'react';
 import type { TipDTO, TipFeedGroupDTO } from '@storm-tips/types';
-import { formatKickoff } from '@storm-tips/ui';
+import { formatKickoff, intlLocale } from '@storm-tips/ui';
 import { theme, shared } from '@/lib/theme';
 import { useI18n } from '@/lib/i18n';
 import { OddsText, ProductBadge, StatusBadge, TeamCrest } from './primitives';
@@ -66,9 +66,7 @@ export function TipCard({ tip }: { tip: TipDTO }): ReactNode {
     >
       <View style={styles.timeRail}>
         <Text style={styles.railDate}>
-          {new Intl.DateTimeFormat(locale === 'de' ? 'de-DE' : 'en-GB', { month: 'short' }).format(
-            startsAt,
-          )}
+          {new Intl.DateTimeFormat(intlLocale(locale), { month: 'short' }).format(startsAt)}
         </Text>
         <Text style={styles.railDate}>{startsAt.getDate()}</Text>
         <Text style={[styles.railTime, isLive && { color: colors.status.LIVE }]}>

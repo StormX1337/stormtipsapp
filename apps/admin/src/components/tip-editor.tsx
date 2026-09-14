@@ -5,18 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { EventDTO, Paginated, TipDTO } from '@storm-tips/types';
 import { MARKET_SELECTIONS, MarketType, marketRequiresLine } from '@storm-tips/types';
 import { api } from '@/lib/api';
-import {
-  Button,
-  ErrorBox,
-  Field,
-  Modal,
-  Select,
-  TextArea,
-  Toggle,
-  TranslationFields,
-  englishOf,
-  translationPayload,
-} from './ui';
+import { Button, ErrorBox, Field, Modal, Select, TextArea, Toggle } from './ui';
 
 const PRODUCTS = ['FREE', 'VIP', 'EXTRA', 'COMBO', 'FIX_ODDS'] as const;
 const STATUSES = ['DRAFT', 'SCHEDULED', 'PUBLISHED'] as const;
@@ -75,7 +64,6 @@ export function TipEditor({
 }): ReactNode {
   const queryClient = useQueryClient();
   const [form, setForm] = useState<FormState>(EMPTY);
-  const [english, setEnglish] = useState<Record<string, string>>({});
   const [eventSearch, setEventSearch] = useState('');
 
   useEffect(() => {
@@ -101,7 +89,6 @@ export function TipEditor({
           }
         : EMPTY,
     );
-    setEnglish(englishOf(tip?.translations));
   }, [open, tip]);
 
   const events = useQuery({
@@ -192,7 +179,6 @@ export function TipEditor({
         status: form.status,
         isLive: form.isLive,
         analysis: form.analysis || null,
-        translations: translationPayload('en', english),
         tags: form.tags
           .split(',')
           .map((tag) => tag.trim())
@@ -383,21 +369,10 @@ export function TipEditor({
         />
 
         <TextArea
-          label="Analysis (German)"
+          label="Analysis"
           value={form.analysis}
           onChange={(event) => setForm({ ...form, analysis: event.target.value })}
           placeholder="Why this selection…"
-        />
-
-        <TranslationFields
-          locale="en"
-          title="English version"
-          fields={[
-            { name: 'title', label: 'Title' },
-            { name: 'analysis', label: 'Analysis', multiline: true },
-          ]}
-          value={english}
-          onChange={setEnglish}
         />
       </div>
     </Modal>

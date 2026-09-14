@@ -2,7 +2,7 @@
 
 import clsx from 'clsx';
 import { useEffect, useMemo, useRef, type ReactNode } from 'react';
-import { toDateKey } from '@storm-tips/ui';
+import { intlLocale, toDateKey } from '@storm-tips/ui';
 import { useI18n } from '@/lib/i18n';
 
 /**
@@ -33,10 +33,10 @@ export function DateStrip({
       const date = new Date(today.getTime() + (index - daysBefore) * 86_400_000);
       return {
         key: toDateKey(date),
-        weekday: new Intl.DateTimeFormat(locale === 'de' ? 'de-DE' : 'en-GB', {
+        weekday: new Intl.DateTimeFormat(intlLocale(locale), {
           weekday: 'short',
         }).format(date),
-        month: new Intl.DateTimeFormat(locale === 'de' ? 'de-DE' : 'en-GB', {
+        month: new Intl.DateTimeFormat(intlLocale(locale), {
           month: 'short',
         }).format(date),
         day: date.getDate(),

@@ -3,16 +3,7 @@
 import { useEffect, type ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import {
-  Bell,
-  ChevronRight,
-  CreditCard,
-  Gift,
-  Globe,
-  LogOut,
-  ShieldQuestion,
-  Trash2,
-} from 'lucide-react';
+import { Bell, ChevronRight, CreditCard, Gift, LogOut, ShieldQuestion, Trash2 } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { useI18n } from '@/lib/i18n';
 import { api } from '@/lib/api';
@@ -44,7 +35,7 @@ function Item({
 }
 
 export default function AccountPage(): ReactNode {
-  const { t, locale, setLocale } = useI18n();
+  const { t } = useI18n();
   const { user, loading, logout, products } = useAuth();
   const router = useRouter();
 
@@ -52,25 +43,8 @@ export default function AccountPage(): ReactNode {
     if (!loading && !user) router.replace('/auth/login?next=/account');
   }, [loading, user, router]);
 
-  /**
-   * The choice is stored on the account as well as locally, because push
-   * notifications and emails are rendered server-side in the stored language.
-   */
-  async function changeLanguage(next: 'de' | 'en'): Promise<void> {
-    setLocale(next);
-    if (!user) return;
-    try {
-      await api('/me', { method: 'PATCH', body: { language: next } });
-    } catch {
-      // The local preference already applied; the next profile edit retries.
-    }
-  }
-
   async function deleteAccount(): Promise<void> {
-    if (
-      !window.confirm('Konto wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.')
-    )
-      return;
+    if (!window.confirm('Delete this account? This cannot be undone.')) return;
     await api('/me', { method: 'DELETE' });
     await logout();
     router.replace('/free');
@@ -131,28 +105,7 @@ export default function AccountPage(): ReactNode {
             </section>
 
             <section className="card overflow-hidden">
-              <div className="flex items-center gap-3 px-3 py-3">
-                <Globe size={18} className="text-ink-dim" aria-hidden />
-                <span className="flex-1 text-[13.5px]">{t('profile.language')}</span>
-                <div className="flex gap-1">
-                  {(['de', 'en'] as const).map((code) => (
-                    <button
-                      key={code}
-                      type="button"
-                      onClick={() => void changeLanguage(code)}
-                      aria-pressed={locale === code}
-                      className={
-                        locale === code
-                          ? 'rounded-sm bg-accent-500 px-2 py-1 text-[11px] font-bold text-ink-inverse'
-                          : 'rounded-sm px-2 py-1 text-[11px] font-bold text-ink-dim hover:text-ink'
-                      }
-                    >
-                      {code.toUpperCase()}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="divide-y divide-line-subtle border-t border-line-subtle">
+              <div className="divide-y divide-line-subtle">
                 <Item
                   href="/legal/responsible-gambling"
                   icon={<ShieldQuestion size={18} aria-hidden />}

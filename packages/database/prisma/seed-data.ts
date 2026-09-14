@@ -31,8 +31,8 @@ export interface SeedPlan {
 export const SEED_PLANS: SeedPlan[] = [
   {
     slug: 'combo-1m',
-    name: 'Combo · 1 Monat',
-    description: 'Zugriff auf alle Combo-Analysen für einen Monat.',
+    name: 'Combo · 1 month',
+    description: 'Access to every Combo analysis for one month.',
     products: ['COMBO'],
     priceCents: 2999,
     interval: 'MONTH',
@@ -47,8 +47,8 @@ export const SEED_PLANS: SeedPlan[] = [
   },
   {
     slug: 'combo-3m',
-    name: 'Combo · 3 Monate',
-    description: 'Drei Monate Combo — günstiger pro Monat.',
+    name: 'Combo · 3 months',
+    description: 'Three months of Combo — cheaper per month.',
     products: ['COMBO'],
     priceCents: 7999,
     compareAtPriceCents: 8997,
@@ -64,8 +64,8 @@ export const SEED_PLANS: SeedPlan[] = [
   },
   {
     slug: 'combo-6m',
-    name: 'Combo · 6 Monate',
-    description: 'Sechs Monate Combo zum besten Monatspreis.',
+    name: 'Combo · 6 months',
+    description: 'Six months of Combo at the best monthly price.',
     products: ['COMBO'],
     priceCents: 13999,
     compareAtPriceCents: 17994,
@@ -82,7 +82,7 @@ export const SEED_PLANS: SeedPlan[] = [
   {
     slug: 'bundle-1m',
     name: 'Combo + VIP + Extra',
-    description: 'Alle Premium-Produkte in einem Abo.',
+    description: 'Every premium product in one subscription.',
     products: ['COMBO', 'VIP', 'EXTRA'],
     priceCents: 3999,
     compareAtPriceCents: 6197,
@@ -99,8 +99,8 @@ export const SEED_PLANS: SeedPlan[] = [
   },
   {
     slug: 'vip-1m',
-    name: 'VIP · 1 Monat',
-    description: 'Alle VIP-Analysen, Live-Tipps und Experten-Kommentare.',
+    name: 'VIP · 1 month',
+    description: 'Every VIP analysis, live tips and expert commentary.',
     products: ['VIP'],
     priceCents: 2499,
     interval: 'MONTH',
@@ -115,8 +115,8 @@ export const SEED_PLANS: SeedPlan[] = [
   },
   {
     slug: 'vip-12m',
-    name: 'VIP · 12 Monate',
-    description: 'Ein Jahr VIP zum reduzierten Monatspreis.',
+    name: 'VIP · 12 months',
+    description: 'A year of VIP at a reduced monthly price.',
     products: ['VIP'],
     priceCents: 19999,
     compareAtPriceCents: 29988,
@@ -132,8 +132,8 @@ export const SEED_PLANS: SeedPlan[] = [
   },
   {
     slug: 'extra-1m',
-    name: 'Extra · 1 Monat',
-    description: 'Value- und Spezialauswahlen mit höheren Quoten.',
+    name: 'Extra · 1 month',
+    description: 'Value and special selections at higher odds.',
     products: ['EXTRA'],
     priceCents: 1999,
     interval: 'MONTH',
@@ -170,7 +170,7 @@ export const SEED_FIX_ODDS_PLANS: SeedFixOddsPlan[] = [
   {
     slug: 'fix-odds-basic',
     name: 'FIX ODDS BASIC',
-    description: 'Konservatives Paket mit Zielquote 1.50 und hoher Konfidenz.',
+    description: 'A conservative package targeting 1.50 at high confidence.',
     priceCents: 1999,
     targetOdds: 1.5,
     maxOdds: 1.8,
@@ -187,7 +187,7 @@ export const SEED_FIX_ODDS_PLANS: SeedFixOddsPlan[] = [
   {
     slug: 'fix-odds-pro',
     name: 'FIX ODDS PRO',
-    description: 'Ausgewogenes Paket mit Zielquote 2.00.',
+    description: 'A balanced package targeting 2.00.',
     priceCents: 3499,
     targetOdds: 2,
     maxOdds: 2.6,
@@ -204,7 +204,7 @@ export const SEED_FIX_ODDS_PLANS: SeedFixOddsPlan[] = [
   {
     slug: 'fix-odds-vip',
     name: 'FIX ODDS VIP',
-    description: 'Zielquote 3.00 — nur für VIP-Mitglieder.',
+    description: 'Targeting 3.00 — VIP members only.',
     priceCents: 4999,
     targetOdds: 3,
     maxOdds: 4,
@@ -221,7 +221,7 @@ export const SEED_FIX_ODDS_PLANS: SeedFixOddsPlan[] = [
   {
     slug: 'fix-odds-combo',
     name: 'FIX ODDS COMBO',
-    description: 'Kombinationen mit Zielquote 5.00 für risikofreudige Nutzer.',
+    description: 'Accumulators targeting 5.00, for members who accept more variance.',
     priceCents: 5999,
     targetOdds: 5,
     maxOdds: 8,
@@ -250,75 +250,76 @@ export const SEED_PRODUCTS: {
   {
     code: 'FREE',
     name: 'Storm Tips Free',
-    tagline: 'Täglich kostenlose Analysen',
-    description: 'Jeden Tag mehrere veröffentlichte Analysen mit Quote, Markt und Begründung.',
+    tagline: 'Free analyses every day',
+    description:
+      'Several published analyses every day, each with odds, market and a written rationale.',
     icon: 'list',
     color: '#12E17F',
     benefits: [
-      'Mehrere Analysen pro Tag',
-      'Quoten und Buchmacher-Angabe',
-      'Vollständige Ergebnis-Historie',
+      'Several analyses per day',
+      'Odds and the bookmaker they came from',
+      'Complete results history',
     ],
     sortOrder: 0,
   },
   {
     code: 'COMBO',
     name: 'Storm Tips Combo',
-    tagline: 'Kuratierte Kombiwetten',
-    description: 'Täglich zusammengestellte Kombinationen mit Einzelbegründung je Auswahl.',
+    tagline: 'Curated accumulators',
+    description: 'Daily accumulators, with every selection reasoned individually.',
     icon: 'ticket',
     color: '#FFC93C',
     benefits: [
-      'Tägliche Kombi-Analysen',
-      'Jede Auswahl einzeln begründet',
-      'Automatische Kombi-Abrechnung',
-      'Geprüfte Erfolgsstatistik',
+      'Daily accumulator analyses',
+      'Every selection reasoned individually',
+      'Automatic accumulator settlement',
+      'Verified performance record',
     ],
     sortOrder: 1,
   },
   {
     code: 'EXTRA',
     name: 'Storm Tips Extra',
-    tagline: 'Value- und Spezialauswahlen',
-    description: 'Ausgewählte Value-Spots, Spezialmärkte und Live-Gelegenheiten.',
+    tagline: 'Value and special selections',
+    description: 'Selected value spots, special markets and in-play opportunities.',
     icon: 'zap',
     color: '#28D8F5',
     benefits: [
-      'Value-Auswahlen mit höheren Quoten',
-      'Spezialmärkte',
-      'Live-Gelegenheiten',
-      'Gewinn-/Verlust-Wirkung je Auswahl',
+      'Value selections at higher odds',
+      'Special markets',
+      'In-play opportunities',
+      'Profit and loss impact per selection',
     ],
     sortOrder: 2,
   },
   {
     code: 'VIP',
     name: 'Storm Tips VIP',
-    tagline: 'Höchste Konfidenz',
-    description: 'Die Auswahlen mit der höchsten Konfidenz, inklusive ausführlicher Analyse.',
+    tagline: 'Highest confidence',
+    description: 'The highest-confidence selections, each with a detailed analysis.',
     icon: 'crown',
     color: '#FFD65C',
     benefits: [
-      'Analysen mit höchster Konfidenz',
-      'Ausführliche Experten-Begründung',
-      'Frühzeitige Veröffentlichung',
-      'Erweiterte Statistiken',
-      'Live-Tipps',
+      'Highest-confidence analyses',
+      'Detailed expert reasoning',
+      'Published earlier',
+      'Extended statistics',
+      'Live tips',
     ],
     sortOrder: 3,
   },
   {
     code: 'FIX_ODDS',
     name: 'Storm Tips FIX Odds',
-    tagline: 'Pakete mit fester Zielquote',
-    description: 'Pakete, die konsequent auf eine definierte Zielquote ausgerichtet sind.',
+    tagline: 'Packages built around a target price',
+    description: 'Packages aimed consistently at a defined target price.',
     icon: 'target',
     color: '#8B5CF6',
     benefits: [
-      'Definierte Zielquote je Paket',
-      'Feste Anzahl Auswahlen pro Periode',
-      'Definierte Mindest-Konfidenz je Auswahl',
-      'Getrennte Statistik je Paket',
+      'A defined target price per package',
+      'A fixed number of selections per period',
+      'A defined minimum confidence per selection',
+      'Separate statistics per package',
     ],
     sortOrder: 4,
   },
@@ -380,7 +381,7 @@ export const SEED_MARKETS = [
 export const SEED_COUPONS = [
   {
     code: 'WELCOME20',
-    description: '20 % Rabatt auf das erste Abo.',
+    description: '20% off your first subscription.',
     discountType: 'PERCENTAGE' as const,
     discountValue: 20,
     maxRedemptions: 1000,
@@ -390,7 +391,7 @@ export const SEED_COUPONS = [
   },
   {
     code: 'COMBO10',
-    description: '10 € Rabatt auf alle Combo-Tarife.',
+    description: '€10 off every Combo plan.',
     discountType: 'FIXED' as const,
     discountValue: 1000,
     maxRedemptions: 500,
@@ -400,7 +401,7 @@ export const SEED_COUPONS = [
   },
   {
     code: 'VIPWEEK',
-    description: '30 % auf VIP — zeitlich begrenzt.',
+    description: '30% off VIP — for a limited time.',
     discountType: 'PERCENTAGE' as const,
     discountValue: 30,
     maxRedemptions: 200,
@@ -409,149 +410,3 @@ export const SEED_COUPONS = [
     applicableProducts: ['VIP'] as ProductCode[],
   },
 ];
-
-// ── translations ─────────────────────────────────────────────────────────────
-//
-// Seed rows keep their authored text in the ordinary columns and carry
-// per-locale overrides here. Products, plans and coupons are authored in
-// German; markets are authored in the English betting terminology the industry
-// uses, so those carry a German override instead. Anything without an entry
-// simply renders its base text in every language.
-
-type TranslationMap = Record<string, Record<string, Record<string, unknown>>>;
-
-export const SEED_PRODUCT_TRANSLATIONS: TranslationMap = {
-  FREE: {
-    en: {
-      name: 'Storm Tips Free',
-      tagline: 'Free analyses every day',
-      description:
-        'Several published analyses every day, each with odds, market and a written rationale.',
-      benefits: [
-        'Several analyses per day',
-        'Odds and the bookmaker they came from',
-        'Complete results history',
-      ],
-    },
-  },
-  COMBO: {
-    en: {
-      name: 'Storm Tips Combo',
-      tagline: 'Curated accumulators',
-      description: 'Daily accumulators, with every selection reasoned individually.',
-      benefits: [
-        'Daily accumulator analyses',
-        'Every selection reasoned individually',
-        'Automatic accumulator settlement',
-        'Verified performance record',
-      ],
-    },
-  },
-  EXTRA: {
-    en: {
-      name: 'Storm Tips Extra',
-      tagline: 'Value and special selections',
-      description: 'Selected value spots, special markets and in-play opportunities.',
-      benefits: [
-        'Value selections at higher odds',
-        'Special markets',
-        'In-play opportunities',
-        'Profit and loss impact per selection',
-      ],
-    },
-  },
-  VIP: {
-    en: {
-      name: 'Storm Tips VIP',
-      tagline: 'Highest confidence',
-      description: 'The highest-confidence selections, each with a detailed analysis.',
-      benefits: [
-        'Highest-confidence analyses',
-        'Detailed expert reasoning',
-        'Published earlier',
-        'Extended statistics',
-        'Live tips',
-      ],
-    },
-  },
-  FIX_ODDS: {
-    en: {
-      name: 'Storm Tips FIX Odds',
-      tagline: 'Packages built around a target price',
-      description: 'Packages aimed consistently at a defined target price.',
-      benefits: [
-        'A defined target price per package',
-        'A fixed number of selections per period',
-        'A defined minimum confidence per selection',
-        'Separate statistics per package',
-      ],
-    },
-  },
-};
-
-export const SEED_PLAN_TRANSLATIONS: TranslationMap = {
-  'combo-1m': {
-    en: { name: 'Combo · 1 month', description: 'Access to every Combo analysis for one month.' },
-  },
-  'combo-3m': {
-    en: { name: 'Combo · 3 months', description: 'Three months of Combo — cheaper per month.' },
-  },
-  'combo-6m': {
-    en: { name: 'Combo · 6 months', description: 'Six months of Combo at the best monthly price.' },
-  },
-  'bundle-1m': {
-    en: {
-      name: 'Combo + VIP + Extra',
-      description: 'Every premium product in one subscription.',
-    },
-  },
-  'vip-1m': {
-    en: {
-      name: 'VIP · 1 month',
-      description: 'Every VIP analysis, live tips and expert commentary.',
-    },
-  },
-  'vip-12m': {
-    en: { name: 'VIP · 12 months', description: 'A year of VIP at a reduced monthly price.' },
-  },
-  'extra-1m': {
-    en: { name: 'Extra · 1 month', description: 'Value and special selections at higher odds.' },
-  },
-};
-
-export const SEED_FIX_ODDS_TRANSLATIONS: TranslationMap = {
-  'fix-odds-basic': {
-    en: {
-      description: 'A conservative package targeting 1.50 at high confidence.',
-    },
-  },
-  'fix-odds-pro': { en: { description: 'A balanced package targeting 2.00.' } },
-  'fix-odds-vip': { en: { description: 'Targeting 3.00 — VIP members only.' } },
-  'fix-odds-combo': {
-    en: { description: 'Accumulators targeting 5.00, for members who accept more variance.' },
-  },
-};
-
-export const SEED_COUPON_TRANSLATIONS: TranslationMap = {
-  WELCOME20: { en: { description: '20% off your first subscription.' } },
-  COMBO10: { en: { description: '€10 off every Combo plan.' } },
-  VIPWEEK: { en: { description: '30% off VIP — for a limited time.' } },
-};
-
-/** Markets are authored in English, so the override here is the German one. */
-export const SEED_MARKET_TRANSLATIONS: TranslationMap = {
-  '1x2': { de: { name: 'Spielausgang' } },
-  'double-chance': { de: { name: 'Doppelte Chance' } },
-  dnb: { de: { name: 'Unentschieden zurück' } },
-  totals: { de: { name: 'Tore über/unter' } },
-  'alt-totals': { de: { name: 'Alternative Torlinie' } },
-  'team-totals': { de: { name: 'Teamtore' } },
-  'asian-handicap': { de: { name: 'Asiatisches Handicap' } },
-  'european-handicap': { de: { name: 'Europäisches Handicap' } },
-  btts: { de: { name: 'Beide Teams treffen' } },
-  'ht-totals': { de: { name: 'Tore 1. Halbzeit' } },
-  corners: { de: { name: 'Eckbälle gesamt' } },
-  cards: { de: { name: 'Karten gesamt' } },
-  'correct-score': { de: { name: 'Genaues Ergebnis' } },
-  'ht-ft': { de: { name: 'Halbzeit / Endstand' } },
-};

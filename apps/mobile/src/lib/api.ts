@@ -1,5 +1,3 @@
-import { getLocales } from 'expo-localization';
-import { resolveLocale } from '@storm-tips/ui';
 import { apiBase } from './config';
 import { secureStorage } from './storage';
 
@@ -58,33 +56,19 @@ export const reachability = {
  * would be answered from cache rather than refetched. The stored preference
  * replaces it as soon as the i18n provider reads it.
  */
-let requestLocale: string = resolveLocale(getLocales()[0]?.languageCode ?? undefined);
-
-export function setRequestLocale(locale: string): void {
-  requestLocale = locale;
-}
 
 /**
- * Transport-level failures never reach the server, so they carry no localised
- * message from it — these are the only strings the client has to translate
- * itself.
+ * Transport-level failures never reach the server, so they carry no message
+ * from it — these are the only strings the client has to supply itself.
  */
-const TRANSPORT_MESSAGES: Record<string, { timeout: string; network: string; unknown: string }> = {
-  de: {
-    timeout: 'Zeitüberschreitung',
-    network: 'Netzwerkfehler',
-    unknown: 'Anfrage fehlgeschlagen',
-  },
-  en: {
-    timeout: 'The request timed out',
-    network: 'Network error',
-    unknown: 'The request failed',
-  },
-};
+const TRANSPORT_MESSAGES = {
+  timeout: 'The request timed out',
+  network: 'Network error',
+  unknown: 'The request failed',
+} as const;
 
-function transportMessage(key: 'timeout' | 'network' | 'unknown'): string {
-  const short = requestLocale.split('-')[0] ?? 'de';
-  return (TRANSPORT_MESSAGES[short] ?? TRANSPORT_MESSAGES.de!)[key];
+function transportMessage(key: keyof typeof TRANSPORT_MESSAGES): string {
+  return TRANSPORT_MESSAGES[key];
 }
 
 /** In-memory mirror so the hot path never awaits the Keychain. */
@@ -162,7 +146,6 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
 
   const requestHeaders: Record<string, string> = {
     accept: 'application/json',
-    'accept-language': requestLocale,
     ...(headers as Record<string, string>),
   };
   if (body !== undefined) requestHeaders['content-type'] = 'application/json';

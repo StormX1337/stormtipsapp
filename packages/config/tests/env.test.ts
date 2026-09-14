@@ -15,7 +15,7 @@ describe('environment schema', () => {
     const env = loadEnv({ ...base });
     expect(env.API_PORT).toBe(4000);
     expect(env.DEFAULT_CURRENCY).toBe('EUR');
-    expect(env.DEFAULT_LOCALE).toBe('de');
+    expect(env.DEFAULT_LOCALE).toBe('en');
     expect(env.SPORTS_PROVIDER).toBe('mock');
     expect(env.STATISTICS_STAKE).toBe(10);
   });

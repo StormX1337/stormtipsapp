@@ -28,7 +28,7 @@ export class ReferralService {
     return config;
   }
 
-  async summary(userId: string, locale = 'de'): Promise<ReferralSummaryDTO> {
+  async summary(userId: string): Promise<ReferralSummaryDTO> {
     const [user, referrals, rewards, program] = await Promise.all([
       prisma.user.findUniqueOrThrow({ where: { id: userId }, select: { referralCode: true } }),
       prisma.referral.findMany({ where: { referrerId: userId } }),
@@ -50,9 +50,7 @@ export class ReferralService {
         type: reward.type,
         status: reward.status,
         days: reward.days,
-        amount: reward.amountCents
-          ? money(reward.amountCents, reward.currency ?? 'EUR', locale)
-          : null,
+        amount: reward.amountCents ? money(reward.amountCents, reward.currency ?? 'EUR') : null,
         grantedAt: reward.grantedAt?.toISOString() ?? null,
       })),
       program: {

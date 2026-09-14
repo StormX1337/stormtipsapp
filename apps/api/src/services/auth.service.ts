@@ -131,7 +131,7 @@ export class AuthService {
     });
 
     await this.attachReferral(user.id, input.referralCode);
-    await this.sendVerificationEmail(user.id, user.email, user.language);
+    await this.sendVerificationEmail(user.id, user.email);
 
     const tokens = await this.issueTokens(
       { id: user.id, email: user.email, role: user.role as UserRole },
@@ -280,7 +280,7 @@ export class AuthService {
     });
   }
 
-  async sendVerificationEmail(userId: string, email: string, locale = 'de'): Promise<void> {
+  async sendVerificationEmail(userId: string, email: string): Promise<void> {
     const { token, hash } = generateVerificationToken();
     await prisma.verificationToken.create({
       data: {
@@ -290,7 +290,7 @@ export class AuthService {
         expiresAt: new Date(Date.now() + VERIFICATION_TTL_MS),
       },
     });
-    await sendMail({ to: email, ...verificationEmail(token, locale) });
+    await sendMail({ to: email, ...verificationEmail(token) });
   }
 
   async verifyEmail(token: string): Promise<void> {
@@ -313,7 +313,7 @@ export class AuthService {
   }
 
   /** Always resolves — never reveals whether an address is registered. */
-  async requestPasswordReset(email: string, locale?: string): Promise<void> {
+  async requestPasswordReset(email: string): Promise<void> {
     const user = await prisma.user.findUnique({
       where: { email },
       select: { id: true, email: true, language: true },
@@ -331,7 +331,7 @@ export class AuthService {
     });
     await sendMail({
       to: user.email,
-      ...passwordResetEmail(token, user.language ?? locale ?? 'de'),
+      ...passwordResetEmail(token),
     });
   }
 

@@ -39,7 +39,6 @@ export async function pollRoutes(app: FastifyInstance): Promise<void> {
         serializePoll(
           poll,
           myVotes.filter((vote) => vote.pollId === poll.id).map((vote) => vote.optionId),
-          request.locale,
         ),
       ),
       total,
@@ -63,7 +62,6 @@ export async function pollRoutes(app: FastifyInstance): Promise<void> {
     return serializePoll(
       poll,
       myVotes.map((vote) => vote.optionId),
-      request.locale,
     );
   });
 
@@ -110,7 +108,7 @@ export async function pollRoutes(app: FastifyInstance): Promise<void> {
     });
 
     const updated = await prisma.poll.findUniqueOrThrow({ where: { id }, include: pollInclude });
-    const dto = serializePoll(updated, optionIds, request.locale);
+    const dto = serializePoll(updated, optionIds);
     await broadcast({
       topic: WS_TOPICS.polls,
       message: { type: 'poll.update', topic: WS_TOPICS.polls, payload: dto },

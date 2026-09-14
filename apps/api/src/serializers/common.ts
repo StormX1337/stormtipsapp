@@ -16,6 +16,6 @@ export function iso(value: Date | null | undefined): string | null {
   return value ? value.toISOString() : null;
 }
 
-export function money(amountCents: number, currency: string, locale = 'de'): Money {
-  return { amountCents, currency, formatted: formatMoney(amountCents, currency, locale) };
+export function money(amountCents: number, currency: string): Money {
+  return { amountCents, currency, formatted: formatMoney(amountCents, currency) };
 }

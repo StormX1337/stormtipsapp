@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, type ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { toDateKey } from '@storm-tips/ui';
+import { intlLocale, toDateKey } from '@storm-tips/ui';
 import { theme } from '@/lib/theme';
 import { useI18n } from '@/lib/i18n';
 
@@ -25,7 +25,7 @@ export function DateStrip({
 }): ReactNode {
   const { locale, t } = useI18n();
   const scrollRef = useRef<ScrollView>(null);
-  const intlLocale = locale === 'de' ? 'de-DE' : 'en-GB';
+  const tag = intlLocale(locale);
 
   const days = useMemo(() => {
     const today = new Date();
@@ -34,13 +34,13 @@ export function DateStrip({
       const date = new Date(today.getTime() + (index - daysBefore) * 86_400_000);
       return {
         key: toDateKey(date),
-        weekday: new Intl.DateTimeFormat(intlLocale, { weekday: 'short' }).format(date),
-        month: new Intl.DateTimeFormat(intlLocale, { month: 'short' }).format(date),
+        weekday: new Intl.DateTimeFormat(tag, { weekday: 'short' }).format(date),
+        month: new Intl.DateTimeFormat(tag, { month: 'short' }).format(date),
         day: date.getDate(),
         isToday: index === daysBefore,
       };
     });
-  }, [daysBefore, daysAfter, intlLocale]);
+  }, [daysBefore, daysAfter, tag]);
 
   // Centre the selected day on first paint.
   useEffect(() => {

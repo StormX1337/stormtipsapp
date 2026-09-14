@@ -194,6 +194,7 @@ export const en = {
   'auth.termsLinkLabel': 'Terms & Conditions',
   'auth.privacyLinkLabel': 'Privacy Policy',
   'auth.registerSubtitle': 'Sign up free and get analyses every day.',
+  'auth.loginSubtitle': 'Sign in to manage your analyses and your subscription.',
   'auth.marketingOptIn': 'Send me offers and promotions by email.',
   'auth.confirmRequired': 'Please accept the terms and confirm your age.',
   'auth.confirmAge': 'I confirm that I am at least 18 years old.',

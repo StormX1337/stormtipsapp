@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { prisma } from '@storm-tips/database';
 import { ALL_PRODUCTS, CACHE_TTL } from '@storm-tips/config';
+import { DEFAULT_LOCALE } from '@storm-tips/types';
 import { translate } from '@storm-tips/ui';
 import {
   AppError,
@@ -27,13 +28,13 @@ import { entitlements } from '../services/entitlement.service.js';
 import { statistics } from '../services/statistics.service.js';
 
 export async function billingRoutes(app: FastifyInstance): Promise<void> {
-  app.get('/products', async (request, reply) => {
+  app.get('/products', async (_request, reply) => {
     const products = await prisma.product.findMany({
       where: { isActive: true },
       orderBy: { sortOrder: 'asc' },
     });
     publicCache(reply, CACHE_TTL.plans);
-    return { items: products.map((product) => serializeProduct(product, request.locale)) };
+    return { items: products.map((product) => serializeProduct(product)) };
   });
 
   /**
@@ -42,8 +43,7 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
    * Every displayed number (per-month price, savings, badges) is computed here
    * from the database rows — the clients render, they never calculate.
    */
-  app.get('/plans', { preHandler: [app.optionalAuth] }, async (request, reply) => {
-    const locale = request.locale;
+  app.get('/plans', { preHandler: [app.optionalAuth] }, async (_request, reply) => {
     const plans = await prisma.subscriptionPlan.findMany({
       where: { isActive: true },
       orderBy: [{ sortOrder: 'asc' }, { priceCents: 'asc' }],
@@ -63,20 +63,20 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
     publicCache(reply, CACHE_TTL.plans);
     return {
       items: plans.map((plan) =>
-        serializePlan(plan, locale, monthlyByProduct.get([...plan.products].sort().join('+'))),
+        serializePlan(plan, monthlyByProduct.get([...plan.products].sort().join('+'))),
       ),
       currency: env.DEFAULT_CURRENCY,
     };
   });
 
-  app.get('/fix-odds-plans', { preHandler: [app.optionalAuth] }, async (request, reply) => {
+  app.get('/fix-odds-plans', { preHandler: [app.optionalAuth] }, async (_request, reply) => {
     const plans = await prisma.fixOddsPlan.findMany({
       where: { isActive: true },
       orderBy: { sortOrder: 'asc' },
     });
     publicCache(reply, CACHE_TTL.plans);
     return {
-      items: plans.map((plan) => serializeFixOddsPlan(plan, request.locale)),
+      items: plans.map((plan) => serializeFixOddsPlan(plan)),
     };
   });
 
@@ -88,7 +88,6 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
       throw AppError.notFound('Product');
     }
     const code = candidate as ProductCode;
-    const locale = request.locale;
 
     const [productRow, plans, headline, promotions] = await Promise.all([
       prisma.product.findUnique({ where: { code } }),
@@ -116,14 +115,14 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
 
     publicCache(reply, 120);
     return {
-      product: serializeProduct(productRow, locale),
+      product: serializeProduct(productRow),
       unlocked,
-      plans: plans.map((plan) => serializePlan(plan, locale, monthly?.priceCents)),
-      promotions: promotions.map((promotion) => serializePromotion(promotion, locale)),
+      plans: plans.map((plan) => serializePlan(plan, monthly?.priceCents)),
+      promotions: promotions.map((promotion) => serializePromotion(promotion)),
       statistics: headline,
       legal: {
         minimumAge: 18,
-        disclaimer: translate(locale, 'legal.paywallDisclaimer'),
+        disclaimer: translate(DEFAULT_LOCALE, 'legal.paywallDisclaimer'),
       },
     };
   });
@@ -135,7 +134,6 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
         isActive: true,
         startsAt: { lte: now },
         OR: [{ endsAt: null }, { endsAt: { gt: now } }],
-        ...(request.auth?.language ? { OR: [{ locale: null }, { locale: request.locale }] } : {}),
       },
       orderBy: { priority: 'asc' },
       take: 10,
@@ -159,7 +157,7 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
     });
 
     publicCache(reply, CACHE_TTL.promotions);
-    return { items: filtered.map((promotion) => serializePromotion(promotion, request.locale)) };
+    return { items: filtered.map((promotion) => serializePromotion(promotion)) };
   });
 
   app.post('/coupons/validate', { preHandler: [app.authenticate] }, async (request, reply) => {
@@ -285,7 +283,7 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
 
     noStore(reply);
     return {
-      subscription: serializeSubscription(subscription, request.auth!.language),
+      subscription: serializeSubscription(subscription),
       entitlements: await entitlements.summary(request.auth!.userId),
     };
   });
@@ -302,9 +300,7 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
     noStore(reply);
     return {
       restored: subscriptions.length,
-      subscriptions: subscriptions.map((subscription) =>
-        serializeSubscription(subscription, request.auth!.language),
-      ),
+      subscriptions: subscriptions.map((subscription) => serializeSubscription(subscription)),
       entitlements: await entitlements.summary(request.auth!.userId),
     };
   });

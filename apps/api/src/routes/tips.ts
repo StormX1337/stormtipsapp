@@ -39,7 +39,6 @@ export async function tipRoutes(app: FastifyInstance): Promise<void> {
           ...query,
           product,
           timezone: request.auth?.timezone,
-          locale: request.locale,
         },
         request.auth?.userId ?? null,
       );
@@ -49,7 +48,7 @@ export async function tipRoutes(app: FastifyInstance): Promise<void> {
       const query = parseQuery(request, tipFeedQuerySchema);
       noStore(reply);
       return tips.list(
-        { ...query, product, timezone: request.auth?.timezone, locale: request.locale },
+        { ...query, product, timezone: request.auth?.timezone },
         request.auth?.userId ?? null,
       );
     });
@@ -63,7 +62,7 @@ export async function tipRoutes(app: FastifyInstance): Promise<void> {
     );
     noStore(reply);
     return tips.combos(
-      { ...query, timezone: request.auth?.timezone, locale: request.locale },
+      { ...query, timezone: request.auth?.timezone },
       request.auth?.userId ?? null,
     );
   });
@@ -71,35 +70,35 @@ export async function tipRoutes(app: FastifyInstance): Promise<void> {
   app.get('/combo/groups/:id', { preHandler: [app.optionalAuth] }, async (request, reply) => {
     const { id } = parseParams(request, idParamSchema);
     noStore(reply);
-    return tips.comboById(id, request.auth?.userId ?? null, request.locale);
+    return tips.comboById(id, request.auth?.userId ?? null);
   });
 
   /** Fix Odds packages on sale, with their verified performance. */
-  app.get('/fix-odds/plans', async (request, reply) => {
+  app.get('/fix-odds/plans', async (_request, reply) => {
     const plans = await prisma.fixOddsPlan.findMany({
       where: { isActive: true },
       orderBy: { sortOrder: 'asc' },
     });
     publicCache(reply, 300);
-    return { items: plans.map((plan) => serializeFixOddsPlan(plan, request.locale)) };
+    return { items: plans.map((plan) => serializeFixOddsPlan(plan)) };
   });
 
   app.get('/live', { preHandler: [app.optionalAuth] }, async (request, reply) => {
     noStore(reply);
-    return { items: await tips.live(request.auth?.userId ?? null, request.locale) };
+    return { items: await tips.live(request.auth?.userId ?? null) };
   });
 
   /** Verified results history — public by design. */
   app.get('/history', { preHandler: [app.optionalAuth] }, async (request, reply) => {
     const query = parseQuery(request, historyQuerySchema);
     publicCache(reply, 60);
-    return tips.history({ ...query, locale: request.locale }, request.auth?.userId ?? null);
+    return tips.history({ ...query }, request.auth?.userId ?? null);
   });
 
   app.get('/:id', { preHandler: [app.optionalAuth] }, async (request, reply) => {
     const { id } = parseParams(request, idParamSchema);
     noStore(reply);
-    return tips.byId(id, request.auth?.userId ?? null, request.locale);
+    return tips.byId(id, request.auth?.userId ?? null);
   });
 
   /** Headline figures used by each product paywall. */

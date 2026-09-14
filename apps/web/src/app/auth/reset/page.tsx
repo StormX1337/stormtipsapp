@@ -38,12 +38,12 @@ function ResetForm(): ReactNode {
   }
 
   if (!token) {
-    return <FormError message="Dieser Link ist unvollständig. Fordere einen neuen Link an." />;
+    return <FormError message="This link is incomplete. Request a new one." />;
   }
   if (done) {
     return (
       <p className="rounded-md bg-accent-500/10 px-3 py-3 text-[13px] text-accent-300">
-        Passwort geändert. Du wirst zur Anmeldung weitergeleitet…
+        Password changed. Taking you to the sign-in page…
       </p>
     );
   }
@@ -71,7 +71,7 @@ function ResetForm(): ReactNode {
 export default function ResetPasswordPage(): ReactNode {
   return (
     <AuthCard
-      title="Neues Passwort setzen"
+      title="Set a new password"
       footer={
         <Link href="/auth/login" className="text-ink-muted hover:text-ink">
           Zur Anmeldung

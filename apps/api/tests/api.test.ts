@@ -126,7 +126,7 @@ describe('plans and paywall', () => {
     expect(body.unlocked).toBe(false);
     // Compliance: the paywall must carry the age notice and disclaimer.
     expect(body.legal.minimumAge).toBe(18);
-    expect(body.legal.disclaimer).toMatch(/garantiert/i);
+    expect(body.legal.disclaimer).toMatch(/no outcome is guaranteed/i);
   });
 
   it('404s for an unknown product', async () => {

@@ -16,77 +16,11 @@ export type TemplateKey = NotificationType | 'TIP_RESULT_SUMMARY' | 'NEW_TIP_MAT
 type Catalogue = Partial<Record<TemplateKey, Template>>;
 
 /**
- * Push copy, per locale.
+ * Push copy.
  *
  * Deliberately free of profit promises — see docs/responsible-gambling.md.
  * `{placeholders}` are substituted from the caller's values.
  */
-const DE: Catalogue = {
-  NEW_TIP: {
-    title: 'Neue Analyse',
-    body: '{league}: {match} — {market}',
-    deepLink: 'stormtips://tips/{tipId}',
-  },
-  NEW_VIP_TIP: {
-    title: 'Neue VIP-Analyse',
-    body: '{league}: {match} — jetzt ansehen',
-    deepLink: 'stormtips://vip/{tipId}',
-  },
-  NEW_COMBO: {
-    title: 'Neue Combo verfügbar',
-    body: '{count} Auswahlen · Gesamtquote {odds}',
-    deepLink: 'stormtips://combo/{comboId}',
-  },
-  NEW_EXTRA: {
-    title: 'Neue Extra-Auswahl',
-    body: '{league}: {match} — {market}',
-    deepLink: 'stormtips://extra/{tipId}',
-  },
-  NEW_FIX_ODDS: {
-    title: 'Neue Fix-Odds-Auswahl',
-    body: '{plan}: Zielquote {odds}',
-    deepLink: 'stormtips://fix-odds/{tipId}',
-  },
-  TIP_RESULT: {
-    title: 'Ergebnis: {outcome}',
-    body: '{match} — {market} @ {odds}',
-    deepLink: 'stormtips://tips/{tipId}',
-  },
-  KICKOFF_REMINDER: {
-    title: 'Anstoß in {minutes} Minuten',
-    body: '{match} — {market}',
-    deepLink: 'stormtips://tips/{tipId}',
-  },
-  SUBSCRIPTION_EXPIRING: {
-    title: 'Dein Abo läuft bald ab',
-    body: 'Noch {days} Tage Zugriff auf {product}.',
-    deepLink: 'stormtips://subscription',
-  },
-  SUBSCRIPTION_RENEWED: {
-    title: 'Abo verlängert',
-    body: '{product} ist bis {date} aktiv.',
-    deepLink: 'stormtips://subscription',
-  },
-  SUBSCRIPTION_CANCELED: {
-    title: 'Abo gekündigt',
-    body: 'Dein Zugriff auf {product} endet am {date}.',
-    deepLink: 'stormtips://subscription',
-  },
-  PROMOTION: { title: '{title}', body: '{body}', deepLink: 'stormtips://paywall/{product}' },
-  POLL: { title: 'Neue Umfrage', body: '{question}', deepLink: 'stormtips://polls/{pollId}' },
-  SYSTEM: { title: '{title}', body: '{body}', deepLink: 'stormtips://home' },
-  TIP_RESULT_SUMMARY: {
-    title: '{product}: {won} gewonnen, {lost} verloren',
-    body: 'Die aktuellen Ergebnisse stehen in deinem Verlauf bereit.',
-    deepLink: 'stormtips://history',
-  },
-  NEW_TIP_MATCH: {
-    title: '{league}',
-    body: '{match}: {selection}',
-    deepLink: 'stormtips://tips/{tipId}',
-  },
-};
-
 const EN: Catalogue = {
   NEW_TIP: {
     title: 'New analysis',
@@ -153,10 +87,8 @@ const EN: Catalogue = {
   },
 };
 
-/** Exposed so a parity test can assert both languages define the same keys. */
-export const templateCatalogues: Record<string, Catalogue> = { de: DE, en: EN };
-
-const CATALOGUES = templateCatalogues;
+/** Exposed so a test can assert the catalogue covers every key it must. */
+export const templateCatalogues: Record<string, Catalogue> = { en: EN };
 
 function interpolate(template: string, values: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (match, key: string) =>
@@ -166,11 +98,9 @@ function interpolate(template: string, values: Record<string, string | number>):
 
 export function renderTemplate(
   type: TemplateKey,
-  locale: string,
   values: Record<string, string | number> = {},
 ): { title: string; body: string; deepLink: string } {
-  const catalogue = CATALOGUES[locale.split('-')[0] ?? 'de'] ?? DE;
-  const template = catalogue[type] ?? DE[type] ?? EN.SYSTEM!;
+  const template = EN[type] ?? EN.SYSTEM!;
   return {
     title: interpolate(template.title, values),
     body: interpolate(template.body, values),

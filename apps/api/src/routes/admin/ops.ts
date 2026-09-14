@@ -14,8 +14,6 @@ import {
 import { parseBody, parseParams, parseQuery } from '../../lib/validate.js';
 import { assertFound, paginate, skipTake } from '../../lib/http.js';
 import { audit } from '../../lib/audit.js';
-import { translationPatch } from '../../lib/translations.js';
-import { adminPoll } from '../../serializers/admin.js';
 import { env } from '../../lib/env.js';
 import { jobs } from '../../lib/queues.js';
 import { pollInclude, serializePoll } from '../../serializers/poll.js';
@@ -34,7 +32,7 @@ export async function adminOpsRoutes(app: FastifyInstance): Promise<void> {
       prisma.poll.count(),
     ]);
     return paginate(
-      polls.map((poll) => adminPoll(serializePoll(poll), poll)),
+      polls.map((poll) => serializePoll(poll)),
       total,
       query,
     );
@@ -59,7 +57,6 @@ export async function adminOpsRoutes(app: FastifyInstance): Promise<void> {
           startsAt: input.startsAt ? new Date(input.startsAt) : new Date(),
           endsAt: input.endsAt ? new Date(input.endsAt) : null,
           createdById: request.auth!.userId,
-          translations: (input.translations ?? {}) as never,
           options: {
             create: input.options.map((option, index) => ({
               label: option.label,
@@ -77,7 +74,7 @@ export async function adminOpsRoutes(app: FastifyInstance): Promise<void> {
         after: input,
       });
       reply.status(201);
-      return adminPoll(serializePoll(poll), poll);
+      return serializePoll(poll);
     },
   );
 
@@ -91,7 +88,6 @@ export async function adminOpsRoutes(app: FastifyInstance): Promise<void> {
       const poll = await prisma.poll.update({
         where: { id },
         data: {
-          translations: translationPatch(before.translations, input.translations) as never,
           question: input.question,
           description: input.description,
           kind: input.kind,
@@ -108,9 +104,10 @@ export async function adminOpsRoutes(app: FastifyInstance): Promise<void> {
         action: 'poll.updated',
         entityType: 'Poll',
         entityId: id,
+        before,
         after: input,
       });
-      return adminPoll(serializePoll(poll), poll);
+      return serializePoll(poll);
     },
   );
 
@@ -137,9 +134,6 @@ export async function adminOpsRoutes(app: FastifyInstance): Promise<void> {
         type: input.type,
         title: input.title,
         body: input.body,
-        // Recipients receive the copy for their own language when the operator
-        // provided one; otherwise the composed text above.
-        translations: input.translations as Record<string, { title?: string; body?: string }>,
         data: input.data,
         deepLink: input.deepLink ?? null,
         imageUrl: input.imageUrl ?? null,

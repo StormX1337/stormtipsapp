@@ -74,7 +74,7 @@ export async function expiringRemindersJob(job: Job): Promise<unknown> {
       });
       await sendMail({
         to: subscription.user.email,
-        ...subscriptionExpiringEmail(product, days, subscription.user.language),
+        ...subscriptionExpiringEmail(product, days),
       });
     }
     results[days] = expiring.length;

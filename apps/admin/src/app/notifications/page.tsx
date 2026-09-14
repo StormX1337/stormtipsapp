@@ -15,8 +15,6 @@ import {
   Select,
   TextArea,
   Toggle,
-  TranslationFields,
-  translationPayload,
   type Column,
 } from '@/components/ui';
 
@@ -38,7 +36,6 @@ interface DeviceStat {
 }
 
 export default function NotificationsPage(): ReactNode {
-  const [english, setEnglish] = useState<Record<string, string>>({});
   const [form, setForm] = useState({
     type: 'SYSTEM',
     title: '',
@@ -73,13 +70,11 @@ export default function NotificationsPage(): ReactNode {
             onlyFreeUsers: form.onlyFreeUsers || undefined,
           },
           scheduledAt: form.scheduledAt ? new Date(form.scheduledAt).toISOString() : null,
-          translations: translationPayload('en', english),
         },
       }),
     onSuccess: () => {
       void history.refetch();
       setForm({ ...form, title: '', body: '' });
-      setEnglish({});
     },
   });
 
@@ -155,26 +150,16 @@ export default function NotificationsPage(): ReactNode {
             </div>
 
             <Field
-              label="Title (German)"
+              label="Title"
               maxLength={80}
               value={form.title}
               onChange={(event) => setForm({ ...form, title: event.target.value })}
             />
             <TextArea
-              label="Body (German)"
+              label="Body"
               maxLength={240}
               value={form.body}
               onChange={(event) => setForm({ ...form, body: event.target.value })}
-            />
-            <TranslationFields
-              locale="en"
-              title="English version"
-              fields={[
-                { name: 'title', label: 'Title' },
-                { name: 'body', label: 'Body', multiline: true },
-              ]}
-              value={english}
-              onChange={setEnglish}
             />
 
             <Field

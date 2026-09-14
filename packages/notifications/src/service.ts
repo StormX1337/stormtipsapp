@@ -81,39 +81,23 @@ export class PushService {
     return summarise(deliveries);
   }
 
-  /**
-   * Renders localised copy and sends it, grouping targets by locale so each
-   * device gets the message in its own language.
-   */
+  /** Renders the template for this type and sends it to every target. */
   async sendTemplated(
     targets: PushTarget[],
     type: NotificationType,
     values: Record<string, string | number>,
     overrides: Partial<PushMessage> = {},
   ): Promise<PushResult> {
-    const byLocale = new Map<string, PushTarget[]>();
-    for (const target of targets) {
-      const locale = (target.locale ?? 'de').split('-')[0] ?? 'de';
-      const list = byLocale.get(locale) ?? [];
-      list.push(target);
-      byLocale.set(locale, list);
-    }
-
-    const deliveries: PushDelivery[] = [];
-    for (const [locale, group] of byLocale) {
-      const rendered = renderTemplate(type, locale, values);
-      const result = await this.send(group, {
-        title: rendered.title,
-        body: rendered.body,
-        deepLink: rendered.deepLink,
-        channelId: channelForType(type),
-        data: { type, ...values },
-        priority: 'high',
-        ...overrides,
-      });
-      deliveries.push(...result.deliveries);
-    }
-    return summarise(deliveries);
+    const rendered = renderTemplate(type, values);
+    return this.send(targets, {
+      title: rendered.title,
+      body: rendered.body,
+      deepLink: rendered.deepLink,
+      channelId: channelForType(type),
+      data: { type, ...values },
+      priority: 'high',
+      ...overrides,
+    });
   }
 
   /** Resolves Expo receipts; returns the tokens whose receipts say to drop them. */

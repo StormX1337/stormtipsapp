@@ -4,7 +4,6 @@ import {
   LEGAL_SLUGS,
   catalogues,
   createTranslator,
-  de,
   en,
   formatCompact,
   formatKickoff,
@@ -22,14 +21,11 @@ import {
   resolveLocale,
   toDateKey,
   translate,
-  type MessageKey,
 } from '../src/index.js';
 
 describe('message catalogues', () => {
-  it('define the same keys in every language', () => {
-    expect(missingKeys('de')).toEqual([]);
+  it('has no key missing from the catalogue it ships', () => {
     expect(missingKeys('en')).toEqual([]);
-    expect(Object.keys(de).sort()).toEqual(Object.keys(en).sort());
   });
 
   it('never leaves a message blank', () => {
@@ -40,12 +36,9 @@ describe('message catalogues', () => {
     }
   });
 
-  it('keeps placeholders consistent across languages', () => {
-    const placeholders = (value: string): string[] =>
-      [...value.matchAll(/\{(\w+)\}/g)].map((match) => match[1] as string).sort();
-
-    for (const key of Object.keys(en) as MessageKey[]) {
-      expect(placeholders(de[key]), key).toEqual(placeholders(en[key]));
+  it('leaves no placeholder unclosed', () => {
+    for (const [key, message] of Object.entries(en)) {
+      expect(message.match(/\{/g)?.length ?? 0, key).toBe(message.match(/\}/g)?.length ?? 0);
     }
   });
 
@@ -55,13 +48,9 @@ describe('message catalogues', () => {
    */
   it('makes no guarantee of winnings', () => {
     const forbidden = [
-      /garantierte?r? gewinn/i,
-      /gewinn garantiert/i,
-      /risikofrei(?!e?“)/i,
       /guaranteed (profit|win)/i,
       /risk[- ]free money/i,
-      /100\s*% (win|trefferquote)/i,
-      /sichere wette/i,
+      /100\s*% win/i,
       /sure win/i,
     ];
 
@@ -74,20 +63,21 @@ describe('message catalogues', () => {
     }
   });
 
-  it('interpolates values and falls back to English', () => {
-    expect(translate('de', 'paywall.perMonth', { price: '9,99 €' })).toContain('9,99 €');
+  it('interpolates values', () => {
+    expect(translate('en', 'paywall.perMonth', { price: '£9.99' })).toContain('£9.99');
     expect(translate('en', 'stats.successRateLastDays', { days: 30 })).toContain('30');
     // An unknown placeholder is left untouched rather than rendering "undefined".
-    expect(translate('de', 'paywall.perMonth', {})).toContain('{price}');
+    expect(translate('en', 'paywall.perMonth', {})).toContain('{price}');
   });
 
   it('resolves locales from device tags', () => {
-    expect(resolveLocale('de-AT')).toBe('de');
     expect(resolveLocale('en-GB')).toBe('en');
+    // Anything the product does not ship folds onto the one it does.
+    expect(resolveLocale('de-AT')).toBe(DEFAULT_LOCALE);
     expect(resolveLocale('fr-FR')).toBe(DEFAULT_LOCALE);
     expect(resolveLocale(null)).toBe(DEFAULT_LOCALE);
-    expect(isSupportedLocale('de')).toBe(true);
-    expect(isSupportedLocale('fr')).toBe(false);
+    expect(isSupportedLocale('en')).toBe(true);
+    expect(isSupportedLocale('de')).toBe(false);
   });
 
   it('exposes a bound translator', () => {
@@ -97,14 +87,12 @@ describe('message catalogues', () => {
 });
 
 describe('legal documents', () => {
-  it('exist in both languages for every slug', () => {
+  it('exist for every slug', () => {
     for (const slug of LEGAL_SLUGS) {
-      for (const locale of ['de', 'en'] as const) {
-        const document = getLegalDocument(locale, slug);
-        expect(document.slug).toBe(slug);
-        expect(document.title.trim()).not.toBe('');
-        expect(document.blocks.length).toBeGreaterThan(0);
-      }
+      const document = getLegalDocument(DEFAULT_LOCALE, slug);
+      expect(document.slug).toBe(slug);
+      expect(document.title.trim()).not.toBe('');
+      expect(document.blocks.length).toBeGreaterThan(0);
     }
   });
 
@@ -114,28 +102,19 @@ describe('legal documents', () => {
   });
 
   it('never contains an empty block', () => {
-    for (const locale of ['de', 'en'] as const) {
-      for (const document of Object.values(legalDocuments[locale])) {
-        for (const block of document.blocks) {
-          if (block.type === 'ul') {
-            expect(block.items.length).toBeGreaterThan(0);
-            for (const item of block.items) expect(item.trim()).not.toBe('');
-          } else {
-            expect(block.text.trim()).not.toBe('');
-          }
+    for (const document of Object.values(legalDocuments[DEFAULT_LOCALE])) {
+      for (const block of document.blocks) {
+        if (block.type === 'ul') {
+          expect(block.items.length).toBeGreaterThan(0);
+          for (const item of block.items) expect(item.trim()).not.toBe('');
+        } else {
+          expect(block.text.trim()).not.toBe('');
         }
       }
     }
   });
 
   it('states plainly that nothing is guaranteed', () => {
-    expect(
-      getLegalDocument('de', 'responsible-gambling')
-        .blocks.filter((block) => block.type === 'ul')
-        .flatMap((block) => (block.type === 'ul' ? block.items : []))
-        .join(' '),
-    ).toMatch(/Keine garantierten Gewinne/i);
-
     expect(
       getLegalDocument('en', 'responsible-gambling')
         .blocks.filter((block) => block.type === 'ul')
@@ -148,7 +127,7 @@ describe('legal documents', () => {
 describe('formatters', () => {
   it('formats money from minor units', () => {
     // Intl inserts a narrow no-break space before the currency symbol.
-    expect(formatMoney(2999, 'EUR', 'de').replace(/\s/g, ' ')).toBe('29,99 \u20ac');
+    expect(formatMoney(2999, 'EUR')).toBe('€29.99');
     expect(formatMoney(2999, 'GBP', 'en')).toBe('£29.99');
   });
 
@@ -160,7 +139,7 @@ describe('formatters', () => {
   });
 
   it('formats units, percentages and compact numbers', () => {
-    expect(formatUnits(124.5, 'de')).toBe('124,50');
+    expect(formatUnits(124.5)).toBe('124.50');
     expect(formatSignedUnits(12, 'en')).toBe('+12.00');
     expect(formatSignedUnits(-12, 'en')).toBe('-12.00');
     expect(formatPercent(62.94, 'en')).toBe('62.9%');
@@ -168,7 +147,7 @@ describe('formatters', () => {
   });
 
   it('formats kickoff times in the requested zone', () => {
-    expect(formatKickoff('2026-03-01T18:30:00.000Z', 'Europe/Berlin', 'de')).toBe('19:30');
+    expect(formatKickoff('2026-03-01T18:30:00.000Z', 'Europe/Berlin')).toBe('19:30');
     expect(formatKickoff('2026-03-01T18:30:00.000Z', 'UTC', 'en')).toBe('18:30');
   });
 

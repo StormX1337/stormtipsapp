@@ -19,8 +19,6 @@ import { comboOdds } from '@storm-tips/statistics';
 import { parseBody, parseParams, parseQuery } from '../../lib/validate.js';
 import { assertFound, paginate, skipTake } from '../../lib/http.js';
 import { audit } from '../../lib/audit.js';
-import { adminCombo, adminTip } from '../../serializers/admin.js';
-import { translationPatch } from '../../lib/translations.js';
 import { jobs } from '../../lib/queues.js';
 import { comboInclude, serializeCombo, serializeTip, tipInclude } from '../../serializers/tip.js';
 import { settlement } from '../../services/settlement.service.js';
@@ -116,7 +114,7 @@ export async function adminTipRoutes(app: FastifyInstance): Promise<void> {
 
     // Admins always see the full tip, never a masked one.
     return paginate(
-      tips.map((tip) => adminTip(serializeTip(tip, true), tip)),
+      tips.map((tip) => serializeTip(tip, true)),
       total,
       query,
     );
@@ -128,7 +126,7 @@ export async function adminTipRoutes(app: FastifyInstance): Promise<void> {
       await prisma.tip.findUnique({ where: { id }, include: tipInclude }),
       'Tip',
     );
-    return adminTip(serializeTip(tip, true), tip);
+    return serializeTip(tip, true);
   });
 
   app.post('/', { preHandler: [app.requireCapability('tips:write')] }, async (request, reply) => {
@@ -150,7 +148,6 @@ export async function adminTipRoutes(app: FastifyInstance): Promise<void> {
         eventId: event.id,
         marketId,
         bookmakerId: input.bookmakerId ?? null,
-        translations: (input.translations ?? {}) as never,
         marketType: input.marketType,
         selectionLabel: input.selectionLabel,
         selectionKey: input.selectionKey,
@@ -192,7 +189,7 @@ export async function adminTipRoutes(app: FastifyInstance): Promise<void> {
       after: input,
     });
     reply.status(201);
-    return adminTip(serializeTip(tip, true), tip);
+    return serializeTip(tip, true);
   });
 
   app.patch('/:id', { preHandler: [app.requireCapability('tips:write')] }, async (request) => {
@@ -217,7 +214,6 @@ export async function adminTipRoutes(app: FastifyInstance): Promise<void> {
       where: { id },
       data: {
         marketId,
-        translations: translationPatch(existing.translations, input.translations) as never,
         marketType: input.marketType,
         selectionLabel: input.selectionLabel,
         selectionKey: input.selectionKey,
@@ -250,7 +246,7 @@ export async function adminTipRoutes(app: FastifyInstance): Promise<void> {
       before: existing,
       after: input,
     });
-    return adminTip(serializeTip(tip, true), tip);
+    return serializeTip(tip, true);
   });
 
   app.post(
@@ -265,7 +261,7 @@ export async function adminTipRoutes(app: FastifyInstance): Promise<void> {
       });
       await announceTip(tip);
       await audit(request, { action: 'tip.published', entityType: 'Tip', entityId: id });
-      return adminTip(serializeTip(tip, true), tip);
+      return serializeTip(tip, true);
     },
   );
 
@@ -280,7 +276,7 @@ export async function adminTipRoutes(app: FastifyInstance): Promise<void> {
         include: tipInclude,
       });
       await audit(request, { action: 'tip.cancelled', entityType: 'Tip', entityId: id });
-      return adminTip(serializeTip(tip, true), tip);
+      return serializeTip(tip, true);
     },
   );
 
@@ -303,7 +299,7 @@ export async function adminTipRoutes(app: FastifyInstance): Promise<void> {
         after: input,
       });
       const tip = await prisma.tip.findUniqueOrThrow({ where: { id }, include: tipInclude });
-      return adminTip(serializeTip(tip, true), tip);
+      return serializeTip(tip, true);
     },
   );
 
@@ -424,7 +420,7 @@ export async function adminTipRoutes(app: FastifyInstance): Promise<void> {
       prisma.combo.count({ where }),
     ]);
     return paginate(
-      combos.map((combo) => adminCombo(serializeCombo(combo, true), combo)),
+      combos.map((combo) => serializeCombo(combo, true)),
       total,
       query,
     );
@@ -451,7 +447,6 @@ export async function adminTipRoutes(app: FastifyInstance): Promise<void> {
           totalOdds,
           stake: input.stake,
           analysis: input.analysis ?? null,
-          translations: (input.translations ?? {}) as never,
           publishAt: input.publishAt ? new Date(input.publishAt) : null,
           expiresAt: input.expiresAt ? new Date(input.expiresAt) : null,
           createdById: request.auth!.userId,
@@ -479,7 +474,7 @@ export async function adminTipRoutes(app: FastifyInstance): Promise<void> {
         after: input,
       });
       reply.status(201);
-      return adminCombo(serializeCombo(combo, true), combo);
+      return serializeCombo(combo, true);
     },
   );
 
@@ -518,7 +513,6 @@ export async function adminTipRoutes(app: FastifyInstance): Promise<void> {
           status: input.status,
           stake: input.stake,
           analysis: input.analysis,
-          translations: translationPatch(existing.translations, input.translations) as never,
           publishAt: input.publishAt ? new Date(input.publishAt) : undefined,
           expiresAt: input.expiresAt ? new Date(input.expiresAt) : undefined,
         },
@@ -531,7 +525,7 @@ export async function adminTipRoutes(app: FastifyInstance): Promise<void> {
         entityId: id,
         after: input,
       });
-      return adminCombo(serializeCombo(combo, true), combo);
+      return serializeCombo(combo, true);
     },
   );
 

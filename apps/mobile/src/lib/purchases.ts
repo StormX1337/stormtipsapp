@@ -23,8 +23,8 @@ let connected = false;
 export class PurchasesUnavailableError extends Error {
   constructor() {
     super(
-      'In-App-Käufe sind in dieser Build-Variante nicht verfügbar. ' +
-        'Erstelle einen Development- oder Production-Build (EAS), Expo Go unterstützt keine Store-Käufe.',
+      'In-app purchases are not available in this build. Create a development or ' +
+        'production build (EAS) — Expo Go cannot make store purchases.',
     );
     this.name = 'PurchasesUnavailableError';
   }

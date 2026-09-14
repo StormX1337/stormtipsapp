@@ -22,15 +22,19 @@ Notifications.setNotificationHandler({
 export async function configureAndroidChannels(): Promise<void> {
   if (Platform.OS !== 'android') return;
   const channels: { id: string; name: string; importance: Notifications.AndroidImportance }[] = [
-    { id: 'tips', name: 'Neue Analysen', importance: Notifications.AndroidImportance.HIGH },
-    { id: 'results', name: 'Ergebnisse', importance: Notifications.AndroidImportance.DEFAULT },
+    { id: 'tips', name: 'New analyses', importance: Notifications.AndroidImportance.HIGH },
+    { id: 'results', name: 'Results', importance: Notifications.AndroidImportance.DEFAULT },
     {
       id: 'reminders',
-      name: 'Anstoß-Erinnerungen',
+      name: 'Kick-off reminders',
       importance: Notifications.AndroidImportance.HIGH,
     },
-    { id: 'account', name: 'Konto & Abo', importance: Notifications.AndroidImportance.DEFAULT },
-    { id: 'promotions', name: 'Angebote', importance: Notifications.AndroidImportance.LOW },
+    {
+      id: 'account',
+      name: 'Account & subscription',
+      importance: Notifications.AndroidImportance.DEFAULT,
+    },
+    { id: 'promotions', name: 'Offers', importance: Notifications.AndroidImportance.LOW },
   ];
   for (const channel of channels) {
     await Notifications.setNotificationChannelAsync(channel.id, {

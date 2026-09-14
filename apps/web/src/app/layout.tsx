@@ -6,19 +6,18 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: {
-    default: `${config.appName} — Datenbasierte Sportanalysen`,
+    default: `${config.appName} — Data-driven sports analysis`,
     template: `%s · ${config.appName}`,
   },
   description:
-    'STORM TIPS veröffentlicht täglich Fußball- und Sportanalysen mit Quote, Wettmarkt und schriftlicher Begründung. Alle Statistiken beruhen auf geprüften, abgerechneten Ergebnissen.',
+    'STORM TIPS publishes daily football and sports analyses with the price, the market and written reasoning. Every statistic is computed from verified, settled results.',
   applicationName: config.appName,
   robots: { index: true, follow: true },
   openGraph: {
     type: 'website',
     siteName: config.appName,
-    title: `${config.appName} — Datenbasierte Sportanalysen`,
-    description:
-      'Tägliche Analysen mit geprüfter Erfolgsbilanz. 18+. Kein Ergebnis ist garantiert.',
+    title: `${config.appName} — Data-driven sports analysis`,
+    description: 'Daily analyses with a verified track record. 18+. No result is guaranteed.',
   },
   other: { rating: 'adult' },
 };
@@ -38,7 +37,7 @@ export default function RootLayout({ children }: { children: ReactNode }): React
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-accent-500 focus:px-3 focus:py-2 focus:text-ink-inverse"
         >
-          Zum Inhalt springen
+          Skip to content
         </a>
         <Providers>{children}</Providers>
       </body>

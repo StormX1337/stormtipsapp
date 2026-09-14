@@ -120,7 +120,7 @@ export function OddsBadge({
         size === 'lg' && 'text-[22px]',
         locked && 'text-ink-dim',
       )}
-      title={changed ? 'Die Quote hat sich seit der Veröffentlichung verändert' : undefined}
+      title={changed ? 'The price has moved since publication' : undefined}
     >
       {text}
       {changed && !locked ? <span className="ml-1 text-[11px] text-gold-400">▲▼</span> : null}

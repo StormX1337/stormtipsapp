@@ -1,15 +1,24 @@
 import type { SupportedCurrency } from './types.js';
 
-const CURRENCY_LOCALE: Record<string, string> = { de: 'de-DE', en: 'en-GB' };
+/**
+ * App locale → the BCP-47 tag `Intl` should format with.
+ *
+ * One table, so a screen that needs its own `Intl` formatter asks here instead
+ * of hard-coding a tag that would then be missed if a locale is ever added.
+ */
+const CURRENCY_LOCALE: Record<string, string> = { en: 'en-GB' };
+
+export function intlLocale(locale = 'en'): string {
+  return CURRENCY_LOCALE[locale] ?? locale;
+}
 
 /** Formats minor units (cents) into a localised currency string. */
 export function formatMoney(
   amountCents: number,
   currency: SupportedCurrency | string = 'EUR',
-  locale = 'de',
+  locale = 'en',
 ): string {
-  const intlLocale = CURRENCY_LOCALE[locale] ?? locale;
-  return new Intl.NumberFormat(intlLocale, {
+  return new Intl.NumberFormat(intlLocale(locale), {
     style: 'currency',
     currency,
     minimumFractionDigits: 2,
@@ -18,9 +27,8 @@ export function formatMoney(
 }
 
 /** Formats a whole-unit amount (e.g. a profit of 124.5 units). */
-export function formatUnits(amount: number, locale = 'de', digits = 2): string {
-  const intlLocale = CURRENCY_LOCALE[locale] ?? locale;
-  return new Intl.NumberFormat(intlLocale, {
+export function formatUnits(amount: number, locale = 'en', digits = 2): string {
+  return new Intl.NumberFormat(intlLocale(locale), {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   }).format(amount);
@@ -34,31 +42,28 @@ export function formatOdds(odds: number | string | null | undefined): string {
   return value.toFixed(2);
 }
 
-export function formatPercent(value: number, locale = 'de', digits = 1): string {
-  const intlLocale = CURRENCY_LOCALE[locale] ?? locale;
-  return `${new Intl.NumberFormat(intlLocale, {
+export function formatPercent(value: number, locale = 'en', digits = 1): string {
+  return `${new Intl.NumberFormat(intlLocale(locale), {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   }).format(value)}%`;
 }
 
 /** Compact display for the statistics circles, e.g. "1,2K" for 1200. */
-export function formatCompact(value: number, locale = 'de'): string {
-  const intlLocale = CURRENCY_LOCALE[locale] ?? locale;
-  return new Intl.NumberFormat(intlLocale, {
+export function formatCompact(value: number, locale = 'en'): string {
+  return new Intl.NumberFormat(intlLocale(locale), {
     notation: 'compact',
     maximumFractionDigits: 1,
   }).format(value);
 }
 
-export function formatSignedUnits(amount: number, locale = 'de'): string {
+export function formatSignedUnits(amount: number, locale = 'en'): string {
   const sign = amount > 0 ? '+' : '';
   return `${sign}${formatUnits(amount, locale)}`;
 }
 
-export function formatKickoff(iso: string, timezone?: string, locale = 'de'): string {
-  const intlLocale = CURRENCY_LOCALE[locale] ?? locale;
-  return new Intl.DateTimeFormat(intlLocale, {
+export function formatKickoff(iso: string, timezone?: string, locale = 'en'): string {
+  return new Intl.DateTimeFormat(intlLocale(locale), {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
@@ -66,25 +71,23 @@ export function formatKickoff(iso: string, timezone?: string, locale = 'de'): st
   }).format(new Date(iso));
 }
 
-export function formatShortDate(iso: string, timezone?: string, locale = 'de'): string {
-  const intlLocale = CURRENCY_LOCALE[locale] ?? locale;
-  return new Intl.DateTimeFormat(intlLocale, {
+export function formatShortDate(iso: string, timezone?: string, locale = 'en'): string {
+  return new Intl.DateTimeFormat(intlLocale(locale), {
     day: '2-digit',
     month: 'short',
     timeZone: timezone,
   }).format(new Date(iso));
 }
 
-export function formatWeekday(iso: string, timezone?: string, locale = 'de'): string {
-  const intlLocale = CURRENCY_LOCALE[locale] ?? locale;
-  return new Intl.DateTimeFormat(intlLocale, { weekday: 'short', timeZone: timezone }).format(
-    new Date(iso),
-  );
+export function formatWeekday(iso: string, timezone?: string, locale = 'en'): string {
+  return new Intl.DateTimeFormat(intlLocale(locale), {
+    weekday: 'short',
+    timeZone: timezone,
+  }).format(new Date(iso));
 }
 
-export function formatDateTime(iso: string, timezone?: string, locale = 'de'): string {
-  const intlLocale = CURRENCY_LOCALE[locale] ?? locale;
-  return new Intl.DateTimeFormat(intlLocale, {
+export function formatDateTime(iso: string, timezone?: string, locale = 'en'): string {
+  return new Intl.DateTimeFormat(intlLocale(locale), {
     dateStyle: 'medium',
     timeStyle: 'short',
     timeZone: timezone,
@@ -92,10 +95,9 @@ export function formatDateTime(iso: string, timezone?: string, locale = 'de'): s
 }
 
 /** "in 2 h", "vor 5 min" — used for kickoff countdowns. */
-export function formatRelative(iso: string, locale = 'de', now = new Date()): string {
-  const intlLocale = CURRENCY_LOCALE[locale] ?? locale;
+export function formatRelative(iso: string, locale = 'en', now = new Date()): string {
   const diffMs = new Date(iso).getTime() - now.getTime();
-  const rtf = new Intl.RelativeTimeFormat(intlLocale, { numeric: 'auto' });
+  const rtf = new Intl.RelativeTimeFormat(intlLocale(locale), { numeric: 'auto' });
   const units: [Intl.RelativeTimeFormatUnit, number][] = [
     ['day', 86_400_000],
     ['hour', 3_600_000],

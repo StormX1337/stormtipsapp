@@ -31,7 +31,7 @@ export default function ForgotPasswordPage(): ReactNode {
   return (
     <AuthCard
       title={t('auth.resetPassword')}
-      subtitle="Wir senden dir einen Link zum Zurücksetzen."
+      subtitle="We will email you a link to reset it."
       footer={
         <Link href="/auth/login" className="text-ink-muted hover:text-ink">
           {t('common.back')}

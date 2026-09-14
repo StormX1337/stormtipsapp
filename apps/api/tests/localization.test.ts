@@ -2,45 +2,26 @@ import { afterAll, describe, expect, it } from 'vitest';
 import { closeApp, createTestUser, getApp, login } from './helpers.js';
 
 /**
- * End-to-end language behaviour.
+ * The product ships English only.
  *
- * The interface strings are translated by the clients; what is verified here is
- * the part only the server can do — returning editorial content (products,
- * plans, promotions, market names, analyses) in the requested language, and
- * never blanking a field that has no translation.
+ * What is verified here is that the server says so consistently: editorial
+ * content comes back in English whatever the request asks for, so a visitor
+ * whose browser prefers another language still gets a complete page rather
+ * than blank fields or a half-translated one.
  */
-describe('content localisation', () => {
-  it('returns the paywall in the requested language', async () => {
+describe('content language', () => {
+  it('serves the paywall in English', async () => {
     const app = await getApp();
+    const body = (await app.inject({ method: 'GET', url: '/api/v1/billing/paywall/combo' })).json();
 
-    const german = (
-      await app.inject({
-        method: 'GET',
-        url: '/api/v1/billing/paywall/combo',
-        headers: { 'accept-language': 'de' },
-      })
-    ).json();
-    const english = (
-      await app.inject({
-        method: 'GET',
-        url: '/api/v1/billing/paywall/combo',
-        headers: { 'accept-language': 'en' },
-      })
-    ).json();
-
-    expect(german.product.tagline).toBe('Kuratierte Kombiwetten');
-    expect(english.product.tagline).toBe('Curated accumulators');
-    expect(english.product.benefits[0]).not.toBe(german.product.benefits[0]);
-    expect(english.legal.disclaimer).toMatch(/no outcome is guaranteed/i);
-    expect(german.legal.disclaimer).toMatch(/garantiert/i);
-
-    // Prices are the same number, formatted for the locale.
-    expect(english.plans[0].price.amountCents).toBe(german.plans[0].price.amountCents);
+    expect(body.product.tagline).toBe('Curated accumulators');
+    expect(body.product.benefits[0]).toBeTruthy();
+    expect(body.legal.disclaimer).toMatch(/no outcome is guaranteed/i);
   });
 
-  it('honours a regional tag and the quality-ordered header', async () => {
+  it('ignores Accept-Language rather than blanking the content', async () => {
     const app = await getApp();
-    for (const header of ['en-GB', 'en-US,en;q=0.9', 'fr-FR,en;q=0.8']) {
+    for (const header of ['de', 'de-AT', 'fr-FR,fr;q=0.9', 'en-GB', '*']) {
       const body = (
         await app.inject({
           method: 'GET',
@@ -50,116 +31,39 @@ describe('content localisation', () => {
       ).json();
       const combo = body.items.find((item: { code: string }) => item.code === 'COMBO');
       expect(combo.tagline, header).toBe('Curated accumulators');
+      expect(combo.benefits.length, header).toBeGreaterThan(0);
     }
   });
 
-  it('falls back to the default language for one we do not ship', async () => {
+  it("ignores an account's stored language too", async () => {
     const app = await getApp();
-    const body = (
-      await app.inject({
-        method: 'GET',
-        url: '/api/v1/billing/products',
-        headers: { 'accept-language': 'fr-FR,fr;q=0.9' },
-      })
-    ).json();
-    const combo = body.items.find((item: { code: string }) => item.code === 'COMBO');
-    expect(combo.tagline).toBe('Kuratierte Kombiwetten');
-  });
-
-  it('lets an explicit ?locale override the header', async () => {
-    const app = await getApp();
-    const body = (
-      await app.inject({
-        method: 'GET',
-        url: '/api/v1/billing/products?locale=en',
-        headers: { 'accept-language': 'de' },
-      })
-    ).json();
-    const combo = body.items.find((item: { code: string }) => item.code === 'COMBO');
-    expect(combo.tagline).toBe('Curated accumulators');
-  });
-
-  it("prefers a signed-in user's stored language when the request does not ask", async () => {
-    const app = await getApp();
-    const user = await createTestUser({ language: 'en' });
+    const user = await createTestUser({ language: 'de' });
     const { accessToken } = await login(app, user);
 
-    const authenticated = (
+    const body = (
       await app.inject({
         method: 'GET',
         url: '/api/v1/billing/paywall/combo',
         headers: { authorization: `Bearer ${accessToken}` },
       })
     ).json();
-    expect(authenticated.product.tagline).toBe('Curated accumulators');
-
-    // An explicit request still wins, so a switcher works before the profile
-    // has been saved.
-    const overridden = (
-      await app.inject({
-        method: 'GET',
-        url: '/api/v1/billing/paywall/combo?locale=de',
-        headers: { authorization: `Bearer ${accessToken}` },
-      })
-    ).json();
-    expect(overridden.product.tagline).toBe('Kuratierte Kombiwetten');
+    expect(body.product.tagline).toBe('Curated accumulators');
   });
 
-  it('translates market names and analyses on a tip', async () => {
+  it('serves market names and analyses in English', async () => {
     const app = await getApp();
     const feed = (
       await app.inject({ method: 'GET', url: '/api/v1/tips/free?includeSettled=true' })
     ).json();
-    const tip = feed.groups.flatMap((group: { tips: unknown[] }) => group.tips)[0] as
+    const first = feed.groups.flatMap((group: { tips: unknown[] }) => group.tips)[0] as
       { id: string } | undefined;
-    if (!tip) return;
+    if (!first) return;
 
-    const german = (
-      await app.inject({
-        method: 'GET',
-        url: `/api/v1/tips/${tip.id}`,
-        headers: { 'accept-language': 'de' },
-      })
-    ).json();
-    const english = (
-      await app.inject({
-        method: 'GET',
-        url: `/api/v1/tips/${tip.id}`,
-        headers: { 'accept-language': 'en' },
-      })
-    ).json();
-
-    expect(english.marketName).not.toBe(german.marketName);
-    expect(german.analysis).not.toBe(english.analysis);
-    // The selection label is betting terminology and stays identical.
-    expect(english.selectionLabel).toBe(german.selectionLabel);
-  });
-
-  it('never blanks a field that has no translation', async () => {
-    const app = await getApp();
-    const body = (
-      await app.inject({
-        method: 'GET',
-        url: '/api/v1/billing/plans',
-        headers: { 'accept-language': 'en' },
-      })
-    ).json();
-
-    for (const plan of body.items) {
-      expect(plan.name, plan.slug).not.toBe('');
-      expect(typeof plan.name, plan.slug).toBe('string');
-    }
-  });
-
-  it('does not expose the translation bundle on public responses', async () => {
-    const app = await getApp();
-    const body = (await app.inject({ method: 'GET', url: '/api/v1/billing/plans' })).json();
-    for (const plan of body.items) {
-      expect(plan.translations, plan.slug).toBeUndefined();
-    }
+    const tip = (await app.inject({ method: 'GET', url: `/api/v1/tips/${first.id}` })).json();
+    expect(tip.marketName).toBeTruthy();
+    // The generated analyses all open with one of the English phrase bank entries.
+    if (tip.analysis) expect(tip.analysis).toMatch(/\b(the|our|recent|expected|head-to-head)\b/i);
   });
 });
 
-afterAll(async () => {
-  await closeApp();
-});
+afterAll(closeApp);

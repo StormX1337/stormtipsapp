@@ -123,7 +123,7 @@ export const envSchema = z.object({
 
   // product defaults
   DEFAULT_CURRENCY: z.enum(['EUR', 'USD', 'GBP']).default('EUR'),
-  DEFAULT_LOCALE: z.enum(['de', 'en']).default('de'),
+  DEFAULT_LOCALE: z.enum(['en']).default('en'),
   DEFAULT_TIMEZONE: z.string().default('Europe/Berlin'),
   STATISTICS_STAKE: z.coerce.number().positive().default(10),
   ODDS_MOVEMENT_THRESHOLD: z.coerce.number().positive().default(0.05),

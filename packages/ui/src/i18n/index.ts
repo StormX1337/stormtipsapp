@@ -1,11 +1,10 @@
 import { en, type MessageKey, type Messages } from './en.js';
-import { de } from './de.js';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type SupportedLocale } from '@storm-tips/types';
 
 export type { MessageKey, Messages };
-export { en, de };
+export { en };
 
-export const catalogues: Record<SupportedLocale, Messages> = { de, en };
+export const catalogues: Record<SupportedLocale, Messages> = { en };
 
 export { DEFAULT_LOCALE };
 
@@ -37,7 +36,7 @@ export function translate(
   );
 }
 
-/** Convenience factory: `const t = createTranslator('de'); t('nav.free')`. */
+/** Convenience factory: `const t = createTranslator('en'); t('nav.free')`. */
 export function createTranslator(locale: SupportedLocale) {
   return (key: MessageKey, values?: TranslateValues) => translate(locale, key, values);
 }

@@ -15,9 +15,6 @@ import {
   PageHeader,
   Select,
   Toggle,
-  TranslationFields,
-  englishOf,
-  translationPayload,
   type Column,
 } from '@/components/ui';
 
@@ -69,7 +66,6 @@ export default function PlansPage(): ReactNode {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<PlanForm>(EMPTY);
-  const [english, setEnglish] = useState<Record<string, string>>({});
 
   const plans = useQuery({
     queryKey: ['admin-plans'],
@@ -96,7 +92,6 @@ export default function PlansPage(): ReactNode {
         isPopular: form.isPopular,
         isActive: form.isActive,
         sortOrder: Number(form.sortOrder),
-        translations: translationPayload('en', english),
         stripePriceId: form.stripePriceId || null,
         appleProductId: form.appleProductId || null,
         googleProductId: form.googleProductId || null,
@@ -206,7 +201,6 @@ export default function PlansPage(): ReactNode {
                 appleProductId: plan.appleProductId ?? '',
                 googleProductId: plan.googleProductId ?? '',
               });
-              setEnglish(englishOf(plan.translations));
               setOpen(true);
             }}
           >
@@ -235,7 +229,6 @@ export default function PlansPage(): ReactNode {
           <Button
             onClick={() => {
               setForm(EMPTY);
-              setEnglish({});
               setOpen(true);
             }}
           >
@@ -280,27 +273,16 @@ export default function PlansPage(): ReactNode {
               placeholder="combo-3m"
             />
             <Field
-              label="Name (German)"
+              label="Name"
               value={form.name}
               onChange={(event) => setForm({ ...form, name: event.target.value })}
             />
           </div>
 
           <Field
-            label="Description (German)"
+            label="Description"
             value={form.description}
             onChange={(event) => setForm({ ...form, description: event.target.value })}
-          />
-          <TranslationFields
-            locale="en"
-            title="English version"
-            fields={[
-              { name: 'name', label: 'Name' },
-              { name: 'description', label: 'Description', multiline: true },
-              { name: 'highlight', label: 'Highlight' },
-            ]}
-            value={english}
-            onChange={setEnglish}
           />
 
           <div>
@@ -372,7 +354,7 @@ export default function PlansPage(): ReactNode {
               options={BADGES.map((value) => ({ value, label: value }))}
             />
             <Field
-              label="Highlight (German)"
+              label="Highlight"
               value={form.highlight}
               onChange={(event) => setForm({ ...form, highlight: event.target.value })}
               placeholder="Save €21.98"

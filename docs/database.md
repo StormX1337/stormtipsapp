@@ -53,12 +53,12 @@ and referral rewards, never from anything the client sends.
 unique, so a replayed Stripe or Google delivery is claimed once and ignored
 afterwards.
 
-**`translations`** is a JSON column on every model that carries reader-facing
-text (`products`, `subscription_plans`, `fix_odds_plans`, `coupons`,
-`promotions`, `polls`, `poll_options`, `markets`, `tips`, `combos`). It holds per-locale overrides of
-the row's own columns; anything missing falls back to the column, so a partial
-translation degrades to the authored text. See
-[localization.md](localization.md).
+Reader-facing text (`products`, `subscription_plans`, `fix_odds_plans`,
+`coupons`, `promotions`, `polls`, `poll_options`, `markets`, `tips`, `combos`)
+is authored in English in the ordinary columns. There is no per-locale override
+column: the product ships one language. See
+[localization.md](localization.md), which also documents what a second one
+would need.
 
 **`StatisticsSnapshot`** caches the computed figures per product and window so
 the paywall does not recompute six months of tips on every request. The worker

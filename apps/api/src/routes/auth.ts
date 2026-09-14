@@ -83,7 +83,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
 
   app.post('/forgot-password', credentialLimit, async (request, reply) => {
     const { email } = parseBody(request, forgotPasswordSchema);
-    await auth.requestPasswordReset(email, request.locale);
+    await auth.requestPasswordReset(email);
     noStore(reply);
     // Always the same answer — never reveals whether the address is registered.
     return { success: true };
@@ -117,7 +117,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
       select: { id: true, email: true, emailVerifiedAt: true, language: true },
     });
     if (user && !user.emailVerifiedAt) {
-      await auth.sendVerificationEmail(user.id, user.email, user.language ?? request.locale);
+      await auth.sendVerificationEmail(user.id, user.email);
     }
     noStore(reply);
     return { success: true };

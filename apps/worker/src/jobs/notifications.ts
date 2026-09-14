@@ -37,8 +37,6 @@ export interface FanOutData {
   values?: Record<string, string | number>;
   title?: string;
   body?: string;
-  /** Operator-composed copy per locale. */
-  translations?: Record<string, { title?: string; body?: string }>;
   data?: Record<string, unknown>;
   deepLink?: string | null;
   imageUrl?: string | null;
@@ -46,7 +44,6 @@ export interface FanOutData {
     products?: string[];
     userIds?: string[];
     onlyFreeUsers?: boolean;
-    locale?: string;
   };
 }
 
@@ -58,60 +55,30 @@ export interface FanOutData {
  * then delivers to that user's active device tokens.
  */
 export async function fanOutNotificationJob(job: Job<FanOutData>): Promise<unknown> {
-  const {
-    type,
-    templateKey,
-    values,
-    title,
-    body,
-    translations,
-    data,
-    deepLink,
-    imageUrl,
-    audience,
-  } = job.data;
+  const { type, templateKey, values, title, body, data, deepLink, imageUrl, audience } = job.data;
   const recipients = await notifications.resolveAudience(type, audience as never);
   if (recipients.length === 0) return { recipients: 0, sent: 0 };
 
   const recipientIds = recipients.map((recipient) => recipient.id);
 
-  /**
-   * Copy in the recipient's own language: rendered from the shared template
-   * when the caller supplied values, otherwise the operator's text for that
-   * locale, falling back to what they authored.
-   */
-  const copyCache = new Map<string, { title: string; body: string }>();
-  const copyFor = (language: string): { title: string; body: string } => {
-    const cached = copyCache.get(language);
-    if (cached) return cached;
-
-    let resolved: { title: string; body: string };
-    if (values) {
-      const rendered = renderTemplate(templateKey ?? type, language, values);
-      resolved = { title: rendered.title, body: rendered.body };
-    } else {
-      const override = translations?.[language.split('-')[0] ?? language];
-      resolved = { title: override?.title ?? title ?? '', body: override?.body ?? body ?? '' };
-    }
-    copyCache.set(language, resolved);
-    return resolved;
-  };
+  // Rendered from the shared template when the caller supplied values,
+  // otherwise the copy the operator wrote.
+  const copy = values
+    ? renderTemplate(templateKey ?? type, values)
+    : { title: title ?? '', body: body ?? '' };
 
   await prisma.notification.createMany({
-    data: recipients.map((recipient) => {
-      const copy = copyFor(recipient.language);
-      return {
-        userId: recipient.id,
-        type,
-        title: copy.title,
-        body: copy.body,
-        imageUrl: imageUrl ?? null,
-        deepLink: deepLink ?? null,
-        data: (data ?? {}) as never,
-        status: 'SENT' as const,
-        sentAt: new Date(),
-      };
-    }),
+    data: recipients.map((recipient) => ({
+      userId: recipient.id,
+      type,
+      title: copy.title,
+      body: copy.body,
+      imageUrl: imageUrl ?? null,
+      deepLink: deepLink ?? null,
+      data: (data ?? {}) as never,
+      status: 'SENT' as const,
+      sentAt: new Date(),
+    })),
   });
 
   const devices = await prisma.deviceToken.findMany({
@@ -121,38 +88,22 @@ export async function fanOutNotificationJob(job: Job<FanOutData>): Promise<unkno
 
   if (devices.length === 0) return { recipients: recipients.length, sent: 0 };
 
-  const localeByUser = new Map(recipients.map((recipient) => [recipient.id, recipient.language]));
+  const targets: PushTarget[] = devices.map((device) => ({
+    token: device.token,
+    provider: device.provider,
+    platform: device.platform,
+  }));
 
-  // Devices are grouped by language so each group receives its own copy.
-  const byLanguage = new Map<string, PushTarget[]>();
-  for (const device of devices) {
-    const language = device.locale ?? localeByUser.get(device.userId) ?? 'de';
-    const group = byLanguage.get(language) ?? [];
-    group.push({
-      token: device.token,
-      provider: device.provider,
-      platform: device.platform,
-      locale: language,
-    });
-    byLanguage.set(language, group);
-  }
-
-  let sent = 0;
-  let failed = 0;
-  for (const [language, targets] of byLanguage) {
-    const copy = copyFor(language);
-    const result = await pushService.send(targets, {
-      title: copy.title,
-      body: copy.body,
-      data: { type, ...data },
-      deepLink: deepLink ?? null,
-      imageUrl: imageUrl ?? null,
-      priority: 'high',
-    });
-    sent += result.sent;
-    failed += result.failed;
-    await handleDeliveries(result.deliveries);
-  }
+  const result = await pushService.send(targets, {
+    title: copy.title,
+    body: copy.body,
+    data: { type, ...data },
+    deepLink: deepLink ?? null,
+    imageUrl: imageUrl ?? null,
+    priority: 'high',
+  });
+  const { sent, failed } = result;
+  await handleDeliveries(result.deliveries);
   logger.info(
     {
       jobId: job.id,

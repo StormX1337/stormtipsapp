@@ -1,14 +1,12 @@
 import type { ReactNode } from 'react';
 import { Alert, Linking, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import type { SupportedLocale } from '@storm-tips/ui';
 import { maskEmail } from '@storm-tips/ui';
 import { theme } from '@/lib/theme';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { useI18n } from '@/lib/i18n';
 import { Card, ListRow, Screen, SectionTitle } from '@/components/layout';
-import { Segmented } from '@/components/form';
 import { Button } from '@/components/primitives';
 import {
   BellIcon,
@@ -23,20 +21,9 @@ import {
 const { colors, fontSize, spacing } = theme;
 
 export default function AccountScreen(): ReactNode {
-  const { t, locale, setLocale } = useI18n();
+  const { t } = useI18n();
   const router = useRouter();
-  const { user, logout, refresh } = useAuth();
-
-  async function changeLanguage(next: SupportedLocale): Promise<void> {
-    setLocale(next);
-    if (!user) return;
-    try {
-      await api('/me', { method: 'PATCH', body: { language: next } });
-      await refresh();
-    } catch {
-      // The local preference already applied; the server retries on next edit.
-    }
-  }
+  const { user, logout } = useAuth();
 
   function confirmDelete(): void {
     Alert.alert(t('profile.deleteAccount'), t('subscription.cancelConfirm'), [
@@ -125,16 +112,6 @@ export default function AccountScreen(): ReactNode {
 
       <SectionTitle>{t('profile.preferences')}</SectionTitle>
       <Card>
-        <Text style={styles.prefLabel}>{t('profile.language')}</Text>
-        <Segmented
-          options={[
-            { value: 'de', label: 'Deutsch' },
-            { value: 'en', label: 'English' },
-          ]}
-          value={locale}
-          onChange={(next) => void changeLanguage(next)}
-        />
-        <View style={{ height: spacing[3] }} />
         <ListRow label={t('profile.timezone')} value={user.timezone} />
         <ListRow label={t('profile.currency')} value={user.currency} />
       </Card>
@@ -183,5 +160,4 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
     fontWeight: '700',
   },
-  prefLabel: { color: colors.text.secondary, fontSize: fontSize.sm, marginBottom: spacing[2] },
 });

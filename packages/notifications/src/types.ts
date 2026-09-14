@@ -4,7 +4,6 @@ export interface PushTarget {
   token: string;
   provider: PushProvider;
   platform: DevicePlatform;
-  locale?: string | null;
 }
 
 export interface PushMessage {
@@ -50,6 +49,5 @@ export interface PushTransport {
 
 export interface NotificationTemplateInput {
   type: NotificationType;
-  locale: string;
   values: Record<string, string | number>;
 }

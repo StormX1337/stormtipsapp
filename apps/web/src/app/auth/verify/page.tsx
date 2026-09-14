@@ -16,7 +16,7 @@ function VerifyContent(): ReactNode {
   useEffect(() => {
     if (!token) {
       setState('error');
-      setError('Dieser Bestätigungslink ist unvollständig.');
+      setError('This confirmation link is incomplete.');
       return;
     }
     void (async () => {
@@ -43,7 +43,7 @@ function VerifyContent(): ReactNode {
 export default function VerifyEmailPage(): ReactNode {
   return (
     <AuthCard
-      title="E-Mail bestätigen"
+      title="Confirm your email"
       footer={
         <Link href="/free" className="text-accent-500 hover:underline">
           Zur App

@@ -22,16 +22,16 @@ export default function CheckoutSuccessPage(): ReactNode {
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-4 px-6 text-center">
       <CheckCircle2 size={48} className="text-accent-500" aria-hidden />
-      <h1 className="text-[22px] font-extrabold">Vielen Dank!</h1>
+      <h1 className="text-[22px] font-extrabold">Thank you!</h1>
       <p className="text-[13.5px] text-ink-muted">
-        Dein Kauf wird bestätigt. Sobald die Zahlung vom Anbieter verifiziert ist, werden deine
-        Premium-Inhalte automatisch freigeschaltet — das dauert in der Regel nur wenige Sekunden.
+        We are confirming your purchase. As soon as the provider verifies the payment your premium
+        content unlocks automatically — usually within a few seconds.
       </p>
       <Link href="/combo" className="w-full">
-        <Button size="lg">Zu den Analysen</Button>
+        <Button size="lg">Go to the analyses</Button>
       </Link>
       <Link href="/account/subscription" className="text-[12px] text-ink-muted hover:text-ink">
-        Mein Abo ansehen
+        View my subscription
       </Link>
     </main>
   );

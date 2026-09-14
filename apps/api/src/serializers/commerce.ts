@@ -1,6 +1,5 @@
 import type { Prisma } from '@storm-tips/database';
 import { intervalMonths, pricePerMonthCents, savingsAgainstMonthly } from '@storm-tips/payments';
-import { localizer } from '@storm-tips/types';
 import type {
   FixOddsPlanDTO,
   PaymentDTO,
@@ -21,7 +20,6 @@ import { dec, iso, money } from './common.js';
  */
 export function serializePlan(
   plan: Prisma.SubscriptionPlanGetPayload<object>,
-  locale = 'de',
   monthlyReferenceCents?: number,
 ): SubscriptionPlanDTO {
   const months = intervalMonths(plan.interval, plan.intervalCount);
@@ -40,27 +38,26 @@ export function serializePlan(
         }
       : null;
   const effective = savings ?? compareSavings;
-  const text = localizer(plan, locale);
 
   return {
     id: plan.id,
     slug: plan.slug,
-    name: text.text('name', plan.name),
-    description: text.text('description', plan.description),
+    name: plan.name,
+    description: plan.description,
     products: plan.products as ProductCode[],
-    price: money(plan.priceCents, plan.currency, locale),
+    price: money(plan.priceCents, plan.currency),
     compareAtPrice: plan.compareAtPriceCents
-      ? money(plan.compareAtPriceCents, plan.currency, locale)
+      ? money(plan.compareAtPriceCents, plan.currency)
       : null,
-    pricePerMonth: perMonth ? money(perMonth, plan.currency, locale) : null,
+    pricePerMonth: perMonth ? money(perMonth, plan.currency) : null,
     savingsPercent: effective?.savingsPercent ?? null,
-    savings: effective ? money(effective.savingsCents, plan.currency, locale) : null,
+    savings: effective ? money(effective.savingsCents, plan.currency) : null,
     interval: plan.interval,
     intervalCount: plan.intervalCount,
     months,
     trialDays: plan.trialDays,
     badge: plan.badge,
-    highlight: text.text('highlight', plan.highlight),
+    highlight: plan.highlight,
     isPopular: plan.isPopular,
     stripePriceId: plan.stripePriceId,
     appleProductId: plan.appleProductId,
@@ -68,17 +65,13 @@ export function serializePlan(
   };
 }
 
-export function serializeFixOddsPlan(
-  plan: Prisma.FixOddsPlanGetPayload<object>,
-  locale = 'de',
-): FixOddsPlanDTO {
-  const text = localizer(plan, locale);
+export function serializeFixOddsPlan(plan: Prisma.FixOddsPlanGetPayload<object>): FixOddsPlanDTO {
   return {
     id: plan.id,
     slug: plan.slug,
-    name: text.text('name', plan.name),
-    description: text.text('description', plan.description),
-    price: money(plan.priceCents, plan.currency, locale),
+    name: plan.name,
+    description: plan.description,
+    price: money(plan.priceCents, plan.currency),
     interval: plan.interval,
     intervalCount: plan.intervalCount,
     targetOdds: dec(plan.targetOdds) ?? 0,
@@ -93,25 +86,20 @@ export function serializeFixOddsPlan(
   };
 }
 
-export function serializeProduct(
-  product: Prisma.ProductGetPayload<object>,
-  locale = 'de',
-): ProductDTO {
-  const text = localizer(product, locale);
+export function serializeProduct(product: Prisma.ProductGetPayload<object>): ProductDTO {
   return {
     code: product.code as ProductCode,
-    name: text.text('name', product.name),
-    tagline: text.text('tagline', product.tagline),
-    description: text.text('description', product.description),
+    name: product.name,
+    tagline: product.tagline,
+    description: product.description,
     icon: product.icon,
     color: product.color,
-    benefits: text.list('benefits', product.benefits),
+    benefits: product.benefits,
   };
 }
 
 export function serializeSubscription(
   subscription: Prisma.SubscriptionGetPayload<{ include: { plan: true } }>,
-  locale = 'de',
 ): SubscriptionDTO {
   const end = subscription.gracePeriodEndsAt ?? subscription.currentPeriodEnd;
   return {
@@ -119,7 +107,7 @@ export function serializeSubscription(
     status: subscription.status,
     provider: subscription.provider,
     products: subscription.products as ProductCode[],
-    plan: subscription.plan ? serializePlan(subscription.plan, locale) : null,
+    plan: subscription.plan ? serializePlan(subscription.plan) : null,
     startedAt: subscription.startedAt.toISOString(),
     currentPeriodStart: iso(subscription.currentPeriodStart),
     currentPeriodEnd: iso(subscription.currentPeriodEnd),
@@ -133,14 +121,13 @@ export function serializeSubscription(
 
 export function serializePayment(
   payment: Prisma.PaymentGetPayload<{ include: { invoice: true } }>,
-  locale = 'de',
 ): PaymentDTO {
   return {
     id: payment.id,
     provider: payment.provider,
     status: payment.status,
-    amount: money(payment.amountCents, payment.currency, locale),
-    refunded: money(payment.refundedCents, payment.currency, locale),
+    amount: money(payment.amountCents, payment.currency),
+    refunded: money(payment.refundedCents, payment.currency),
     description: payment.description,
     paidAt: iso(payment.paidAt),
     createdAt: payment.createdAt.toISOString(),
@@ -149,18 +136,14 @@ export function serializePayment(
   };
 }
 
-export function serializePromotion(
-  promotion: Prisma.PromotionGetPayload<object>,
-  locale = 'de',
-): PromotionDTO {
-  const text = localizer(promotion, locale);
+export function serializePromotion(promotion: Prisma.PromotionGetPayload<object>): PromotionDTO {
   return {
     id: promotion.id,
-    title: text.text('title', promotion.title),
-    subtitle: text.text('subtitle', promotion.subtitle),
-    body: text.text('body', promotion.body),
+    title: promotion.title,
+    subtitle: promotion.subtitle,
+    body: promotion.body,
     imageUrl: promotion.imageUrl,
-    ctaLabel: text.text('ctaLabel', promotion.ctaLabel),
+    ctaLabel: promotion.ctaLabel,
     ctaUrl: promotion.ctaUrl,
     deepLink: promotion.deepLink,
     badge: promotion.badge,

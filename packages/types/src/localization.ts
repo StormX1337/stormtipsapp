@@ -1,7 +1,14 @@
-/** The interface languages the product ships. */
-export const SUPPORTED_LOCALES = ['de', 'en'] as const;
+/**
+ * The interface languages the product ships.
+ *
+ * English only. The list and the helpers below stay because they are what a
+ * second language would be added back through — `toSupportedLocale` already
+ * folds every regional tag onto a supported one, so nothing downstream has to
+ * care how many entries this has.
+ */
+export const SUPPORTED_LOCALES = ['en'] as const;
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
-export const DEFAULT_LOCALE: SupportedLocale = 'de';
+export const DEFAULT_LOCALE: SupportedLocale = 'en';
 
 /**
  * Content localisation.

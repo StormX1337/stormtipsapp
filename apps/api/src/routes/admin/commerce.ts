@@ -12,13 +12,6 @@ import {
 import { parseBody, parseParams, parseQuery } from '../../lib/validate.js';
 import { assertFound, paginate, skipTake } from '../../lib/http.js';
 import { audit } from '../../lib/audit.js';
-import {
-  adminCoupon,
-  adminFixOddsPlan,
-  adminPlan,
-  adminPromotion,
-} from '../../serializers/admin.js';
-import { translationPatch } from '../../lib/translations.js';
 import { cacheInvalidatePattern } from '../../lib/cache.js';
 import {
   serializeFixOddsPlan,
@@ -32,7 +25,7 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
   // ── subscription plans ────────────────────────────────────────────────────
   app.get('/plans', { preHandler: [app.requireCapability('plans:write')] }, async () => {
     const plans = await prisma.subscriptionPlan.findMany({ orderBy: { sortOrder: 'asc' } });
-    return { items: plans.map((plan) => adminPlan(serializePlan(plan), plan)) };
+    return { items: plans.map((plan) => serializePlan(plan)) };
   });
 
   app.post(
@@ -49,7 +42,7 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         after: input,
       });
       reply.status(201);
-      return adminPlan(serializePlan(plan), plan);
+      return serializePlan(plan);
     },
   );
 
@@ -67,7 +60,6 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         where: { id },
         data: {
           ...(normalisePlan(input as never, true) as Record<string, unknown>),
-          translations: translationPatch(before.translations, input.translations) as never,
         } as never,
       });
       await cacheInvalidatePattern('plans:*');
@@ -78,7 +70,7 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         before,
         after: input,
       });
-      return adminPlan(serializePlan(plan), plan);
+      return serializePlan(plan);
     },
   );
 
@@ -112,7 +104,7 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
   // ── fix odds plans ────────────────────────────────────────────────────────
   app.get('/fix-odds-plans', { preHandler: [app.requireCapability('plans:write')] }, async () => {
     const plans = await prisma.fixOddsPlan.findMany({ orderBy: { sortOrder: 'asc' } });
-    return { items: plans.map((plan) => adminFixOddsPlan(serializeFixOddsPlan(plan), plan)) };
+    return { items: plans.map((plan) => serializeFixOddsPlan(plan)) };
   });
 
   app.post(
@@ -131,7 +123,7 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         after: input,
       });
       reply.status(201);
-      return adminFixOddsPlan(serializeFixOddsPlan(plan), plan);
+      return serializeFixOddsPlan(plan);
     },
   );
 
@@ -149,16 +141,16 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         where: { id },
         data: {
           ...(input as Record<string, unknown>),
-          translations: translationPatch(before.translations, input.translations) as never,
         } as never,
       });
       await audit(request, {
         action: 'fixodds.updated',
         entityType: 'FixOddsPlan',
         entityId: id,
+        before,
         after: input,
       });
-      return adminFixOddsPlan(serializeFixOddsPlan(plan), plan);
+      return serializeFixOddsPlan(plan);
     },
   );
 
@@ -186,7 +178,7 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
       prisma.coupon.count(),
     ]);
     return paginate(
-      coupons.map((coupon) => adminCoupon(coupon, request.locale)),
+      coupons.map((coupon) => coupon),
       total,
       query,
     );
@@ -204,7 +196,6 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         data: {
           ...input,
           code: input.code.toUpperCase(),
-          translations: translationPatch(undefined, input.translations),
           validFrom: input.validFrom ? new Date(input.validFrom) : new Date(),
           validUntil: input.validUntil ? new Date(input.validUntil) : null,
         } as never,
@@ -216,7 +207,7 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         after: input,
       });
       reply.status(201);
-      return adminCoupon(coupon, request.locale);
+      return coupon;
     },
   );
 
@@ -232,7 +223,6 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         data: {
           ...input,
           code: input.code?.toUpperCase(),
-          translations: translationPatch(before.translations, input.translations),
           validFrom: input.validFrom ? new Date(input.validFrom) : undefined,
           validUntil: input.validUntil ? new Date(input.validUntil) : undefined,
         } as never,
@@ -241,9 +231,10 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         action: 'coupon.updated',
         entityType: 'Coupon',
         entityId: id,
+        before,
         after: input,
       });
-      return adminCoupon(coupon, request.locale);
+      return coupon;
     },
   );
 
@@ -277,9 +268,7 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
   app.get('/promotions', { preHandler: [app.requireCapability('promotions:write')] }, async () => {
     const promotions = await prisma.promotion.findMany({ orderBy: { priority: 'asc' } });
     return {
-      items: promotions.map((promotion) =>
-        adminPromotion(serializePromotion(promotion), promotion),
-      ),
+      items: promotions.map((promotion) => serializePromotion(promotion)),
     };
   });
 
@@ -303,7 +292,7 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         after: input,
       });
       reply.status(201);
-      return adminPromotion(serializePromotion(promotion), promotion);
+      return serializePromotion(promotion);
     },
   );
 
@@ -318,7 +307,6 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         where: { id },
         data: {
           ...input,
-          translations: translationPatch(before.translations, input.translations),
           startsAt: input.startsAt ? new Date(input.startsAt) : undefined,
           endsAt: input.endsAt ? new Date(input.endsAt) : undefined,
         } as never,
@@ -328,9 +316,10 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         action: 'promotion.updated',
         entityType: 'Promotion',
         entityId: id,
+        before,
         after: input,
       });
-      return adminPromotion(serializePromotion(promotion), promotion);
+      return serializePromotion(promotion);
     },
   );
 

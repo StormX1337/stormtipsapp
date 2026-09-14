@@ -47,7 +47,7 @@ export function ScreenHeader({
           {back ? (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Zurück"
+              accessibilityLabel="Back"
               hitSlop={8}
               onPress={() => (router.canGoBack() ? router.back() : router.replace('/free'))}
             >

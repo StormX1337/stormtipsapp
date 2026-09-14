@@ -98,7 +98,8 @@ describe('toSupportedLocale', () => {
   it('accepts the languages the product ships', () => {
     for (const locale of SUPPORTED_LOCALES) expect(toSupportedLocale(locale)).toBe(locale);
     expect(toSupportedLocale('en-GB')).toBe('en');
-    expect(toSupportedLocale('DE-at')).toBe('de');
+    // A language the product no longer ships folds onto the one it does.
+    expect(toSupportedLocale('DE-at')).toBe(DEFAULT_LOCALE);
   });
 
   it('falls back to the default for anything else', () => {

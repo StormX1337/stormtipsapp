@@ -17,11 +17,11 @@ is served at `GET /api/v1/openapi.json`.
 - Money is returned as `{ amountCents, currency, formatted }` — the server
   formats for the caller's locale so no two clients round differently.
 - Timestamps are ISO-8601 UTC strings.
-- Responses are localised. The language is taken from `?locale=`, then the
-  signed-in user's stored preference, then `Accept-Language`, then the
-  configured default. Cacheable responses carry
-  `Vary: accept-language, authorization`, so a shared cache never serves the
-  wrong language. See [localization.md](localization.md).
+- Responses are English. `Accept-Language` is not read, so a visitor whose
+  browser prefers another language gets a complete page rather than blank
+  fields. Cacheable responses carry `Vary: authorization`, which is what keeps
+  a shared cache from serving a signed-in payload to an anonymous visitor. See
+  [localization.md](localization.md).
 
 ### Error codes
 

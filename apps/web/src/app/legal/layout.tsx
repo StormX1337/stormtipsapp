@@ -3,11 +3,11 @@ import type { ReactNode } from 'react';
 import { config } from '@/lib/config';
 
 const LINKS = [
-  { href: '/legal/terms', label: 'AGB' },
-  { href: '/legal/privacy', label: 'Datenschutz' },
-  { href: '/legal/responsible-gambling', label: 'Verantwortungsvolles Spielen' },
-  { href: '/legal/disclaimer', label: 'Haftungsausschluss' },
-  { href: '/legal/help', label: 'Hilfe & Support' },
+  { href: '/legal/terms', label: 'Terms' },
+  { href: '/legal/privacy', label: 'Privacy' },
+  { href: '/legal/responsible-gambling', label: 'Responsible gambling' },
+  { href: '/legal/disclaimer', label: 'Disclaimer' },
+  { href: '/legal/help', label: 'Help & support' },
 ];
 
 export default function LegalLayout({ children }: { children: ReactNode }): ReactNode {

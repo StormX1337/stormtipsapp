@@ -95,9 +95,7 @@ export async function meRoutes(app: FastifyInstance): Promise<void> {
       orderBy: { startedAt: 'desc' },
     });
     return {
-      items: subscriptions.map((subscription) =>
-        serializeSubscription(subscription, request.locale),
-      ),
+      items: subscriptions.map((subscription) => serializeSubscription(subscription)),
     };
   });
 
@@ -115,7 +113,7 @@ export async function meRoutes(app: FastifyInstance): Promise<void> {
       prisma.payment.count({ where: { userId: request.auth!.userId } }),
     ]);
     return paginate(
-      payments.map((payment) => serializePayment(payment, request.locale)),
+      payments.map((payment) => serializePayment(payment)),
       total,
       query,
     );
@@ -187,7 +185,7 @@ export async function meRoutes(app: FastifyInstance): Promise<void> {
     return { success: true };
   });
 
-  app.get('/referrals', async (request) => referrals.summary(request.auth!.userId, request.locale));
+  app.get('/referrals', async (request) => referrals.summary(request.auth!.userId));
 
   app.get('/referrals/list', async (request) => ({
     items: await referrals.list(request.auth!.userId),
