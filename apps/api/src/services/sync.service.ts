@@ -2,6 +2,8 @@ import { prisma, type Prisma } from '@storm-tips/database';
 import {
   CATALOGUE_COUNTRIES,
   classifyMovement,
+  humaniseLeagueKey,
+  resolveCatalogueLeague,
   createProviderWithFallback,
   relativeDelta,
   type ProviderEvent,
@@ -157,16 +159,33 @@ export class SyncService {
 
     let leagueId = cache.leagues.get(`${event.sportKey}:${event.leagueKey}`);
     if (!leagueId) {
+      /**
+       * Providers name leagues in their own shorthand. Resolving it to the
+       * catalogue keeps the fixtures on the league that already exists rather
+       * than creating `IT_SERIE_A` alongside `Serie A`, and gives the feed a
+       * name a reader recognises. The provider's own key stays on the row.
+       */
+      const known = resolveCatalogueLeague(event.leagueKey, event.sportKey);
+      const key = known?.key ?? event.leagueKey;
+      const name = known?.name ?? humaniseLeagueKey(event.leagueKey);
+
       const league = await prisma.league.upsert({
-        where: { sportId_key: { sportId, key: event.leagueKey } },
+        where: { sportId_key: { sportId, key } },
         create: {
           sportId,
           countryId,
-          key: event.leagueKey,
-          name: event.leagueKey,
+          key,
+          name,
+          shortName: known?.shortName,
+          priority: known?.priority,
           providerLeagueId: event.leagueKey,
         },
-        update: { countryId: countryId ?? undefined },
+        update: {
+          countryId: countryId ?? undefined,
+          providerLeagueId: event.leagueKey,
+          // Repairs a row an earlier sync created with the raw key as its name.
+          ...(known ? {} : { name }),
+        },
       });
       leagueId = league.id;
       cache.leagues.set(`${event.sportKey}:${event.leagueKey}`, leagueId);

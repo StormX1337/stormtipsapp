@@ -57,6 +57,7 @@ export default tseslint.config(
       '**/tests/**/*.ts',
       '**/seed.ts',
       '**/prisma/set-password.ts',
+      '**/prisma/merge-leagues.ts',
       '**/scripts/**',
     ],
     rules: { 'no-console': 'off', '@typescript-eslint/no-explicit-any': 'off' },

@@ -56,6 +56,45 @@ stripe trigger checkout.session.completed
 
 Copy the `whsec_…` that `stripe listen` prints into `STRIPE_WEBHOOK_SECRET`.
 
+### Going live
+
+The code needs no changes; what it needs is a price to charge and somewhere for
+Stripe to call back.
+
+1. **Keys.** Stripe Dashboard → Developers → API keys. Put the secret key in
+   `STRIPE_SECRET_KEY` and the publishable one in both `STRIPE_PUBLISHABLE_KEY`
+   and `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`. Test keys (`sk_test_…`) charge
+   nothing and are the right place to start.
+
+2. **A product and a price per plan.** Products → Add product, then a recurring
+   price whose amount and interval match the plan. Copy the price id
+   (`price_…`) into that plan under Admin → Plans → _Stripe Price ID_. A plan
+   without one cannot be checked out: `POST /billing/checkout` has nothing to
+   charge.
+
+3. **The webhook.** Developers → Webhooks → Add endpoint, pointing at
+   `https://<your domain>/api/v1/webhooks/stripe`, subscribed to
+   `checkout.session.completed`,
+   `customer.subscription.created|updated|deleted|paused|resumed`,
+   `invoice.paid`, `invoice.payment_succeeded`, `invoice.payment_failed` and
+   `charge.refunded`. Put its signing secret in `STRIPE_WEBHOOK_SECRET`.
+
+   This is the step that actually grants access — the browser returning from
+   Stripe proves nothing, so the entitlement is written when the webhook
+   arrives. An endpoint Stripe cannot reach means paid customers with no
+   access, which is why the reverse proxy exempts `/api/v1/webhooks/` from the
+   visitor rate limit.
+
+4. **Return URLs.** `STRIPE_SUCCESS_URL` and `STRIPE_CANCEL_URL` must be public
+   URLs on your own domain, not `localhost`.
+
+5. **Check it.** Pay with Stripe's test card `4242 4242 4242 4242`, any future
+   expiry and any CVC. The webhook's delivery attempt is visible in the
+   dashboard, and the subscription appears under Admin → Subscriptions.
+
+Switching to live keys later changes nothing but the keys: the price ids are
+per-mode, so create the products again in live mode and update the plans.
+
 ## Apple (iOS in-app subscriptions)
 
 1. The app calls `purchaseSubscription(appleProductId)` (`react-native-iap`).

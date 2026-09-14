@@ -275,3 +275,58 @@ export const CATALOGUE_BOOKMAKERS = [
   { key: 'pinnacle', name: 'Pinnacle', color: '#E4002B', priority: 5 },
   { key: 'unibet', name: 'Unibet', color: '#147B45', priority: 6 },
 ] as const;
+
+/**
+ * Maps a provider's league key onto the catalogue.
+ *
+ * Providers name leagues in their own shorthand — `EPL`, `IT_SERIE_A`,
+ * `LA_LIGA` — and the sync used to store that string as the league's name and
+ * key. That produced both an ugly name in the feed and a second league sitting
+ * beside the one already in the catalogue, so `Serie A` and `IT_SERIE_A` were
+ * two different leagues with the same fixtures.
+ *
+ * Resolving to the catalogue entry keeps the provider's events on the league
+ * that already exists; its own key is kept in `providerLeagueId`.
+ */
+const squash = (value: string): string => value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+export function resolveCatalogueLeague(
+  providerKey: string,
+  sportKey?: string,
+): CatalogueLeague | null {
+  const candidates = sportKey
+    ? CATALOGUE_LEAGUES.filter((league) => league.sportKey === sportKey)
+    : CATALOGUE_LEAGUES;
+  const squashed = squash(providerKey);
+
+  return (
+    candidates.find((league) => league.key === providerKey) ??
+    candidates.find((league) => squash(league.shortName) === squashed) ??
+    candidates.find((league) => squash(league.key) === squashed) ??
+    // `IT_SERIE_A` → `ITSERIEA`, which ends with the catalogue name `SERIEA`.
+    candidates.find((league) => {
+      const name = squash(league.name);
+      return name.length >= 4 && squashed.endsWith(name);
+    }) ??
+    null
+  );
+}
+
+/**
+ * A readable name for a league the catalogue does not know, so the feed shows
+ * "FR Ligue 2" rather than `FR_LIGUE_2`. Short all-caps tokens are left alone,
+ * because they are acronyms; everything else is title cased.
+ */
+export function humaniseLeagueKey(providerKey: string): string {
+  const parts = providerKey.split(/[^A-Za-z0-9]+/).filter(Boolean);
+  if (parts.length === 0) return providerKey;
+  return parts
+    .map((part) => {
+      if (/^\d+$/.test(part)) return part;
+      // Short all-caps tokens are acronyms — NBA, NHL, WTA, and the country
+      // prefixes providers put in front of a league.
+      if (part.length <= 3 && part === part.toUpperCase()) return part;
+      return part[0]!.toUpperCase() + part.slice(1).toLowerCase();
+    })
+    .join(' ');
+}
