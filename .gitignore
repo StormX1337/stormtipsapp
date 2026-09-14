@@ -45,3 +45,7 @@ Thumbs.db
 tmp/
 .cache/
 *.pid
+
+# Redis persistence, written wherever redis-server is started from.
+dump.rdb
+*.rdb
