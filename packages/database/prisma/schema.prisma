@@ -1046,6 +1046,12 @@ model Coupon {
   payments    Payment[]
 
   @@index([isActive, validUntil])
+  /// Per-locale overrides for this row's human-readable fields, keyed by
+  /// locale: `{ "en": { "description": "…" } }`. A missing locale or field
+  /// falls back to the column itself, so content is never blank in a second
+  /// language.
+  translations Json @default("{}")
+
   @@map("coupons")
 }
 

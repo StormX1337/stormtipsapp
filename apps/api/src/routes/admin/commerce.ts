@@ -12,7 +12,12 @@ import {
 import { parseBody, parseParams, parseQuery } from '../../lib/validate.js';
 import { assertFound, paginate, skipTake } from '../../lib/http.js';
 import { audit } from '../../lib/audit.js';
-import { adminFixOddsPlan, adminPlan, adminPromotion } from '../../serializers/admin.js';
+import {
+  adminCoupon,
+  adminFixOddsPlan,
+  adminPlan,
+  adminPromotion,
+} from '../../serializers/admin.js';
 import { translationPatch } from '../../lib/translations.js';
 import { cacheInvalidatePattern } from '../../lib/cache.js';
 import {
@@ -180,7 +185,11 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
       prisma.coupon.findMany({ orderBy: { createdAt: 'desc' }, skip, take }),
       prisma.coupon.count(),
     ]);
-    return paginate(coupons, total, query);
+    return paginate(
+      coupons.map((coupon) => adminCoupon(coupon, request.locale)),
+      total,
+      query,
+    );
   });
 
   app.post(
@@ -195,9 +204,10 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         data: {
           ...input,
           code: input.code.toUpperCase(),
+          translations: translationPatch(undefined, input.translations),
           validFrom: input.validFrom ? new Date(input.validFrom) : new Date(),
           validUntil: input.validUntil ? new Date(input.validUntil) : null,
-        },
+        } as never,
       });
       await audit(request, {
         action: 'coupon.created',
@@ -206,7 +216,7 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         after: input,
       });
       reply.status(201);
-      return coupon;
+      return adminCoupon(coupon, request.locale);
     },
   );
 
@@ -216,14 +226,16 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
     async (request) => {
       const { id } = parseParams(request, idParamSchema);
       const input = parseBody(request, upsertCouponSchema.partial());
+      const before = assertFound(await prisma.coupon.findUnique({ where: { id } }), 'Coupon');
       const coupon = await prisma.coupon.update({
         where: { id },
         data: {
           ...input,
           code: input.code?.toUpperCase(),
+          translations: translationPatch(before.translations, input.translations),
           validFrom: input.validFrom ? new Date(input.validFrom) : undefined,
           validUntil: input.validUntil ? new Date(input.validUntil) : undefined,
-        },
+        } as never,
       });
       await audit(request, {
         action: 'coupon.updated',
@@ -231,7 +243,7 @@ export async function adminCommerceRoutes(app: FastifyInstance): Promise<void> {
         entityId: id,
         after: input,
       });
-      return coupon;
+      return adminCoupon(coupon, request.locale);
     },
   );
 

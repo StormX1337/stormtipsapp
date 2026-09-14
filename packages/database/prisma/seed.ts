@@ -26,6 +26,7 @@ import type { MatchResult, SettlementOutcome } from '@storm-tips/statistics';
 import type { ProductCode } from '@storm-tips/types';
 import {
   SEED_COUPONS,
+  SEED_COUPON_TRANSLATIONS,
   SEED_FIX_ODDS_PLANS,
   SEED_FIX_ODDS_TRANSLATIONS,
   SEED_MARKETS,
@@ -275,6 +276,7 @@ async function seedCommerce(): Promise<Map<string, string>> {
     await prisma.coupon.create({
       data: {
         ...coupon,
+        translations: (SEED_COUPON_TRANSLATIONS[coupon.code] ?? {}) as Prisma.InputJsonValue,
         validUntil: addDays(new Date(), 90),
       },
     });

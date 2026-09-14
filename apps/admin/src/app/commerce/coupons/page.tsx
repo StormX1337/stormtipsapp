@@ -16,6 +16,8 @@ import {
   Pagination,
   Select,
   Toggle,
+  TranslationFields,
+  translationPayload,
   type Column,
 } from '@/components/ui';
 
@@ -33,12 +35,14 @@ interface CouponRow {
   applicableProducts: string[];
   validUntil: string | null;
   isActive: boolean;
+  translations?: Record<string, Record<string, unknown>>;
 }
 
 export default function CouponsPage(): ReactNode {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
+  const [english, setEnglish] = useState<Record<string, string>>({});
   const [form, setForm] = useState({
     code: '',
     description: '',
@@ -76,6 +80,7 @@ export default function CouponsPage(): ReactNode {
           applicableProducts: form.products,
           validUntil: form.validUntil ? new Date(form.validUntil).toISOString() : null,
           isActive: form.isActive,
+          translations: translationPayload('en', english),
         },
       }),
     onSuccess: () => {
@@ -169,7 +174,12 @@ export default function CouponsPage(): ReactNode {
         title="Coupons"
         description="Discount codes with limits per code and per user."
         actions={
-          <Button onClick={() => setOpen(true)}>
+          <Button
+            onClick={() => {
+              setEnglish({});
+              setOpen(true);
+            }}
+          >
             <Plus size={15} aria-hidden /> New code
           </Button>
         }
@@ -216,9 +226,16 @@ export default function CouponsPage(): ReactNode {
             placeholder="WELCOME20"
           />
           <Field
-            label="Description"
+            label="Description (German)"
             value={form.description}
             onChange={(event) => setForm({ ...form, description: event.target.value })}
+          />
+          <TranslationFields
+            locale="en"
+            title="English version"
+            fields={[{ name: 'description', label: 'Description', multiline: true }]}
+            value={english}
+            onChange={setEnglish}
           />
           <div className="grid gap-3 sm:grid-cols-2">
             <Select

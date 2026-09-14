@@ -1,4 +1,4 @@
-import { translationBundle } from '@storm-tips/types';
+import { localizedString, translationBundle } from '@storm-tips/types';
 import type {
   ComboDTO,
   FixOddsPlanDTO,
@@ -43,4 +43,20 @@ export function adminPromotion(dto: PromotionDTO, row: WithTranslations): Promot
 
 export function adminPoll(dto: PollDTO, row: WithTranslations): PollDTO {
   return withTranslations(dto, row);
+}
+
+/**
+ * Coupons are staff-facing only — they have no public DTO, so the admin routes
+ * return the row as stored and this only localises the one human-readable
+ * field on it.
+ */
+export function adminCoupon<T extends WithTranslations & { description: string | null }>(
+  row: T,
+  locale: string,
+): T {
+  return {
+    ...row,
+    description: localizedString(row, locale, 'description', row.description),
+    translations: translationBundle(row.translations),
+  };
 }

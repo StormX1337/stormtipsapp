@@ -9,10 +9,10 @@ not a partial veneer.
 
 ## Two kinds of text
 
-| Kind                                                                               | Where it lives                    | Who translates it                                                             |
-| ---------------------------------------------------------------------------------- | --------------------------------- | ----------------------------------------------------------------------------- |
-| Interface strings (labels, buttons, empty states, errors)                          | `packages/ui/src/i18n/{de,en}.ts` | Shipped with the apps; the client renders the catalogue for the active locale |
-| Editorial content (products, plans, promotions, polls, market names, tips, combos) | The database                      | The server, from each row's `translations` column                             |
+| Kind                                                                                        | Where it lives                    | Who translates it                                                             |
+| ------------------------------------------------------------------------------------------- | --------------------------------- | ----------------------------------------------------------------------------- |
+| Interface strings (labels, buttons, empty states, errors)                                   | `packages/ui/src/i18n/{de,en}.ts` | Shipped with the apps; the client renders the catalogue for the active locale |
+| Editorial content (products, plans, coupons, promotions, polls, market names, tips, combos) | The database                      | The server, from each row's `translations` column                             |
 
 The split matters: a client can translate its own chrome, but it cannot
 translate a tip's analysis. That has to come from the server in the right
@@ -28,7 +28,7 @@ per-locale overrides in a `translations` JSON column:
 ```
 
 Columns carrying it: `products`, `subscription_plans`, `fix_odds_plans`,
-`promotions`, `polls`, `poll_options`, `markets`, `tips`, `combos`.
+`coupons`, `promotions`, `polls`, `poll_options`, `markets`, `tips`, `combos`.
 
 Rules, enforced by `packages/types/src/localization.ts` and covered by its unit
 tests:
@@ -107,7 +107,7 @@ surface, so it is not localised and its API client always sends
 Content is a separate matter: it is authored in German (the default content
 locale), so the base fields of each form are labelled "(German)" and every form
 that owns content carries an "English version" block underneath — tips and
-combos, subscription plans, Fix Odds packages, promotions, polls and
+combos, subscription plans, Fix Odds packages, coupons, promotions, polls and
 notification campaigns. Fields left empty simply fall back.
 
 The admin endpoints return the raw `translations` bundle so the editors can

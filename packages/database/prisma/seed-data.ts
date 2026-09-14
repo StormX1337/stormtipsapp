@@ -532,6 +532,12 @@ export const SEED_FIX_ODDS_TRANSLATIONS: TranslationMap = {
   },
 };
 
+export const SEED_COUPON_TRANSLATIONS: TranslationMap = {
+  WELCOME20: { en: { description: '20% off your first subscription.' } },
+  COMBO10: { en: { description: '€10 off every Combo plan.' } },
+  VIPWEEK: { en: { description: '30% off VIP — for a limited time.' } },
+};
+
 /** Markets are authored in English, so the override here is the German one. */
 export const SEED_MARKET_TRANSLATIONS: TranslationMap = {
   '1x2': { de: { name: 'Spielausgang' } },

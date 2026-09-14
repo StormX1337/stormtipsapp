@@ -434,6 +434,7 @@ export const upsertCouponSchema = z.object({
   validFrom: z.string().datetime().optional(),
   validUntil: z.string().datetime().nullish(),
   isActive: z.boolean().default(true),
+  translations: translationsSchema,
 });
 
 export const upsertPromotionSchema = z.object({
