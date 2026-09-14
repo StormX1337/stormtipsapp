@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "@storm-tips/auth": "workspace:*",
+    "@storm-tips/payments": "workspace:*",
     "@storm-tips/sports": "workspace:*",
     "@storm-tips/statistics": "workspace:*",
     "@storm-tips/types": "workspace:*",

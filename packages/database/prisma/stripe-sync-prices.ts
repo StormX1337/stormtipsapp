@@ -9,16 +9,18 @@
  * test prices and a live key creates live ones. Price ids are per-mode: after
  * switching keys, run it again to fill in the live ids.
  *
- * Idempotent in both directions. A plan that already carries a price id is
- * left alone, and a product this script created before is reused rather than
- * duplicated — it is looked up by the plan's slug, which is stored in the
- * product's metadata.
+ * Idempotent in both directions. A plan that already carries a real price id
+ * is left alone, and a product this script created before is reused rather
+ * than duplicated — it is looked up by the plan's slug, which is stored in the
+ * product's metadata. A leftover `price_dev_…` placeholder from an older seed
+ * counts as unset and is replaced.
  *
  * Stripe prices are immutable: changing a plan's amount or interval means a
  * new price. Clear the plan's Stripe Price ID in the admin and run this again.
  */
 import { PrismaClient } from '@prisma/client';
 import Stripe from 'stripe';
+import { isUsableStripePriceId } from '@storm-tips/payments';
 
 const prisma = new PrismaClient();
 
@@ -63,10 +65,15 @@ async function main(): Promise<void> {
       intervalCount?: number;
     },
   ): Promise<void> => {
-    if (row.stripePriceId) {
+    if (isUsableStripePriceId(row.stripePriceId)) {
       console.log(`skip   ${row.slug} — already has ${row.stripePriceId}`);
       skipped += 1;
       return;
+    }
+    // A leftover `price_dev_…` placeholder is not a price Stripe can charge,
+    // so it is replaced rather than treated as configured.
+    if (row.stripePriceId) {
+      console.log(`       ${row.slug} — replacing placeholder ${row.stripePriceId}`);
     }
 
     const recurring = row.interval ? INTERVAL[row.interval] : null;

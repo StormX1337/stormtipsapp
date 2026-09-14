@@ -451,6 +451,9 @@ importers:
       '@storm-tips/auth':
         specifier: workspace:*
         version: link:../auth
+      '@storm-tips/payments':
+        specifier: workspace:*
+        version: link:../payments
       '@storm-tips/sports':
         specifier: workspace:*
         version: link:../sports

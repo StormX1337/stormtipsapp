@@ -14,6 +14,7 @@ import {
 } from '@storm-tips/types';
 import { parseBody } from '../lib/validate.js';
 import { assertFound, noStore, publicCache } from '../lib/http.js';
+import { isUsableStripePriceId } from '@storm-tips/payments';
 import { env } from '../lib/env.js';
 import { audit } from '../lib/audit.js';
 import {
@@ -209,13 +210,7 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
       : null;
 
     const priceId = plan?.stripePriceId ?? fixPlan?.stripePriceId;
-    /**
-     * Older seeds wrote a plausible-looking `price_dev_…` placeholder, which
-     * passes the "is one set?" check and then fails at Stripe with "No such
-     * price" — an error that reads like a fault in the app rather than a
-     * setting nobody filled in. Treat it as unset and say what to do.
-     */
-    if (!priceId || priceId.startsWith('price_dev_')) {
+    if (!isUsableStripePriceId(priceId)) {
       throw new AppError(
         ErrorCode.PROVIDER_ERROR,
         'This plan has no Stripe price configured. Create a price in Stripe and ' +
