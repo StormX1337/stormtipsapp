@@ -1,12 +1,27 @@
 'use client';
 
-import { Suspense, useState, type FormEvent, type ReactNode } from 'react';
+import { Fragment, Suspense, useState, type FormEvent, type ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import { useT } from '@/lib/i18n';
 import { AuthCard, Field, FormError } from '@/components/auth-form';
 import { Button } from '@/components/primitives';
+
+/**
+ * Renders a translated sentence whose `{placeholder}` markers become nodes.
+ *
+ * The legal consent line has to carry two links inside a full sentence, and
+ * the two languages do not order that sentence the same way — assembling it
+ * from fragments in the component would bake German word order into the
+ * English copy.
+ */
+function withNodes(template: string, nodes: Record<string, ReactNode>): ReactNode[] {
+  return template.split(/(\{[a-zA-Z]+\})/).map((part, index) => {
+    const key = part.startsWith('{') && part.endsWith('}') ? part.slice(1, -1) : null;
+    return key && key in nodes ? <Fragment key={index}>{nodes[key]}</Fragment> : part;
+  });
+}
 
 function RegisterForm(): ReactNode {
   const t = useT();
@@ -28,7 +43,7 @@ function RegisterForm(): ReactNode {
   async function submit(event: FormEvent): Promise<void> {
     event.preventDefault();
     if (!accepted || !ageConfirmed) {
-      setError('Bitte bestätige die AGB und dein Alter.');
+      setError(t('auth.confirmRequired'));
       return;
     }
     setBusy(true);
@@ -105,15 +120,18 @@ function RegisterForm(): ReactNode {
           required
         />
         <span>
-          Ich akzeptiere die{' '}
-          <Link href="/legal/terms" className="text-accent-500 hover:underline">
-            AGB
-          </Link>{' '}
-          und die{' '}
-          <Link href="/legal/privacy" className="text-accent-500 hover:underline">
-            Datenschutzerklärung
-          </Link>
-          .
+          {withNodes(t('auth.acceptTermsLinked'), {
+            terms: (
+              <Link href="/legal/terms" className="text-accent-500 hover:underline">
+                {t('auth.termsLinkLabel')}
+              </Link>
+            ),
+            privacy: (
+              <Link href="/legal/privacy" className="text-accent-500 hover:underline">
+                {t('auth.privacyLinkLabel')}
+              </Link>
+            ),
+          })}
         </span>
       </label>
       <label className="flex items-start gap-2 text-[12px] text-ink-muted">
@@ -123,7 +141,7 @@ function RegisterForm(): ReactNode {
           onChange={(event) => setMarketingOptIn(event.target.checked)}
           className="mt-0.5 accent-[#12E17F]"
         />
-        <span>Ich möchte Angebote und Aktionen per E-Mail erhalten.</span>
+        <span>{t('auth.marketingOptIn')}</span>
       </label>
 
       <Button type="submit" size="lg" disabled={busy}>
@@ -134,15 +152,16 @@ function RegisterForm(): ReactNode {
 }
 
 export default function RegisterPage(): ReactNode {
+  const t = useT();
   return (
     <AuthCard
-      title="Konto erstellen"
-      subtitle="Kostenlos registrieren und täglich Analysen erhalten."
+      title={t('auth.register')}
+      subtitle={t('auth.registerSubtitle')}
       footer={
         <span className="text-ink-muted">
-          Schon ein Konto?{' '}
+          {t('auth.hasAccount')}{' '}
           <Link href="/auth/login" className="font-semibold text-accent-500 hover:underline">
-            Anmelden
+            {t('auth.login')}
           </Link>
         </span>
       }

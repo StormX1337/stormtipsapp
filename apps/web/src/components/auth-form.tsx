@@ -4,6 +4,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import clsx from 'clsx';
 import { config } from '@/lib/config';
+import { useT } from '@/lib/i18n';
 
 /** Shared shell for every authentication screen. */
 export function AuthCard({
@@ -17,6 +18,7 @@ export function AuthCard({
   children: ReactNode;
   footer?: ReactNode;
 }): ReactNode {
+  const t = useT();
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-5 py-10">
       <Link href="/free" className="mb-8 text-center">
@@ -34,8 +36,7 @@ export function AuthCard({
       {footer ? <div className="mt-5 text-center text-[13px]">{footer}</div> : null}
 
       <p className="mt-8 text-center text-[11px] leading-relaxed text-ink-dim">
-        18+ · Wetten ist mit finanziellem Risiko verbunden. STORM TIPS veröffentlicht Analysen zu
-        Informationszwecken; kein Ergebnis ist garantiert.
+        {t('legal.ageNotice')} {t('legal.noGuarantee')}
       </p>
     </main>
   );
