@@ -65,12 +65,27 @@ export function PromoBanner({ promotion }: { promotion: PromotionDTO }): ReactNo
       ) : null}
 
       <View style={styles.ball} pointerEvents="none">
-        <Svg width={72} height={72} viewBox="0 0 100 100">
-          <Circle cx="50" cy="50" r="34" fill={colors.bg.subtle} stroke={colors.accent.DEFAULT} strokeWidth={2.5} />
+        {/* Drawn, not imported — the app bundles no third-party artwork. */}
+        <Svg width={72} height={72} viewBox="0 0 24 24">
+          <Circle
+            cx="12"
+            cy="12"
+            r="10"
+            fill={colors.bg.subtle}
+            stroke={colors.accent.DEFAULT}
+            strokeWidth={1.4}
+          />
           <Path
-            d="M50 28l10 7-4 12H44l-4-12z M50 72l-10-7 4-12h12l4 12z M28 50l7-10 12 4v12l-12 4z M72 50l-7 10-12-4V44l12-4z"
+            d="M12 6.5 15.5 9l-1.3 4h-4.4L8.5 9z"
             fill={colors.accent.DEFAULT}
-            opacity={0.85}
+            opacity={0.9}
+          />
+          <Path
+            d="M12 2.6v3.9M3.6 8.6 8.5 9M20.4 8.6 15.5 9M6.6 20.2l3.2-7.2M17.4 20.2l-3.2-7.2"
+            stroke={colors.accent.DEFAULT}
+            strokeWidth={1.2}
+            strokeLinecap="round"
+            fill="none"
           />
         </Svg>
       </View>

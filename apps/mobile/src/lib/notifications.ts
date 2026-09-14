@@ -43,7 +43,8 @@ export async function configureAndroidChannels(): Promise<void> {
  * Silently does nothing on a simulator or when the user declines.
  */
 export async function registerPushToken(): Promise<string | null> {
-  if (!Device.isDevice) return null;
+  // Expo web has no push module, and a simulator has no token to register.
+  if (Platform.OS === 'web' || !Device.isDevice) return null;
   if (!tokens.access) return null;
 
   const existing = await Notifications.getPermissionsAsync();

@@ -22,7 +22,19 @@ config.resolver.unstable_enableSymlinks = true;
  * so the extension is rewritten back to the TypeScript file.
  */
 const defaultResolveRequest = config.resolver.resolveRequest;
+
+/**
+ * `merge-options` ships both a CJS and an ESM entry. Metro picks the ESM one
+ * through package exports, and `@react-native-async-storage/async-storage`'s
+ * web build then reads `.default` off it and crashes on load. Pinning the CJS
+ * entry keeps the interop wrapper that the consumer expects.
+ */
+const mergeOptionsCjs = require.resolve('merge-options', { paths: [projectRoot, workspaceRoot] });
+
 config.resolver.resolveRequest = (context, moduleName, platform) => {
+  if (moduleName === 'merge-options') {
+    return { type: 'sourceFile', filePath: mergeOptionsCjs };
+  }
   if (moduleName.startsWith('.') && moduleName.endsWith('.js')) {
     try {
       return (defaultResolveRequest ?? context.resolveRequest)(

@@ -71,6 +71,7 @@ export default function OnboardingScreen(): ReactNode {
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={onScroll}
         style={{ flex: 1 }}
+        contentContainerStyle={{ flexGrow: 1 }}
       >
         {SLIDES.map((slide) => {
           const Icon = slide.icon;
@@ -118,7 +119,13 @@ export default function OnboardingScreen(): ReactNode {
 const styles = StyleSheet.create({
   skip: { alignSelf: 'flex-end', padding: spacing[4] },
   skipText: { color: colors.text.muted, fontSize: fontSize.md },
-  slide: { alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing[8], gap: spacing[4] },
+  slide: {
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing[8],
+    gap: spacing[4],
+  },
   iconCircle: {
     width: 116,
     height: 116,

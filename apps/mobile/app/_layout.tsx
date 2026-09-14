@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { AppState, StyleSheet, View } from 'react-native';
+import { AppState, Platform, StyleSheet, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Notifications from 'expo-notifications';
@@ -67,6 +67,9 @@ function NotificationRouter(): null {
   const handled = useRef<string | null>(null);
 
   useEffect(() => {
+    // Push notifications are a native-only surface; Expo web has no module.
+    if (Platform.OS === 'web') return;
+
     void configureAndroidChannels();
 
     const open = (response: Notifications.NotificationResponse): void => {
@@ -79,9 +82,11 @@ function NotificationRouter(): null {
     };
 
     // A notification may have cold-started the app.
-    void Notifications.getLastNotificationResponseAsync().then((response) => {
-      if (response) open(response);
-    });
+    void Notifications.getLastNotificationResponseAsync()
+      .then((response) => {
+        if (response) open(response);
+      })
+      .catch(() => undefined);
 
     const subscription = Notifications.addNotificationResponseReceivedListener(open);
     return () => subscription.remove();
