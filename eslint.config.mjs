@@ -51,7 +51,14 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*.test.ts', '**/*.spec.ts', '**/tests/**/*.ts', '**/seed.ts', '**/scripts/**'],
+    files: [
+      '**/*.test.ts',
+      '**/*.spec.ts',
+      '**/tests/**/*.ts',
+      '**/seed.ts',
+      '**/prisma/set-password.ts',
+      '**/scripts/**',
+    ],
     rules: { 'no-console': 'off', '@typescript-eslint/no-explicit-any': 'off' },
   },
   prettier,

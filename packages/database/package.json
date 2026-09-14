@@ -16,6 +16,7 @@
     "push": "dotenv -e ../../.env -- prisma db push",
     "reset": "dotenv -e ../../.env -- prisma migrate reset --force",
     "seed": "dotenv -e ../../.env -- tsx prisma/seed.ts",
+    "set-password": "dotenv -e ../../.env -- tsx prisma/set-password.ts",
     "studio": "dotenv -e ../../.env -- prisma studio",
     "validate": "dotenv -e ../../.env -- prisma validate",
     "build": "prisma generate",

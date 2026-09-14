@@ -54,6 +54,17 @@ outcomes), combos, subscription plans, demo subscribers, polls and referrals.
 
 The seed refuses to run when `NODE_ENV=production`.
 
+The admin account it writes comes from `SEED_ADMIN_EMAIL` and
+`SEED_ADMIN_PASSWORD`; the seed prints both when it finishes. Those accounts are
+written on a fresh seed only, so to recover a login without wiping the database:
+
+```bash
+pnpm --filter @storm-tips/database set-password <email> '<password>'
+```
+
+It hashes with the same KDF the API uses, and lists the staff accounts that do
+exist when the address is unknown.
+
 Mock fixtures are deterministic: `MOCK_PROVIDER_SEED` (default `storm-tips`)
 drives the generator, and the seed and the running worker must agree on it, or
 the worker will rewrite fixtures the seed already stored.
