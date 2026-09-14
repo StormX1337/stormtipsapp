@@ -23,9 +23,16 @@ export interface SeedPlan {
   highlight?: string;
   isPopular: boolean;
   sortOrder: number;
-  stripePriceId: string;
-  appleProductId: string;
-  googleProductId: string;
+  /**
+   * Store identifiers are operator credentials, so the seed leaves them empty.
+   * A plausible-looking placeholder is worse than nothing: it passes the
+   * "is a price configured?" check and then fails at Stripe with "No such
+   * price", which reads like a fault in the app rather than a setting nobody
+   * filled in. Empty makes the checkout say exactly what to do.
+   */
+  stripePriceId: string | null;
+  appleProductId: string | null;
+  googleProductId: string | null;
 }
 
 export const SEED_PLANS: SeedPlan[] = [
@@ -41,9 +48,9 @@ export const SEED_PLANS: SeedPlan[] = [
     badge: 'NONE',
     isPopular: false,
     sortOrder: 10,
-    stripePriceId: 'price_dev_combo_1m',
-    appleProductId: 'app.stormtips.combo.1m',
-    googleProductId: 'combo_1m',
+    stripePriceId: null,
+    appleProductId: null,
+    googleProductId: null,
   },
   {
     slug: 'combo-3m',
@@ -58,9 +65,9 @@ export const SEED_PLANS: SeedPlan[] = [
     badge: 'SALE',
     isPopular: false,
     sortOrder: 20,
-    stripePriceId: 'price_dev_combo_3m',
-    appleProductId: 'app.stormtips.combo.3m',
-    googleProductId: 'combo_3m',
+    stripePriceId: null,
+    appleProductId: null,
+    googleProductId: null,
   },
   {
     slug: 'combo-6m',
@@ -75,9 +82,9 @@ export const SEED_PLANS: SeedPlan[] = [
     badge: 'BEST_VALUE',
     isPopular: false,
     sortOrder: 30,
-    stripePriceId: 'price_dev_combo_6m',
-    appleProductId: 'app.stormtips.combo.6m',
-    googleProductId: 'combo_6m',
+    stripePriceId: null,
+    appleProductId: null,
+    googleProductId: null,
   },
   {
     slug: 'bundle-1m',
@@ -93,9 +100,9 @@ export const SEED_PLANS: SeedPlan[] = [
     highlight: 'Spare 21,98 €',
     isPopular: true,
     sortOrder: 5,
-    stripePriceId: 'price_dev_bundle_1m',
-    appleProductId: 'app.stormtips.bundle.1m',
-    googleProductId: 'bundle_1m',
+    stripePriceId: null,
+    appleProductId: null,
+    googleProductId: null,
   },
   {
     slug: 'vip-1m',
@@ -109,9 +116,9 @@ export const SEED_PLANS: SeedPlan[] = [
     badge: 'NONE',
     isPopular: false,
     sortOrder: 40,
-    stripePriceId: 'price_dev_vip_1m',
-    appleProductId: 'app.stormtips.vip.1m',
-    googleProductId: 'vip_1m',
+    stripePriceId: null,
+    appleProductId: null,
+    googleProductId: null,
   },
   {
     slug: 'vip-12m',
@@ -126,9 +133,9 @@ export const SEED_PLANS: SeedPlan[] = [
     badge: 'SALE',
     isPopular: false,
     sortOrder: 50,
-    stripePriceId: 'price_dev_vip_12m',
-    appleProductId: 'app.stormtips.vip.12m',
-    googleProductId: 'vip_12m',
+    stripePriceId: null,
+    appleProductId: null,
+    googleProductId: null,
   },
   {
     slug: 'extra-1m',
@@ -142,9 +149,9 @@ export const SEED_PLANS: SeedPlan[] = [
     badge: 'NONE',
     isPopular: false,
     sortOrder: 60,
-    stripePriceId: 'price_dev_extra_1m',
-    appleProductId: 'app.stormtips.extra.1m',
-    googleProductId: 'extra_1m',
+    stripePriceId: null,
+    appleProductId: null,
+    googleProductId: null,
   },
 ];
 
@@ -161,9 +168,9 @@ export interface SeedFixOddsPlan {
   requiresVip: boolean;
   badge: PromoBadge;
   sortOrder: number;
-  stripePriceId: string;
-  appleProductId: string;
-  googleProductId: string;
+  stripePriceId: string | null;
+  appleProductId: string | null;
+  googleProductId: string | null;
 }
 
 export const SEED_FIX_ODDS_PLANS: SeedFixOddsPlan[] = [
@@ -180,9 +187,9 @@ export const SEED_FIX_ODDS_PLANS: SeedFixOddsPlan[] = [
     requiresVip: false,
     badge: 'NONE',
     sortOrder: 10,
-    stripePriceId: 'price_dev_fix_basic',
-    appleProductId: 'app.stormtips.fix.basic',
-    googleProductId: 'fix_basic',
+    stripePriceId: null,
+    appleProductId: null,
+    googleProductId: null,
   },
   {
     slug: 'fix-odds-pro',
@@ -197,9 +204,9 @@ export const SEED_FIX_ODDS_PLANS: SeedFixOddsPlan[] = [
     requiresVip: false,
     badge: 'MOST_POPULAR',
     sortOrder: 20,
-    stripePriceId: 'price_dev_fix_pro',
-    appleProductId: 'app.stormtips.fix.pro',
-    googleProductId: 'fix_pro',
+    stripePriceId: null,
+    appleProductId: null,
+    googleProductId: null,
   },
   {
     slug: 'fix-odds-vip',
@@ -214,9 +221,9 @@ export const SEED_FIX_ODDS_PLANS: SeedFixOddsPlan[] = [
     requiresVip: true,
     badge: 'LIMITED',
     sortOrder: 30,
-    stripePriceId: 'price_dev_fix_vip',
-    appleProductId: 'app.stormtips.fix.vip',
-    googleProductId: 'fix_vip',
+    stripePriceId: null,
+    appleProductId: null,
+    googleProductId: null,
   },
   {
     slug: 'fix-odds-combo',
@@ -231,9 +238,9 @@ export const SEED_FIX_ODDS_PLANS: SeedFixOddsPlan[] = [
     requiresVip: false,
     badge: 'NEW',
     sortOrder: 40,
-    stripePriceId: 'price_dev_fix_combo',
-    appleProductId: 'app.stormtips.fix.combo',
-    googleProductId: 'fix_combo',
+    stripePriceId: null,
+    appleProductId: null,
+    googleProductId: null,
   },
 ];
 

@@ -209,10 +209,17 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
       : null;
 
     const priceId = plan?.stripePriceId ?? fixPlan?.stripePriceId;
-    if (!priceId) {
+    /**
+     * Older seeds wrote a plausible-looking `price_dev_…` placeholder, which
+     * passes the "is one set?" check and then fails at Stripe with "No such
+     * price" — an error that reads like a fault in the app rather than a
+     * setting nobody filled in. Treat it as unset and say what to do.
+     */
+    if (!priceId || priceId.startsWith('price_dev_')) {
       throw new AppError(
         ErrorCode.PROVIDER_ERROR,
-        'This plan has no Stripe price configured. Set it in Admin → Plans.',
+        'This plan has no Stripe price configured. Create a price in Stripe and ' +
+          'paste its price_… id into the plan under Admin → Plans.',
       );
     }
     if (plan && !plan.isActive) throw AppError.validation('This plan is no longer available');
