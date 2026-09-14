@@ -33,7 +33,7 @@ import {
   Zap,
   type LucideIcon,
 } from 'lucide-react';
-import type { UserRole } from '@profit-tips/types';
+import type { UserRole } from '@storm-tips/types';
 import { useAdminAuth } from '@/lib/auth';
 import { Skeleton } from './ui';
 
@@ -121,7 +121,7 @@ function LoginScreen(): ReactNode {
   return (
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center px-6">
       <div className="mb-6 text-center">
-        <p className="text-[20px] font-black tracking-tight text-accent-500">PROFIT TIPS</p>
+        <p className="text-[20px] font-black tracking-tight text-accent-500">STORM TIPS</p>
         <p className="text-[12px] text-ink-dim">Verwaltung</p>
       </div>
       <form
@@ -204,7 +204,7 @@ export function AdminShell({ children }: { children: ReactNode }): ReactNode {
       >
         <div className="flex items-center gap-2 px-4 py-4">
           <Gauge size={18} className="text-accent-500" aria-hidden />
-          <span className="text-[14px] font-black tracking-tight">PROFIT TIPS</span>
+          <span className="text-[14px] font-black tracking-tight">STORM TIPS</span>
         </div>
 
         <nav className="px-2 pb-6">

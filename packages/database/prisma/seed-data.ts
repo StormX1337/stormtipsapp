@@ -1,4 +1,4 @@
-import type { BillingInterval, ProductCode, PromoBadge } from '@profit-tips/types';
+import type { BillingInterval, ProductCode, PromoBadge } from '@storm-tips/types';
 
 /**
  * Commercial catalogue for the development seed.
@@ -42,7 +42,7 @@ export const SEED_PLANS: SeedPlan[] = [
     isPopular: false,
     sortOrder: 10,
     stripePriceId: 'price_dev_combo_1m',
-    appleProductId: 'app.profittips.combo.1m',
+    appleProductId: 'app.stormtips.combo.1m',
     googleProductId: 'combo_1m',
   },
   {
@@ -59,7 +59,7 @@ export const SEED_PLANS: SeedPlan[] = [
     isPopular: false,
     sortOrder: 20,
     stripePriceId: 'price_dev_combo_3m',
-    appleProductId: 'app.profittips.combo.3m',
+    appleProductId: 'app.stormtips.combo.3m',
     googleProductId: 'combo_3m',
   },
   {
@@ -76,7 +76,7 @@ export const SEED_PLANS: SeedPlan[] = [
     isPopular: false,
     sortOrder: 30,
     stripePriceId: 'price_dev_combo_6m',
-    appleProductId: 'app.profittips.combo.6m',
+    appleProductId: 'app.stormtips.combo.6m',
     googleProductId: 'combo_6m',
   },
   {
@@ -94,7 +94,7 @@ export const SEED_PLANS: SeedPlan[] = [
     isPopular: true,
     sortOrder: 5,
     stripePriceId: 'price_dev_bundle_1m',
-    appleProductId: 'app.profittips.bundle.1m',
+    appleProductId: 'app.stormtips.bundle.1m',
     googleProductId: 'bundle_1m',
   },
   {
@@ -110,7 +110,7 @@ export const SEED_PLANS: SeedPlan[] = [
     isPopular: false,
     sortOrder: 40,
     stripePriceId: 'price_dev_vip_1m',
-    appleProductId: 'app.profittips.vip.1m',
+    appleProductId: 'app.stormtips.vip.1m',
     googleProductId: 'vip_1m',
   },
   {
@@ -127,7 +127,7 @@ export const SEED_PLANS: SeedPlan[] = [
     isPopular: false,
     sortOrder: 50,
     stripePriceId: 'price_dev_vip_12m',
-    appleProductId: 'app.profittips.vip.12m',
+    appleProductId: 'app.stormtips.vip.12m',
     googleProductId: 'vip_12m',
   },
   {
@@ -143,7 +143,7 @@ export const SEED_PLANS: SeedPlan[] = [
     isPopular: false,
     sortOrder: 60,
     stripePriceId: 'price_dev_extra_1m',
-    appleProductId: 'app.profittips.extra.1m',
+    appleProductId: 'app.stormtips.extra.1m',
     googleProductId: 'extra_1m',
   },
 ];
@@ -181,7 +181,7 @@ export const SEED_FIX_ODDS_PLANS: SeedFixOddsPlan[] = [
     badge: 'NONE',
     sortOrder: 10,
     stripePriceId: 'price_dev_fix_basic',
-    appleProductId: 'app.profittips.fix.basic',
+    appleProductId: 'app.stormtips.fix.basic',
     googleProductId: 'fix_basic',
   },
   {
@@ -198,7 +198,7 @@ export const SEED_FIX_ODDS_PLANS: SeedFixOddsPlan[] = [
     badge: 'MOST_POPULAR',
     sortOrder: 20,
     stripePriceId: 'price_dev_fix_pro',
-    appleProductId: 'app.profittips.fix.pro',
+    appleProductId: 'app.stormtips.fix.pro',
     googleProductId: 'fix_pro',
   },
   {
@@ -215,7 +215,7 @@ export const SEED_FIX_ODDS_PLANS: SeedFixOddsPlan[] = [
     badge: 'LIMITED',
     sortOrder: 30,
     stripePriceId: 'price_dev_fix_vip',
-    appleProductId: 'app.profittips.fix.vip',
+    appleProductId: 'app.stormtips.fix.vip',
     googleProductId: 'fix_vip',
   },
   {
@@ -232,7 +232,7 @@ export const SEED_FIX_ODDS_PLANS: SeedFixOddsPlan[] = [
     badge: 'NEW',
     sortOrder: 40,
     stripePriceId: 'price_dev_fix_combo',
-    appleProductId: 'app.profittips.fix.combo',
+    appleProductId: 'app.stormtips.fix.combo',
     googleProductId: 'fix_combo',
   },
 ];
@@ -249,7 +249,7 @@ export const SEED_PRODUCTS: {
 }[] = [
   {
     code: 'FREE',
-    name: 'Free',
+    name: 'Storm Tips Free',
     tagline: 'Täglich kostenlose Analysen',
     description: 'Jeden Tag mehrere veröffentlichte Analysen mit Quote, Markt und Begründung.',
     icon: 'list',
@@ -263,7 +263,7 @@ export const SEED_PRODUCTS: {
   },
   {
     code: 'COMBO',
-    name: 'Combo',
+    name: 'Storm Tips Combo',
     tagline: 'Kuratierte Kombiwetten',
     description: 'Täglich zusammengestellte Kombinationen mit Einzelbegründung je Auswahl.',
     icon: 'ticket',
@@ -278,7 +278,7 @@ export const SEED_PRODUCTS: {
   },
   {
     code: 'EXTRA',
-    name: 'Extra',
+    name: 'Storm Tips Extra',
     tagline: 'Value- und Spezialauswahlen',
     description: 'Ausgewählte Value-Spots, Spezialmärkte und Live-Gelegenheiten.',
     icon: 'zap',
@@ -293,7 +293,7 @@ export const SEED_PRODUCTS: {
   },
   {
     code: 'VIP',
-    name: 'VIP',
+    name: 'Storm Tips VIP',
     tagline: 'Höchste Konfidenz',
     description: 'Die Auswahlen mit der höchsten Konfidenz, inklusive ausführlicher Analyse.',
     icon: 'crown',
@@ -309,7 +309,7 @@ export const SEED_PRODUCTS: {
   },
   {
     code: 'FIX_ODDS',
-    name: 'Fix Odds',
+    name: 'Storm Tips FIX Odds',
     tagline: 'Pakete mit fester Zielquote',
     description: 'Pakete, die konsequent auf eine definierte Zielquote ausgerichtet sind.',
     icon: 'target',
@@ -317,7 +317,7 @@ export const SEED_PRODUCTS: {
     benefits: [
       'Definierte Zielquote je Paket',
       'Feste Anzahl Auswahlen pro Periode',
-      'Mindest-Konfidenz garantiert',
+      'Definierte Mindest-Konfidenz je Auswahl',
       'Getrennte Statistik je Paket',
     ],
     sortOrder: 4,

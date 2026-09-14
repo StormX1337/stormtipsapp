@@ -1,4 +1,4 @@
-import { MarketType, type EventStatus } from '@profit-tips/types';
+import { MarketType, type EventStatus } from '@storm-tips/types';
 import { BaseProvider } from '../provider.js';
 import { HttpClient } from '../http.js';
 import type {

@@ -1,4 +1,4 @@
-import type { DevicePlatform, NotificationType, PushProvider } from '@profit-tips/types';
+import type { DevicePlatform, NotificationType, PushProvider } from '@storm-tips/types';
 
 export interface PushTarget {
   token: string;

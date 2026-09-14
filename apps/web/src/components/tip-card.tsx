@@ -4,8 +4,8 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { Lock } from 'lucide-react';
 import type { ReactNode } from 'react';
-import type { TipDTO, TipFeedGroupDTO } from '@profit-tips/types';
-import { formatKickoff } from '@profit-tips/ui';
+import type { TipDTO, TipFeedGroupDTO } from '@storm-tips/types';
+import { formatKickoff } from '@storm-tips/ui';
 import { useI18n } from '@/lib/i18n';
 import { CountryFlag, OddsBadge, ProductBadge, StatusBadge, TeamCrest } from './primitives';
 

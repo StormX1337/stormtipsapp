@@ -1,6 +1,6 @@
-import { prisma, type Prisma } from '@profit-tips/database';
-import { PREFERENCE_FOR_TYPE } from '@profit-tips/notifications';
-import type { NotificationType, ProductCode } from '@profit-tips/types';
+import { prisma, type Prisma } from '@storm-tips/database';
+import { PREFERENCE_FOR_TYPE } from '@storm-tips/notifications';
+import type { NotificationType, ProductCode } from '@storm-tips/types';
 import { jobs } from '../lib/queues.js';
 import { mergePreferences } from '../serializers/user.js';
 

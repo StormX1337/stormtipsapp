@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, type ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { toDateKey } from '@profit-tips/ui';
+import { toDateKey } from '@storm-tips/ui';
 import { theme } from '@/lib/theme';
 import { useI18n } from '@/lib/i18n';
 

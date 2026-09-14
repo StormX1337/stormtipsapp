@@ -3,7 +3,7 @@ import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native'
 import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import type { ComboDTO, Paginated } from '@profit-tips/types';
+import type { ComboDTO, Paginated } from '@storm-tips/types';
 import { theme, shared } from '@/lib/theme';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';

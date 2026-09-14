@@ -28,7 +28,7 @@
 
 `EntitlementService` is the only authority on premium access. It reads
 entitlements and subscriptions, applies the pure rules in
-`@profit-tips/payments`, caches the answer in Redis for 60 seconds and
+`@storm-tips/payments`, caches the answer in Redis for 60 seconds and
 invalidates that cache on every relevant change.
 
 Locked tips are stripped **in the serializer**, before the response is built:
@@ -70,7 +70,7 @@ quota) and the stricter credential bucket. `/health` and `/ready` are exempt.
 ## Input validation
 
 Every body, query and path parameter is parsed with a Zod schema from
-`@profit-tips/types` — the same schemas the clients use, so there is one
+`@storm-tips/types` — the same schemas the clients use, so there is one
 definition per shape. A failure returns `VALIDATION_ERROR` (422) listing the
 offending fields. Prisma parameterises all SQL; no query is string-built.
 

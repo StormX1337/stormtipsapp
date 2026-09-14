@@ -6,7 +6,7 @@ import {
   type JWSRenewalInfoDecodedPayload,
   type ResponseBodyV2DecodedPayload,
 } from '@apple/app-store-server-library';
-import { AppError, ErrorCode, type SubscriptionStatus } from '@profit-tips/types';
+import { AppError, ErrorCode, type SubscriptionStatus } from '@storm-tips/types';
 import type { NormalizedSubscription, NormalizedWebhookEvent } from '../types.js';
 
 export interface AppleConfig {

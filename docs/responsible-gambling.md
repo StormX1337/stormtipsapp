@@ -1,6 +1,6 @@
 # Responsible gambling and compliance
 
-PROFIT TIPS publishes **sports analyses**, for information and entertainment. It
+STORM TIPS publishes **sports analyses**, for information and entertainment. It
 is not a bookmaker: it accepts no bets, holds no customer funds and brokers no
 wagers.
 

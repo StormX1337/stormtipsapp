@@ -1,5 +1,5 @@
 {
-  "name": "@profit-tips/auth",
+  "name": "@storm-tips/auth",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -14,8 +14,8 @@
   },
   "dependencies": {
     "@node-rs/argon2": "^2.0.2",
-    "@profit-tips/config": "workspace:*",
-    "@profit-tips/types": "workspace:*",
+    "@storm-tips/config": "workspace:*",
+    "@storm-tips/types": "workspace:*",
     "jose": "^6.1.0"
   },
   "devDependencies": {

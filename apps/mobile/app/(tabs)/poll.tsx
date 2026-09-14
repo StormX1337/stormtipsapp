@@ -3,7 +3,7 @@ import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'r
 import { useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import type { Paginated, PollDTO } from '@profit-tips/types';
+import type { Paginated, PollDTO } from '@storm-tips/types';
 import { theme, shared } from '@/lib/theme';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';

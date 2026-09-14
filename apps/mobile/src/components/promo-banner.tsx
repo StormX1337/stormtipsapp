@@ -2,8 +2,8 @@ import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import Svg, { Circle, Path } from 'react-native-svg';
-import type { PromoBadge as PromoBadgeCode, PromotionDTO } from '@profit-tips/types';
-import type { MessageKey } from '@profit-tips/ui';
+import type { PromoBadge as PromoBadgeCode, PromotionDTO } from '@storm-tips/types';
+import type { MessageKey } from '@storm-tips/ui';
 import { theme } from '@/lib/theme';
 import { useT } from '@/lib/i18n';
 
@@ -29,8 +29,8 @@ export function PromoBadge({ badge }: { badge: PromoBadgeCode }): ReactNode {
 }
 
 function targetRoute(promotion: PromotionDTO): string {
-  if (promotion.deepLink?.startsWith('profittips://')) {
-    const path = promotion.deepLink.replace('profittips://', '');
+  if (promotion.deepLink?.startsWith('stormtips://')) {
+    const path = promotion.deepLink.replace('stormtips://', '');
     return `/${path === 'paywall/bundle' ? 'paywall/combo' : path}`;
   }
   if (promotion.product) {

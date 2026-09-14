@@ -1,4 +1,4 @@
-import { prisma, type Prisma } from '@profit-tips/database';
+import { prisma, type Prisma } from '@storm-tips/database';
 import {
   generateReferralCode,
   generateRefreshToken,
@@ -12,7 +12,7 @@ import {
   verifyGoogleIdToken,
   verifyPassword,
   type TokenConfig,
-} from '@profit-tips/auth';
+} from '@storm-tips/auth';
 import {
   AppError,
   ErrorCode,
@@ -22,7 +22,7 @@ import {
   type OAuthInput,
   type RegisterInput,
   type UserRole,
-} from '@profit-tips/types';
+} from '@storm-tips/types';
 import { randomUUID } from 'node:crypto';
 import { env } from '../lib/env.js';
 import { logger } from '../lib/logger.js';

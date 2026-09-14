@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { prisma, type Prisma } from '@profit-tips/database';
+import { prisma, type Prisma } from '@storm-tips/database';
 import {
   AppError,
   adminTipsQuerySchema,
@@ -14,8 +14,8 @@ import {
   updateTipSchema,
   WS_TOPICS,
   type ProductCode,
-} from '@profit-tips/types';
-import { comboOdds } from '@profit-tips/statistics';
+} from '@storm-tips/types';
+import { comboOdds } from '@storm-tips/statistics';
 import { parseBody, parseParams, parseQuery } from '../../lib/validate.js';
 import { assertFound, paginate, skipTake } from '../../lib/http.js';
 import { audit } from '../../lib/audit.js';
@@ -548,7 +548,7 @@ export async function adminTipRoutes(app: FastifyInstance): Promise<void> {
         type: 'NEW_COMBO',
         title: 'Neue Combo verfügbar',
         body: combo.subtitle ?? combo.title,
-        deepLink: `profittips://combo/${combo.id}`,
+        deepLink: `stormtips://combo/${combo.id}`,
         audience: { products: ['COMBO'] },
         dedupeKey: `combo:${combo.id}`,
       });
@@ -594,7 +594,7 @@ async function announceTip(
     type: NOTIFICATION_BY_PRODUCT[product] as never,
     title: full.league.name,
     body: `${full.event.homeTeam.name} – ${full.event.awayTeam.name}: ${full.selectionLabel}`,
-    deepLink: `profittips://tips/${full.id}`,
+    deepLink: `stormtips://tips/${full.id}`,
     audience: product === 'FREE' ? {} : { products: [product] },
     dedupeKey: `tip:${full.id}`,
   });

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { QUEUE_NAMES } from '@profit-tips/config';
+import { QUEUE_NAMES } from '@storm-tips/config';
 import { CONCURRENCY, HANDLERS, SCHEDULES } from '../src/registry.js';
 
 /** Minimal 5-field cron validator — enough to catch a typo in a schedule. */

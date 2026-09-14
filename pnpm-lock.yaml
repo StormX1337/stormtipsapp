@@ -50,10 +50,10 @@ importers:
 
   apps/admin:
     dependencies:
-      '@profit-tips/types':
+      '@storm-tips/types':
         specifier: workspace:*
         version: link:../../packages/types
-      '@profit-tips/ui':
+      '@storm-tips/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       '@tanstack/react-query':
@@ -120,31 +120,31 @@ importers:
       '@node-rs/argon2':
         specifier: ^2.0.2
         version: 2.2.1
-      '@profit-tips/auth':
+      '@storm-tips/auth':
         specifier: workspace:*
         version: link:../../packages/auth
-      '@profit-tips/config':
+      '@storm-tips/config':
         specifier: workspace:*
         version: link:../../packages/config
-      '@profit-tips/database':
+      '@storm-tips/database':
         specifier: workspace:*
         version: link:../../packages/database
-      '@profit-tips/notifications':
+      '@storm-tips/notifications':
         specifier: workspace:*
         version: link:../../packages/notifications
-      '@profit-tips/payments':
+      '@storm-tips/payments':
         specifier: workspace:*
         version: link:../../packages/payments
-      '@profit-tips/sports':
+      '@storm-tips/sports':
         specifier: workspace:*
         version: link:../../packages/sports
-      '@profit-tips/statistics':
+      '@storm-tips/statistics':
         specifier: workspace:*
         version: link:../../packages/statistics
-      '@profit-tips/types':
+      '@storm-tips/types':
         specifier: workspace:*
         version: link:../../packages/types
-      '@profit-tips/ui':
+      '@storm-tips/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       bullmq:
@@ -196,15 +196,15 @@ importers:
       '@expo/metro-runtime':
         specifier: ~6.1.2
         version: 6.1.2(expo@54.0.37)(react-dom@19.1.0(react@19.1.0))(react-native@0.81.4(@babel/core@7.29.7)(@react-native/metro-config@0.87.1(@babel/core@7.29.7))(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
-      '@profit-tips/types':
-        specifier: workspace:*
-        version: link:../../packages/types
-      '@profit-tips/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@react-native-async-storage/async-storage':
         specifier: 2.2.0
         version: 2.2.0(react-native@0.81.4(@babel/core@7.29.7)(@react-native/metro-config@0.87.1(@babel/core@7.29.7))(@types/react@19.1.17)(react@19.1.0))
+      '@storm-tips/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@storm-tips/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@tanstack/react-query':
         specifier: ^5.90.2
         version: 5.102.8(react@19.1.0)
@@ -296,10 +296,10 @@ importers:
 
   apps/web:
     dependencies:
-      '@profit-tips/types':
+      '@storm-tips/types':
         specifier: workspace:*
         version: link:../../packages/types
-      '@profit-tips/ui':
+      '@storm-tips/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       '@tanstack/react-query':
@@ -351,28 +351,28 @@ importers:
       '@node-rs/argon2':
         specifier: ^2.0.2
         version: 2.2.1
-      '@profit-tips/api':
+      '@storm-tips/api':
         specifier: workspace:*
         version: link:../api
-      '@profit-tips/config':
+      '@storm-tips/config':
         specifier: workspace:*
         version: link:../../packages/config
-      '@profit-tips/database':
+      '@storm-tips/database':
         specifier: workspace:*
         version: link:../../packages/database
-      '@profit-tips/notifications':
+      '@storm-tips/notifications':
         specifier: workspace:*
         version: link:../../packages/notifications
-      '@profit-tips/sports':
+      '@storm-tips/sports':
         specifier: workspace:*
         version: link:../../packages/sports
-      '@profit-tips/statistics':
+      '@storm-tips/statistics':
         specifier: workspace:*
         version: link:../../packages/statistics
-      '@profit-tips/types':
+      '@storm-tips/types':
         specifier: workspace:*
         version: link:../../packages/types
-      '@profit-tips/ui':
+      '@storm-tips/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       bullmq:
@@ -403,10 +403,10 @@ importers:
       '@node-rs/argon2':
         specifier: ^2.0.2
         version: 2.2.1
-      '@profit-tips/config':
+      '@storm-tips/config':
         specifier: workspace:*
         version: link:../config
-      '@profit-tips/types':
+      '@storm-tips/types':
         specifier: workspace:*
         version: link:../types
       jose:
@@ -442,16 +442,16 @@ importers:
         specifier: 6.16.2
         version: 6.16.2(magicast@0.3.5)(typescript@5.9.3)
     devDependencies:
-      '@profit-tips/auth':
+      '@storm-tips/auth':
         specifier: workspace:*
         version: link:../auth
-      '@profit-tips/sports':
+      '@storm-tips/sports':
         specifier: workspace:*
         version: link:../sports
-      '@profit-tips/statistics':
+      '@storm-tips/statistics':
         specifier: workspace:*
         version: link:../statistics
-      '@profit-tips/types':
+      '@storm-tips/types':
         specifier: workspace:*
         version: link:../types
       dotenv-cli:
@@ -466,7 +466,7 @@ importers:
 
   packages/notifications:
     dependencies:
-      '@profit-tips/types':
+      '@storm-tips/types':
         specifier: workspace:*
         version: link:../types
       google-auth-library:
@@ -488,7 +488,7 @@ importers:
       '@apple/app-store-server-library':
         specifier: ^1.5.0
         version: 1.6.0
-      '@profit-tips/types':
+      '@storm-tips/types':
         specifier: workspace:*
         version: link:../types
       google-auth-library:
@@ -507,7 +507,7 @@ importers:
 
   packages/sports:
     dependencies:
-      '@profit-tips/types':
+      '@storm-tips/types':
         specifier: workspace:*
         version: link:../types
     devDependencies:
@@ -520,7 +520,7 @@ importers:
 
   packages/statistics:
     dependencies:
-      '@profit-tips/types':
+      '@storm-tips/types':
         specifier: workspace:*
         version: link:../types
     devDependencies:
@@ -543,7 +543,7 @@ importers:
 
   packages/ui:
     dependencies:
-      '@profit-tips/types':
+      '@storm-tips/types':
         specifier: workspace:*
         version: link:../types
     devDependencies:

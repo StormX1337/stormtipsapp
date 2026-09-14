@@ -1,7 +1,7 @@
-import { prisma } from '@profit-tips/database';
-import { CACHE_TTL, REDIS_KEYS } from '@profit-tips/config';
-import { aggregate, windowRange, type StatTip } from '@profit-tips/statistics';
-import type { ProductCode, StatisticsDTO, StatsWindow } from '@profit-tips/types';
+import { prisma } from '@storm-tips/database';
+import { CACHE_TTL, REDIS_KEYS } from '@storm-tips/config';
+import { aggregate, windowRange, type StatTip } from '@storm-tips/statistics';
+import type { ProductCode, StatisticsDTO, StatsWindow } from '@storm-tips/types';
 import { cacheInvalidatePattern, cached } from '../lib/cache.js';
 import { env } from '../lib/env.js';
 

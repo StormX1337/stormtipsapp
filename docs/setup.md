@@ -54,7 +54,7 @@ outcomes), combos, subscription plans, demo subscribers, polls and referrals.
 
 The seed refuses to run when `NODE_ENV=production`.
 
-Mock fixtures are deterministic: `MOCK_PROVIDER_SEED` (default `profit-tips`)
+Mock fixtures are deterministic: `MOCK_PROVIDER_SEED` (default `storm-tips`)
 drives the generator, and the seed and the running worker must agree on it, or
 the worker will rewrite fixtures the seed already stored.
 

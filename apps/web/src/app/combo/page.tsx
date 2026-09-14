@@ -4,7 +4,7 @@ import { useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { History } from 'lucide-react';
-import type { ComboDTO, Paginated } from '@profit-tips/types';
+import type { ComboDTO, Paginated } from '@storm-tips/types';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { useI18n } from '@/lib/i18n';

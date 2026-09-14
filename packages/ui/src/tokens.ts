@@ -1,5 +1,5 @@
 /**
- * PROFIT TIPS design tokens.
+ * STORM TIPS design tokens.
  *
  * Single source of truth for the visual language, consumed by
  *  • the web + admin apps  (emitted as CSS custom properties, see `cssVariables()`)
@@ -272,11 +272,11 @@ export function cssVariables(): Record<string, string> {
   const vars: Record<string, string> = {};
   const walk = (prefix: string, value: unknown): void => {
     if (typeof value === 'string' || typeof value === 'number') {
-      vars[`--pt-${prefix}`] = String(value);
+      vars[`--st-${prefix}`] = String(value);
       return;
     }
     if (Array.isArray(value)) {
-      vars[`--pt-${prefix}`] = value.join(', ');
+      vars[`--st-${prefix}`] = value.join(', ');
       return;
     }
     if (value && typeof value === 'object') {

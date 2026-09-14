@@ -1,7 +1,7 @@
 /** English message catalogue — the reference locale. */
 export const en = {
   // common
-  'common.appName': 'PROFIT TIPS',
+  'common.appName': 'STORM TIPS',
   'common.tagline': 'Data-driven sports analysis',
   'common.loading': 'Loading…',
   'common.retry': 'Try again',
@@ -266,7 +266,7 @@ export const en = {
   'legal.help': 'Help & support',
   'legal.ageNotice': '18+. Betting involves financial risk.',
   'legal.noGuarantee':
-    'PROFIT TIPS publishes sports analyses for informational purposes. No result is guaranteed and no outcome can be predicted with certainty.',
+    'STORM TIPS publishes sports analyses for informational purposes. No result is guaranteed and no outcome can be predicted with certainty.',
   'legal.helpLine':
     'If gambling stops being fun, seek help from a support service in your country.',
 

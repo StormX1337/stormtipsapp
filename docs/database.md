@@ -3,7 +3,7 @@
 PostgreSQL 16 with Prisma 6. The schema lives in
 `packages/database/prisma/schema.prisma` (39 models) and is the single place
 where the data model is defined — the API, worker, seed and admin all import the
-generated client from `@profit-tips/database`.
+generated client from `@storm-tips/database`.
 
 ## Client
 
@@ -99,7 +99,7 @@ invents a result — it settles what the provider reports.
 `pg_dump` the database before every deploy that carries a migration:
 
 ```bash
-pg_dump --format=custom --file=profit-tips-$(date +%F).dump "$DATABASE_URL"
+pg_dump --format=custom --file=storm-tips-$(date +%F).dump "$DATABASE_URL"
 ```
 
 The container stack keeps data in the named volume `postgres-data`; back up the

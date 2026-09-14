@@ -1,7 +1,7 @@
 import { apiBase } from './config';
 
-const ACCESS_TOKEN_KEY = 'pt.admin.accessToken';
-const REFRESH_TOKEN_KEY = 'pt.admin.refreshToken';
+const ACCESS_TOKEN_KEY = 'st.admin.accessToken';
+const REFRESH_TOKEN_KEY = 'st.admin.refreshToken';
 
 export interface ApiError extends Error {
   code: string;
@@ -35,12 +35,12 @@ export const tokenStore = {
   set(accessToken: string, refreshToken: string): void {
     window.localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
     window.localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
-    window.dispatchEvent(new Event('pt:auth-changed'));
+    window.dispatchEvent(new Event('st:auth-changed'));
   },
   clear(): void {
     window.localStorage.removeItem(ACCESS_TOKEN_KEY);
     window.localStorage.removeItem(REFRESH_TOKEN_KEY);
-    window.dispatchEvent(new Event('pt:auth-changed'));
+    window.dispatchEvent(new Event('st:auth-changed'));
   },
 };
 

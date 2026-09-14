@@ -11,9 +11,9 @@ import {
 import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import type { MessageKey } from '@profit-tips/ui';
-import type { ProductCode, PromotionDTO, TipFeedDTO } from '@profit-tips/types';
-import { toDateKey } from '@profit-tips/ui';
+import type { MessageKey } from '@storm-tips/ui';
+import type { ProductCode, PromotionDTO, TipFeedDTO } from '@storm-tips/types';
+import { toDateKey } from '@storm-tips/ui';
 import { theme, shared } from '@/lib/theme';
 import { api } from '@/lib/api';
 import { cache } from '@/lib/storage';

@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { pingDatabase } from '@profit-tips/database';
+import { pingDatabase } from '@storm-tips/database';
 import { pingRedis } from '../lib/redis.js';
 import { env } from '../lib/env.js';
 
@@ -9,7 +9,7 @@ export async function healthRoutes(app: FastifyInstance): Promise<void> {
   /** Liveness: the process is up. Never touches a dependency. */
   app.get('/health', async () => ({
     status: 'ok',
-    service: 'profit-tips-api',
+    service: 'storm-tips-api',
     version: process.env.APP_VERSION ?? '1.0.0',
     env: env.NODE_ENV,
     uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
@@ -34,14 +34,14 @@ export async function healthRoutes(app: FastifyInstance): Promise<void> {
     }
     const memory = process.memoryUsage();
     const lines = [
-      '# HELP profit_tips_uptime_seconds Process uptime in seconds',
-      '# TYPE profit_tips_uptime_seconds gauge',
-      `profit_tips_uptime_seconds ${Math.round((Date.now() - startedAt) / 1000)}`,
-      '# HELP profit_tips_memory_bytes Resident memory in bytes',
-      '# TYPE profit_tips_memory_bytes gauge',
-      `profit_tips_memory_bytes{type="rss"} ${memory.rss}`,
-      `profit_tips_memory_bytes{type="heap_used"} ${memory.heapUsed}`,
-      `profit_tips_memory_bytes{type="heap_total"} ${memory.heapTotal}`,
+      '# HELP storm_tips_uptime_seconds Process uptime in seconds',
+      '# TYPE storm_tips_uptime_seconds gauge',
+      `storm_tips_uptime_seconds ${Math.round((Date.now() - startedAt) / 1000)}`,
+      '# HELP storm_tips_memory_bytes Resident memory in bytes',
+      '# TYPE storm_tips_memory_bytes gauge',
+      `storm_tips_memory_bytes{type="rss"} ${memory.rss}`,
+      `storm_tips_memory_bytes{type="heap_used"} ${memory.heapUsed}`,
+      `storm_tips_memory_bytes{type="heap_total"} ${memory.heapTotal}`,
     ];
     reply.header('content-type', 'text/plain; version=0.0.4');
     return `${lines.join('\n')}\n`;

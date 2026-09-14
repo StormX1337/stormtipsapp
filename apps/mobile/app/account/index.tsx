@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 import { Alert, Linking, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import type { SupportedLocale } from '@profit-tips/ui';
-import { maskEmail } from '@profit-tips/ui';
+import type { SupportedLocale } from '@storm-tips/ui';
+import { maskEmail } from '@storm-tips/ui';
 import { theme } from '@/lib/theme';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';

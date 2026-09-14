@@ -17,7 +17,7 @@ pnpm dev:mobile         # Expo dev server
 ```bash
 EXPO_PUBLIC_API_URL=http://localhost:4000
 EXPO_PUBLIC_WS_URL=ws://localhost:4000/ws
-EXPO_PUBLIC_APP_NAME="PROFIT TIPS"
+EXPO_PUBLIC_APP_NAME="STORM TIPS"
 ```
 
 `EXPO_PUBLIC_*` values are compiled into the bundle. Never put a secret there.
@@ -117,7 +117,7 @@ AsyncStorage's web build reads `.default` off it.
 ## Verifying a change
 
 ```bash
-pnpm --filter @profit-tips/mobile typecheck
+pnpm --filter @storm-tips/mobile typecheck
 cd apps/mobile && npx expo export --platform android --output-dir .expo-export
 ```
 

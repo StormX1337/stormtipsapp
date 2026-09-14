@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { prisma, type Prisma } from '@profit-tips/database';
+import { prisma, type Prisma } from '@storm-tips/database';
 import {
   AppError,
   idParamSchema,
@@ -8,7 +8,7 @@ import {
   upsertFixOddsPlanSchema,
   upsertPlanSchema,
   upsertPromotionSchema,
-} from '@profit-tips/types';
+} from '@storm-tips/types';
 import { parseBody, parseParams, parseQuery } from '../../lib/validate.js';
 import { assertFound, paginate, skipTake } from '../../lib/http.js';
 import { audit } from '../../lib/audit.js';

@@ -49,7 +49,7 @@ only the last four characters.
 ## The mock provider
 
 `MockProvider` generates a deterministic league calendar, odds and results from a
-seed (`MOCK_PROVIDER_SEED`, default `profit-tips`). It exists for local
+seed (`MOCK_PROVIDER_SEED`, default `storm-tips`). It exists for local
 development, for tests, and so a fresh checkout has a working product without a
 vendor account.
 

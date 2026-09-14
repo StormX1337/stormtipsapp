@@ -1,5 +1,5 @@
-import { prisma, type Prisma } from '@profit-tips/database';
-import { CACHE_TTL, REDIS_KEYS } from '@profit-tips/config';
+import { prisma, type Prisma } from '@storm-tips/database';
+import { CACHE_TTL, REDIS_KEYS } from '@storm-tips/config';
 import {
   AppError,
   type ComboDTO,
@@ -8,7 +8,7 @@ import {
   type TipDTO,
   type TipFeedDTO,
   type TipFeedGroupDTO,
-} from '@profit-tips/types';
+} from '@storm-tips/types';
 import { cacheInvalidatePattern } from '../lib/cache.js';
 import { paginate, skipTake, type PageParams } from '../lib/http.js';
 import { serializeBookmaker, serializeLeague } from '../serializers/catalogue.js';

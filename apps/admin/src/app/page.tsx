@@ -16,7 +16,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import type { AdminDashboardDTO } from '@profit-tips/types';
+import type { AdminDashboardDTO } from '@storm-tips/types';
 import { api } from '@/lib/api';
 import { ErrorBox, PageHeader, Skeleton } from '@/components/ui';
 

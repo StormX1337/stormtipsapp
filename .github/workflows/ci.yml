@@ -14,8 +14,8 @@ concurrency:
 env:
   NODE_VERSION: '22'
   # Test-only values. Real secrets live in the environment, never in the repo.
-  DATABASE_URL: postgresql://profit:profit@localhost:5432/profit_tips_test?schema=public
-  DIRECT_DATABASE_URL: postgresql://profit:profit@localhost:5432/profit_tips_test?schema=public
+  DATABASE_URL: postgresql://storm:storm@localhost:5432/storm_tips_test?schema=public
+  DIRECT_DATABASE_URL: postgresql://storm:storm@localhost:5432/storm_tips_test?schema=public
   REDIS_URL: redis://localhost:6379
   JWT_ACCESS_SECRET: ci-access-secret-that-is-long-enough-000
   JWT_REFRESH_SECRET: ci-refresh-secret-that-is-long-enough-00
@@ -34,12 +34,12 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_USER: profit
-          POSTGRES_PASSWORD: profit
-          POSTGRES_DB: profit_tips_test
+          POSTGRES_USER: storm
+          POSTGRES_PASSWORD: storm
+          POSTGRES_DB: storm_tips_test
         ports: ['5432:5432']
         options: >-
-          --health-cmd "pg_isready -U profit"
+          --health-cmd "pg_isready -U storm"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
@@ -66,7 +66,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Apply migrations
-        run: pnpm --filter @profit-tips/database exec prisma migrate deploy
+        run: pnpm --filter @storm-tips/database exec prisma migrate deploy
 
       - name: Lint
         run: pnpm lint

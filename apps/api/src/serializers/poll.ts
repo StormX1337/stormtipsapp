@@ -1,5 +1,5 @@
-import type { Prisma } from '@profit-tips/database';
-import type { PollDTO, PollOptionDTO } from '@profit-tips/types';
+import type { Prisma } from '@storm-tips/database';
+import type { PollDTO, PollOptionDTO } from '@storm-tips/types';
 import { eventInclude, serializeEvent } from './catalogue.js';
 import { iso } from './common.js';
 

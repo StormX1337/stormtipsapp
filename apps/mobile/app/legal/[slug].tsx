@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { LEGAL_FOOTNOTE, getLegalDocument, isLegalSlug } from '@profit-tips/ui';
+import { LEGAL_FOOTNOTE, getLegalDocument, isLegalSlug } from '@storm-tips/ui';
 import { theme } from '@/lib/theme';
 import { useI18n } from '@/lib/i18n';
 import { Screen } from '@/components/layout';

@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import type { AuthResponseDTO, ProductCode, UserDTO } from '@profit-tips/types';
+import type { AuthResponseDTO, ProductCode, UserDTO } from '@storm-tips/types';
 import { api, tokens } from './api';
 import { cache } from './storage';
 import { registerPushToken, unregisterPushToken } from './notifications';
@@ -75,7 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }): ReactNode {
         await api<AuthResponseDTO>('/auth/login', {
           method: 'POST',
           auth: false,
-          body: { email, password, deviceName: 'PROFIT TIPS App' },
+          body: { email, password, deviceName: 'STORM TIPS App' },
         }),
       );
     },

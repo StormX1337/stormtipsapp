@@ -1,4 +1,4 @@
-import type { EventStatus, MarketType } from '@profit-tips/types';
+import type { EventStatus, MarketType } from '@storm-tips/types';
 
 /**
  * Normalised provider DTOs.

@@ -1,4 +1,4 @@
-import { prisma, type Prisma } from '@profit-tips/database';
+import { prisma, type Prisma } from '@storm-tips/database';
 import {
   classifyMovement,
   createProviderWithFallback,
@@ -6,9 +6,9 @@ import {
   type ProviderEvent,
   type ProviderOdds,
   type SportsDataProvider,
-} from '@profit-tips/sports';
-import { decryptSecret } from '@profit-tips/auth';
-import type { MarketType } from '@profit-tips/types';
+} from '@storm-tips/sports';
+import { decryptSecret } from '@storm-tips/auth';
+import type { MarketType } from '@storm-tips/types';
 import { env } from '../lib/env.js';
 import { logger } from '../lib/logger.js';
 

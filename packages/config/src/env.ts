@@ -9,7 +9,7 @@ import { z } from 'zod';
  * developer convenience only and never overrides an already-set variable.
  */
 function bootstrapDotenv(): void {
-  if (process.env.PROFIT_TIPS_ENV_LOADED === 'true') return;
+  if (process.env.STORM_TIPS_ENV_LOADED === 'true') return;
   let dir = process.cwd();
   for (let depth = 0; depth < 6; depth += 1) {
     const candidate = path.join(dir, '.env');
@@ -21,7 +21,7 @@ function bootstrapDotenv(): void {
     if (parent === dir) break;
     dir = parent;
   }
-  process.env.PROFIT_TIPS_ENV_LOADED = 'true';
+  process.env.STORM_TIPS_ENV_LOADED = 'true';
 }
 
 const bool = z
@@ -84,14 +84,14 @@ export const envSchema = z.object({
   STRIPE_CANCEL_URL: z.string().url().default('http://localhost:3000/billing/cancelled'),
 
   // apple iap
-  APPLE_BUNDLE_ID: z.string().default('com.profittips.app'),
+  APPLE_BUNDLE_ID: z.string().default('com.stormtips.app'),
   APPLE_ISSUER_ID: z.string().optional(),
   APPLE_KEY_ID: z.string().optional(),
   APPLE_PRIVATE_KEY: z.string().optional(),
   APPLE_ENVIRONMENT: z.enum(['Sandbox', 'Production']).default('Sandbox'),
 
   // google play
-  GOOGLE_PLAY_PACKAGE_NAME: z.string().default('com.profittips.app'),
+  GOOGLE_PLAY_PACKAGE_NAME: z.string().default('com.stormtips.app'),
   GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_BASE64: z.string().optional(),
   GOOGLE_PUBSUB_AUDIENCE: z.string().optional(),
   GOOGLE_PUBSUB_SERVICE_ACCOUNT_EMAIL: z.string().optional(),
@@ -110,7 +110,7 @@ export const envSchema = z.object({
   APNS_KEY_ID: z.string().optional(),
   APNS_TEAM_ID: z.string().optional(),
   APNS_PRIVATE_KEY: z.string().optional(),
-  APNS_BUNDLE_ID: z.string().default('com.profittips.app'),
+  APNS_BUNDLE_ID: z.string().default('com.stormtips.app'),
   APNS_PRODUCTION: bool.default(false),
 
   // email
@@ -119,7 +119,7 @@ export const envSchema = z.object({
   SMTP_SECURE: bool.default(false),
   SMTP_USER: z.string().optional(),
   SMTP_PASSWORD: z.string().optional(),
-  SMTP_FROM: z.string().default('PROFIT TIPS <no-reply@profittips.app>'),
+  SMTP_FROM: z.string().default('STORM TIPS <no-reply@stormtips.app>'),
 
   // product defaults
   DEFAULT_CURRENCY: z.enum(['EUR', 'USD', 'GBP']).default('EUR'),
@@ -133,7 +133,7 @@ export const envSchema = z.object({
   METRICS_ENABLED: bool.default(true),
 
   // seed
-  SEED_ADMIN_EMAIL: z.string().email().default('admin@profittips.app'),
+  SEED_ADMIN_EMAIL: z.string().email().default('admin@stormtips.app'),
   SEED_ADMIN_PASSWORD: z.string().min(8).default('ChangeMe!2026'),
 });
 
@@ -165,7 +165,7 @@ export function loadEnv(overrides: NodeJS.ProcessEnv = process.env): Env {
 /** Test helper — forces the next `loadEnv()` to re-read `process.env`. */
 export function resetEnvCache(): void {
   cached = null;
-  delete process.env.PROFIT_TIPS_ENV_LOADED;
+  delete process.env.STORM_TIPS_ENV_LOADED;
 }
 
 export const isProduction = (env: Env): boolean => env.NODE_ENV === 'production';

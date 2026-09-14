@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { RefreshControl, View } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
-import type { TipDTO } from '@profit-tips/types';
+import type { TipDTO } from '@storm-tips/types';
 import { theme } from '@/lib/theme';
 import { api } from '@/lib/api';
 import { useI18n } from '@/lib/i18n';

@@ -2,7 +2,7 @@ import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
-import { colors } from '@profit-tips/ui';
+import { colors } from '@storm-tips/ui';
 import { api, tokens } from './api';
 import { preferences } from './storage';
 
@@ -100,7 +100,7 @@ export async function unregisterPushToken(): Promise<void> {
 export function routeForNotification(data: Record<string, unknown> | undefined): string | null {
   const deepLink = typeof data?.deepLink === 'string' ? data.deepLink : null;
   if (!deepLink) return null;
-  const withoutScheme = deepLink.replace(/^profittips:\/\//, '');
+  const withoutScheme = deepLink.replace(/^stormtips:\/\//, '');
   if (!withoutScheme || withoutScheme === 'home') return '/free';
   return `/${withoutScheme}`;
 }

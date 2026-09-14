@@ -1,12 +1,12 @@
-import { prisma } from '@profit-tips/database';
-import { REDIS_KEYS } from '@profit-tips/config';
-import { AppError, type EntitlementDTO, type ProductCode } from '@profit-tips/types';
+import { prisma } from '@storm-tips/database';
+import { REDIS_KEYS } from '@storm-tips/config';
+import { AppError, type EntitlementDTO, type ProductCode } from '@storm-tips/types';
 import {
   activeProducts,
   entitlementIsActive,
   subscriptionGrantsAccess,
   type EntitlementWindow,
-} from '@profit-tips/payments';
+} from '@storm-tips/payments';
 import { cacheDelete, cacheGet, cacheSet } from '../lib/cache.js';
 
 const CACHE_TTL_SECONDS = 60;

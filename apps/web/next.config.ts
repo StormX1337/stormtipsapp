@@ -8,7 +8,7 @@ const config: NextConfig = {
   output: 'standalone',
   outputFileTracingRoot: path.join(import.meta.dirname, '../..'),
   // Workspace packages ship TypeScript source and must be compiled by Next.
-  transpilePackages: ['@profit-tips/ui', '@profit-tips/types'],
+  transpilePackages: ['@storm-tips/ui', '@storm-tips/types'],
   eslint: {
     // Linting runs once for the whole monorepo via `pnpm lint`; running it again
     // here would need a second, duplicated ESLint config.

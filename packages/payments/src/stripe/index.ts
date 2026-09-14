@@ -1,5 +1,5 @@
 import Stripe from 'stripe';
-import { AppError, ErrorCode, type SubscriptionStatus } from '@profit-tips/types';
+import { AppError, ErrorCode, type SubscriptionStatus } from '@storm-tips/types';
 import type {
   CheckoutParams,
   CheckoutSession,
@@ -51,7 +51,7 @@ export class StripeAdapter {
     }
     this.client = new Stripe(config.secretKey, {
       apiVersion: config.apiVersion ?? ('2025-09-30.clover' as Stripe.LatestApiVersion),
-      appInfo: { name: 'PROFIT TIPS', version: '1.0.0' },
+      appInfo: { name: 'STORM TIPS', version: '1.0.0' },
       maxNetworkRetries: 2,
       timeout: 15_000,
     });

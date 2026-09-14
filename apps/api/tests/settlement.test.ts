@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { prisma } from '@profit-tips/database';
+import { prisma } from '@storm-tips/database';
 import { settlement } from '../src/services/settlement.service.js';
 import { billing } from '../src/services/billing.service.js';
 import { closeApp } from './helpers.js';

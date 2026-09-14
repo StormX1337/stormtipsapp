@@ -1,4 +1,4 @@
-import { AppError, ErrorCode, MarketType, SelectionKey } from '@profit-tips/types';
+import { AppError, ErrorCode, MarketType, SelectionKey } from '@storm-tips/types';
 
 /** The settled outcome of a single selection. */
 export type SettlementOutcome = 'WON' | 'LOST' | 'VOID' | 'HALF_WON' | 'HALF_LOST';

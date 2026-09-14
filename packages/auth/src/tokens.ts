@@ -1,6 +1,6 @@
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import { SignJWT, jwtVerify, type JWTPayload } from 'jose';
-import { AppError, ErrorCode, type UserRole } from '@profit-tips/types';
+import { AppError, ErrorCode, type UserRole } from '@storm-tips/types';
 
 export interface AccessTokenClaims extends JWTPayload {
   sub: string;

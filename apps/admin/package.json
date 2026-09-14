@@ -1,5 +1,5 @@
 {
-  "name": "@profit-tips/admin",
+  "name": "@storm-tips/admin",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -10,8 +10,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@profit-tips/types": "workspace:*",
-    "@profit-tips/ui": "workspace:*",
+    "@storm-tips/types": "workspace:*",
+    "@storm-tips/ui": "workspace:*",
     "@tanstack/react-query": "^5.90.2",
     "clsx": "^2.1.1",
     "lucide-react": "^0.544.0",

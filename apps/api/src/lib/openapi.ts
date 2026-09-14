@@ -8,8 +8,8 @@ import {
   tipFeedQuerySchema,
   verifyStorePurchaseSchema,
   voteSchema,
-} from '@profit-tips/types';
-import { API_PREFIX, APP_NAME } from '@profit-tips/config';
+} from '@storm-tips/types';
+import { API_PREFIX, APP_NAME } from '@storm-tips/config';
 import { env } from './env.js';
 
 type JsonSchema = Record<string, unknown>;

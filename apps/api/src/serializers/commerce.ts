@@ -1,5 +1,5 @@
-import type { Prisma } from '@profit-tips/database';
-import { intervalMonths, pricePerMonthCents, savingsAgainstMonthly } from '@profit-tips/payments';
+import type { Prisma } from '@storm-tips/database';
+import { intervalMonths, pricePerMonthCents, savingsAgainstMonthly } from '@storm-tips/payments';
 import type {
   FixOddsPlanDTO,
   PaymentDTO,
@@ -8,7 +8,7 @@ import type {
   PromotionDTO,
   SubscriptionDTO,
   SubscriptionPlanDTO,
-} from '@profit-tips/types';
+} from '@storm-tips/types';
 import { dec, iso, money } from './common.js';
 
 /**

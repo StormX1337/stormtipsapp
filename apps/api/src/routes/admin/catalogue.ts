@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { prisma } from '@profit-tips/database';
+import { prisma } from '@storm-tips/database';
 import {
   idParamSchema,
   paginationSchema,
@@ -7,7 +7,7 @@ import {
   upsertLeagueSchema,
   upsertSportSchema,
   upsertTeamSchema,
-} from '@profit-tips/types';
+} from '@storm-tips/types';
 import { parseBody, parseParams, parseQuery } from '../../lib/validate.js';
 import { paginate, skipTake } from '../../lib/http.js';
 import { audit } from '../../lib/audit.js';

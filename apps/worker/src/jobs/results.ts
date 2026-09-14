@@ -1,9 +1,9 @@
 import type { Job } from 'bullmq';
-import { prisma } from '@profit-tips/database';
-import { settlement, statistics, sync, notifications } from '@profit-tips/api/services';
-import { logger } from '@profit-tips/api/lib/logger';
-import { WS_TOPICS, type ProductCode } from '@profit-tips/types';
-import { serializeTip, tipInclude } from '@profit-tips/api/serializers/tip';
+import { prisma } from '@storm-tips/database';
+import { settlement, statistics, sync, notifications } from '@storm-tips/api/services';
+import { logger } from '@storm-tips/api/lib/logger';
+import { WS_TOPICS, type ProductCode } from '@storm-tips/types';
+import { serializeTip, tipInclude } from '@storm-tips/api/serializers/tip';
 import { publish } from '../lib/broadcast.js';
 
 const TOPIC_BY_PRODUCT: Record<ProductCode, string> = {
@@ -72,7 +72,7 @@ async function notifyResults(): Promise<void> {
       type: 'TIP_RESULT',
       title: `${product}: ${counts.won} gewonnen, ${counts.lost} verloren`,
       body: 'Die aktuellen Ergebnisse stehen in deinem Verlauf bereit.',
-      deepLink: 'profittips://history',
+      deepLink: 'stormtips://history',
       audience: product === 'FREE' ? {} : { products: [product as ProductCode] },
       dedupeKey: `results:${product}:${Math.floor(Date.now() / 900_000)}`,
     });

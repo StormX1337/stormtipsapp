@@ -1,5 +1,5 @@
-import { prisma } from '@profit-tips/database';
-import type { AnalyticsEventName } from '@profit-tips/types';
+import { prisma } from '@storm-tips/database';
+import type { AnalyticsEventName } from '@storm-tips/types';
 import { logger } from '../lib/logger.js';
 
 export interface TrackInput {

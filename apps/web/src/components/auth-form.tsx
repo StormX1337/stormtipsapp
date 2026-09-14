@@ -34,7 +34,7 @@ export function AuthCard({
       {footer ? <div className="mt-5 text-center text-[13px]">{footer}</div> : null}
 
       <p className="mt-8 text-center text-[11px] leading-relaxed text-ink-dim">
-        18+ · Wetten ist mit finanziellem Risiko verbunden. PROFIT TIPS veröffentlicht Analysen zu
+        18+ · Wetten ist mit finanziellem Risiko verbunden. STORM TIPS veröffentlicht Analysen zu
         Informationszwecken; kein Ergebnis ist garantiert.
       </p>
     </main>

@@ -1,5 +1,5 @@
 import { afterAll, describe, expect, it } from 'vitest';
-import { prisma } from '@profit-tips/database';
+import { prisma } from '@storm-tips/database';
 import {
   closeApp,
   createTestUser,

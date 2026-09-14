@@ -2,7 +2,7 @@
 
 import clsx from 'clsx';
 import { useEffect, useMemo, useRef, type ReactNode } from 'react';
-import { toDateKey } from '@profit-tips/ui';
+import { toDateKey } from '@storm-tips/ui';
 import { useI18n } from '@/lib/i18n';
 
 /**

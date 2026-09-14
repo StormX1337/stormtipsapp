@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { trackBatchSchema, trackEventSchema } from '@profit-tips/types';
+import { trackBatchSchema, trackEventSchema } from '@storm-tips/types';
 import { parseBody } from '../lib/validate.js';
 import { noStore } from '../lib/http.js';
 import { analytics } from '../services/analytics.service.js';

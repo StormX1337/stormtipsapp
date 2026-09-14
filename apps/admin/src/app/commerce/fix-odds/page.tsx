@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Pencil, Plus } from 'lucide-react';
-import type { FixOddsPlanDTO } from '@profit-tips/types';
+import type { FixOddsPlanDTO } from '@storm-tips/types';
 import { api } from '@/lib/api';
 import {
   Badge,

@@ -4,7 +4,7 @@ import { Suspense, useState, type ReactNode } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 import { Check, Pencil, Plus, Send, Trash2, X } from 'lucide-react';
-import type { Paginated, TipDTO, TipOutcome } from '@profit-tips/types';
+import type { Paginated, TipDTO, TipOutcome } from '@storm-tips/types';
 import { api } from '@/lib/api';
 import { useAdminAuth } from '@/lib/auth';
 import { TipEditor } from '@/components/tip-editor';

@@ -1,7 +1,7 @@
-import { prisma } from '@profit-tips/database';
-import { referralProgramSchema, type ReferralProgramConfig } from '@profit-tips/types';
-import { maskEmail } from '@profit-tips/ui';
-import type { ReferralSummaryDTO } from '@profit-tips/types';
+import { prisma } from '@storm-tips/database';
+import { referralProgramSchema, type ReferralProgramConfig } from '@storm-tips/types';
+import { maskEmail } from '@storm-tips/ui';
+import type { ReferralSummaryDTO } from '@storm-tips/types';
 import { env } from '../lib/env.js';
 import { money } from '../serializers/common.js';
 import { entitlements } from './entitlement.service.js';

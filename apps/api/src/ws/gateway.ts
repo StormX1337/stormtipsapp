@@ -1,15 +1,15 @@
 import fp from 'fastify-plugin';
 import type { FastifyInstance } from 'fastify';
 import type { WebSocket } from '@fastify/websocket';
-import { REDIS_CHANNELS } from '@profit-tips/config';
-import { verifyAccessToken } from '@profit-tips/auth';
+import { REDIS_CHANNELS } from '@storm-tips/config';
+import { verifyAccessToken } from '@storm-tips/auth';
 import {
   WS_TOPICS,
   type BroadcastEnvelope,
   type ClientMessage,
   type ProductCode,
   type ServerMessage,
-} from '@profit-tips/types';
+} from '@storm-tips/types';
 import { logger } from '../lib/logger.js';
 import { redisPublisher, redisSubscriber } from '../lib/redis.js';
 import { entitlements } from '../services/entitlement.service.js';

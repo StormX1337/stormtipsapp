@@ -1,4 +1,4 @@
-import { prisma, type Prisma } from '@profit-tips/database';
+import { prisma, type Prisma } from '@storm-tips/database';
 import {
   profitFor,
   returnFactor,
@@ -6,8 +6,8 @@ import {
   settleSelection,
   type MatchResult,
   type SettlementOutcome,
-} from '@profit-tips/statistics';
-import { AppError, ErrorCode, type TipOutcome } from '@profit-tips/types';
+} from '@storm-tips/statistics';
+import { AppError, ErrorCode, type TipOutcome } from '@storm-tips/types';
 import { logger } from '../lib/logger.js';
 import { statistics } from './statistics.service.js';
 

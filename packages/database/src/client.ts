@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 export type { PrismaClient } from '@prisma/client';
 
 declare global {
-  var __profitTipsPrisma__: PrismaClient | undefined;
+  var __stormTipsPrisma__: PrismaClient | undefined;
 }
 
 function logLevels(): ('query' | 'info' | 'warn' | 'error')[] {
@@ -23,10 +23,10 @@ export function createPrismaClient(): PrismaClient {
 let instance: PrismaClient | undefined;
 
 function client(): PrismaClient {
-  instance ??= globalThis.__profitTipsPrisma__ ?? createPrismaClient();
+  instance ??= globalThis.__stormTipsPrisma__ ?? createPrismaClient();
   // Re-used across hot reloads in development so a long-running dev server does
   // not exhaust the Postgres connection pool.
-  if (process.env.NODE_ENV !== 'production') globalThis.__profitTipsPrisma__ = instance;
+  if (process.env.NODE_ENV !== 'production') globalThis.__stormTipsPrisma__ = instance;
   return instance;
 }
 

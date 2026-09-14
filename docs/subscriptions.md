@@ -48,7 +48,7 @@ restrictions.
 | `PAUSED`       | no                         | Paused by the customer (Google Play)          |
 | `EXPIRED`      | no                         | Period over, not renewed                      |
 
-`subscriptionGrantsAccess()` in `@profit-tips/payments` is the single rule: the
+`subscriptionGrantsAccess()` in `@storm-tips/payments` is the single rule: the
 status must be access-granting **and** the later of `currentPeriodEnd` and
 `gracePeriodEndsAt` must still be in the future.
 

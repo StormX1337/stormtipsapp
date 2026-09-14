@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import type { AuthResponseDTO, ProductCode, UserDTO } from '@profit-tips/types';
+import type { AuthResponseDTO, ProductCode, UserDTO } from '@storm-tips/types';
 import { api, tokenStore } from './api';
 
 interface AuthContextValue {
@@ -60,10 +60,10 @@ export function AuthProvider({ children }: { children: ReactNode }): ReactNode {
     const handler = (): void => {
       void loadProfile();
     };
-    window.addEventListener('pt:auth-changed', handler);
+    window.addEventListener('st:auth-changed', handler);
     window.addEventListener('storage', handler);
     return () => {
-      window.removeEventListener('pt:auth-changed', handler);
+      window.removeEventListener('st:auth-changed', handler);
       window.removeEventListener('storage', handler);
     };
   }, [loadProfile]);

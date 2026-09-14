@@ -1,4 +1,4 @@
-import type { BillingInterval, DiscountType } from '@profit-tips/types';
+import type { BillingInterval, DiscountType } from '@storm-tips/types';
 
 /** Number of months a billing interval covers (used for "per month" pricing). */
 export function intervalMonths(interval: BillingInterval, count: number): number {

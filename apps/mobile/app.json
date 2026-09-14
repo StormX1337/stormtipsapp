@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "PROFIT TIPS",
-    "slug": "profit-tips",
+    "name": "STORM TIPS",
+    "slug": "storm-tips",
     "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "profittips",
+    "scheme": "stormtips",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "backgroundColor": "#0A0C10",
@@ -12,7 +12,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.profittips.app",
+      "bundleIdentifier": "com.stormtips.app",
       "config": { "usesNonExemptEncryption": false },
       "infoPlist": {
         "UIBackgroundModes": ["remote-notification"],
@@ -20,7 +20,7 @@
       }
     },
     "android": {
-      "package": "com.profittips.app",
+      "package": "com.stormtips.app",
       "adaptiveIcon": { "backgroundColor": "#0A0C10" },
       "permissions": ["POST_NOTIFICATIONS"],
       "edgeToEdgeEnabled": true

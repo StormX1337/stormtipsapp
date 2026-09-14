@@ -56,7 +56,7 @@ function layout(title: string, body: string, ctaLabel?: string, ctaUrl?: string)
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:32px 16px">
     <tr><td align="center">
       <table role="presentation" width="100%" style="max-width:520px;background:#151821;border-radius:16px;padding:28px">
-        <tr><td style="font-size:20px;font-weight:800;letter-spacing:.5px;color:#12E17F;padding-bottom:16px">PROFIT TIPS</td></tr>
+        <tr><td style="font-size:20px;font-weight:800;letter-spacing:.5px;color:#12E17F;padding-bottom:16px">STORM TIPS</td></tr>
         <tr><td style="font-size:18px;font-weight:700;padding-bottom:12px">${title}</td></tr>
         <tr><td style="font-size:14px;line-height:1.6;color:#9BA5B7">${body}</td></tr>
         ${
@@ -66,7 +66,7 @@ function layout(title: string, body: string, ctaLabel?: string, ctaUrl?: string)
             : ''
         }
         <tr><td style="padding-top:28px;font-size:11px;color:#6C7688;line-height:1.6">
-          PROFIT TIPS veröffentlicht Sportanalysen zu Informationszwecken. Kein Ergebnis ist garantiert. 18+.
+          STORM TIPS veröffentlicht Sportanalysen zu Informationszwecken. Kein Ergebnis ist garantiert. 18+.
         </td></tr>
       </table>
     </td></tr>
@@ -81,7 +81,7 @@ export function verificationEmail(token: string): Omit<MailInput, 'to'> {
     text: `Bestätige deine E-Mail-Adresse: ${url}\n\nDer Link ist 24 Stunden gültig.`,
     html: layout(
       'Bestätige deine E-Mail-Adresse',
-      'Klicke auf den Button, um dein PROFIT TIPS Konto zu aktivieren. Der Link ist 24 Stunden gültig.',
+      'Klicke auf den Button, um dein STORM TIPS Konto zu aktivieren. Der Link ist 24 Stunden gültig.',
       'E-Mail bestätigen',
       url,
     ),

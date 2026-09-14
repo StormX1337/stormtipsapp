@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { AppError, ErrorCode, type Paginated } from '@profit-tips/types';
-import { PAGINATION } from '@profit-tips/config';
+import { AppError, ErrorCode, type Paginated } from '@storm-tips/types';
+import { PAGINATION } from '@storm-tips/config';
 
 export interface PageParams {
   page: number;

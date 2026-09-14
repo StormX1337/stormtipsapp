@@ -1,4 +1,4 @@
-import type { NotificationType } from '@profit-tips/types';
+import type { NotificationType } from '@storm-tips/types';
 
 interface Template {
   title: string;
@@ -18,112 +18,112 @@ const DE: Catalogue = {
   NEW_TIP: {
     title: 'Neue Analyse',
     body: '{league}: {match} — {market}',
-    deepLink: 'profittips://tips/{tipId}',
+    deepLink: 'stormtips://tips/{tipId}',
   },
   NEW_VIP_TIP: {
     title: 'Neue VIP-Analyse',
     body: '{league}: {match} — jetzt ansehen',
-    deepLink: 'profittips://vip/{tipId}',
+    deepLink: 'stormtips://vip/{tipId}',
   },
   NEW_COMBO: {
     title: 'Neue Combo verfügbar',
     body: '{count} Auswahlen · Gesamtquote {odds}',
-    deepLink: 'profittips://combo/{comboId}',
+    deepLink: 'stormtips://combo/{comboId}',
   },
   NEW_EXTRA: {
     title: 'Neue Extra-Auswahl',
     body: '{league}: {match} — {market}',
-    deepLink: 'profittips://extra/{tipId}',
+    deepLink: 'stormtips://extra/{tipId}',
   },
   NEW_FIX_ODDS: {
     title: 'Neue Fix-Odds-Auswahl',
     body: '{plan}: Zielquote {odds}',
-    deepLink: 'profittips://fix-odds/{tipId}',
+    deepLink: 'stormtips://fix-odds/{tipId}',
   },
   TIP_RESULT: {
     title: 'Ergebnis: {outcome}',
     body: '{match} — {market} @ {odds}',
-    deepLink: 'profittips://tips/{tipId}',
+    deepLink: 'stormtips://tips/{tipId}',
   },
   KICKOFF_REMINDER: {
     title: 'Anstoß in {minutes} Minuten',
     body: '{match} — {market}',
-    deepLink: 'profittips://tips/{tipId}',
+    deepLink: 'stormtips://tips/{tipId}',
   },
   SUBSCRIPTION_EXPIRING: {
     title: 'Dein Abo läuft bald ab',
     body: 'Noch {days} Tage Zugriff auf {product}.',
-    deepLink: 'profittips://subscription',
+    deepLink: 'stormtips://subscription',
   },
   SUBSCRIPTION_RENEWED: {
     title: 'Abo verlängert',
     body: '{product} ist bis {date} aktiv.',
-    deepLink: 'profittips://subscription',
+    deepLink: 'stormtips://subscription',
   },
   SUBSCRIPTION_CANCELED: {
     title: 'Abo gekündigt',
     body: 'Dein Zugriff auf {product} endet am {date}.',
-    deepLink: 'profittips://subscription',
+    deepLink: 'stormtips://subscription',
   },
-  PROMOTION: { title: '{title}', body: '{body}', deepLink: 'profittips://paywall/{product}' },
-  POLL: { title: 'Neue Umfrage', body: '{question}', deepLink: 'profittips://polls/{pollId}' },
-  SYSTEM: { title: '{title}', body: '{body}', deepLink: 'profittips://home' },
+  PROMOTION: { title: '{title}', body: '{body}', deepLink: 'stormtips://paywall/{product}' },
+  POLL: { title: 'Neue Umfrage', body: '{question}', deepLink: 'stormtips://polls/{pollId}' },
+  SYSTEM: { title: '{title}', body: '{body}', deepLink: 'stormtips://home' },
 };
 
 const EN: Catalogue = {
   NEW_TIP: {
     title: 'New analysis',
     body: '{league}: {match} — {market}',
-    deepLink: 'profittips://tips/{tipId}',
+    deepLink: 'stormtips://tips/{tipId}',
   },
   NEW_VIP_TIP: {
     title: 'New VIP analysis',
     body: '{league}: {match} — open now',
-    deepLink: 'profittips://vip/{tipId}',
+    deepLink: 'stormtips://vip/{tipId}',
   },
   NEW_COMBO: {
     title: 'New combo available',
     body: '{count} selections · total odds {odds}',
-    deepLink: 'profittips://combo/{comboId}',
+    deepLink: 'stormtips://combo/{comboId}',
   },
   NEW_EXTRA: {
     title: 'New Extra selection',
     body: '{league}: {match} — {market}',
-    deepLink: 'profittips://extra/{tipId}',
+    deepLink: 'stormtips://extra/{tipId}',
   },
   NEW_FIX_ODDS: {
     title: 'New Fix Odds selection',
     body: '{plan}: target odds {odds}',
-    deepLink: 'profittips://fix-odds/{tipId}',
+    deepLink: 'stormtips://fix-odds/{tipId}',
   },
   TIP_RESULT: {
     title: 'Result: {outcome}',
     body: '{match} — {market} @ {odds}',
-    deepLink: 'profittips://tips/{tipId}',
+    deepLink: 'stormtips://tips/{tipId}',
   },
   KICKOFF_REMINDER: {
     title: 'Kick-off in {minutes} minutes',
     body: '{match} — {market}',
-    deepLink: 'profittips://tips/{tipId}',
+    deepLink: 'stormtips://tips/{tipId}',
   },
   SUBSCRIPTION_EXPIRING: {
     title: 'Your subscription expires soon',
     body: '{days} days of {product} access remaining.',
-    deepLink: 'profittips://subscription',
+    deepLink: 'stormtips://subscription',
   },
   SUBSCRIPTION_RENEWED: {
     title: 'Subscription renewed',
     body: '{product} is active until {date}.',
-    deepLink: 'profittips://subscription',
+    deepLink: 'stormtips://subscription',
   },
   SUBSCRIPTION_CANCELED: {
     title: 'Subscription cancelled',
     body: 'Your {product} access ends on {date}.',
-    deepLink: 'profittips://subscription',
+    deepLink: 'stormtips://subscription',
   },
-  PROMOTION: { title: '{title}', body: '{body}', deepLink: 'profittips://paywall/{product}' },
-  POLL: { title: 'New poll', body: '{question}', deepLink: 'profittips://polls/{pollId}' },
-  SYSTEM: { title: '{title}', body: '{body}', deepLink: 'profittips://home' },
+  PROMOTION: { title: '{title}', body: '{body}', deepLink: 'stormtips://paywall/{product}' },
+  POLL: { title: 'New poll', body: '{question}', deepLink: 'stormtips://polls/{pollId}' },
+  SYSTEM: { title: '{title}', body: '{body}', deepLink: 'stormtips://home' },
 };
 
 const CATALOGUES: Record<string, Catalogue> = { de: DE, en: EN };

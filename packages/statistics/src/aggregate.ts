@@ -1,4 +1,4 @@
-import type { MarketType, ProductCode, TipOutcome } from '@profit-tips/types';
+import type { MarketType, ProductCode, TipOutcome } from '@storm-tips/types';
 import { returnFactor, round2, round4, type SettlementOutcome } from './settlement.js';
 
 /** A settled or pending tip, reduced to what the statistics engine needs. */

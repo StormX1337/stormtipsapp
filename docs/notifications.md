@@ -1,7 +1,7 @@
 # Notifications
 
 Two channels: push (mobile) and transactional email. Both are produced by
-`@profit-tips/notifications` and delivered by the worker, so nothing blocks an
+`@storm-tips/notifications` and delivered by the worker, so nothing blocks an
 HTTP request.
 
 ```
@@ -77,8 +77,8 @@ individually in the system settings.
 
 ## Deep links
 
-Every notification may carry a `deepLink` such as `profittips://tips/<id>` or
-`profittips://paywall/combo`. The app maps it to a route on open, including when
+Every notification may carry a `deepLink` such as `stormtips://tips/<id>` or
+`stormtips://paywall/combo`. The app maps it to a route on open, including when
 the notification cold-starts the process.
 
 ## Scheduling

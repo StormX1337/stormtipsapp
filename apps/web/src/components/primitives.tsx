@@ -2,7 +2,7 @@
 
 import clsx from 'clsx';
 import type { ReactNode } from 'react';
-import type { ProductCode, TipOutcome } from '@profit-tips/types';
+import type { ProductCode, TipOutcome } from '@storm-tips/types';
 import { useT } from '@/lib/i18n';
 
 /* ── team crest ─────────────────────────────────────────────────────────────

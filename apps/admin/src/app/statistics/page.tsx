@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { RefreshCw } from 'lucide-react';
-import type { ProductCode, StatsWindow } from '@profit-tips/types';
+import type { ProductCode, StatsWindow } from '@storm-tips/types';
 import { api } from '@/lib/api';
 import { Button, DataTable, ErrorBox, PageHeader, Select, type Column } from '@/components/ui';
 

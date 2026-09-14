@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { Check, Crown, ShieldCheck, Ticket, Zap } from 'lucide-react';
-import type { ProductCode, PromotionDTO, SubscriptionPlanDTO } from '@profit-tips/types';
+import type { ProductCode, PromotionDTO, SubscriptionPlanDTO } from '@storm-tips/types';
 import { useI18n } from '@/lib/i18n';
 import { useAuth } from '@/lib/auth';
 import { api } from '@/lib/api';

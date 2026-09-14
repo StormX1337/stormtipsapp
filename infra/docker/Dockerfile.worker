@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 #
-# PROFIT TIPS background worker.
+# STORM TIPS background worker.
 #
 # Runs the BullMQ queues: fixture and odds sync, settlement, tip publication,
 # push fan-out, subscription expiry and statistics recomputation.
@@ -19,15 +19,15 @@ COPY apps/web/package.json ./apps/web/
 COPY apps/admin/package.json ./apps/admin/
 
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm install --frozen-lockfile --filter @profit-tips/worker...
+    pnpm install --frozen-lockfile --filter @storm-tips/worker...
 
 # The worker imports services from the API workspace, so both sources are needed.
 COPY apps/api ./apps/api
 COPY apps/worker ./apps/worker
-RUN pnpm --filter @profit-tips/worker build
+RUN pnpm --filter @storm-tips/worker build
 
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm deploy --filter @profit-tips/worker --prod --legacy /out \
+    pnpm deploy --filter @storm-tips/worker --prod --legacy /out \
     && cp -r apps/worker/dist /out/dist \
     && cp -r packages/database/prisma /out/prisma \
     && cd /out \

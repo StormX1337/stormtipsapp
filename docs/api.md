@@ -6,7 +6,7 @@ is served at `GET /api/v1/openapi.json`.
 ## Conventions
 
 - JSON in, JSON out. Request bodies, query strings and path parameters are
-  validated with the Zod schemas in `@profit-tips/types`, so client and server
+  validated with the Zod schemas in `@storm-tips/types`, so client and server
   agree on one definition.
 - Errors always use the same envelope:
 

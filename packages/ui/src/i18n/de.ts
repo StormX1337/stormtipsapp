@@ -3,7 +3,7 @@ import type { Messages } from './en.js';
 /** German message catalogue — the product's default locale. */
 export const de: Messages = {
   // common
-  'common.appName': 'PROFIT TIPS',
+  'common.appName': 'STORM TIPS',
   'common.tagline': 'Datenbasierte Sportanalysen',
   'common.loading': 'Wird geladen…',
   'common.retry': 'Erneut versuchen',
@@ -269,7 +269,7 @@ export const de: Messages = {
   'legal.help': 'Hilfe & Support',
   'legal.ageNotice': '18+. Wetten ist mit finanziellem Risiko verbunden.',
   'legal.noGuarantee':
-    'PROFIT TIPS veröffentlicht Sportanalysen zu Informationszwecken. Es wird kein Ergebnis garantiert und kein Ausgang kann sicher vorhergesagt werden.',
+    'STORM TIPS veröffentlicht Sportanalysen zu Informationszwecken. Es wird kein Ergebnis garantiert und kein Ausgang kann sicher vorhergesagt werden.',
   'legal.helpLine':
     'Wenn Glücksspiel keinen Spaß mehr macht, wende dich an eine Beratungsstelle in deinem Land.',
 

@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
-import { prisma } from '@profit-tips/database';
-import type { AdminDashboardDTO, ProductCode } from '@profit-tips/types';
+import { prisma } from '@storm-tips/database';
+import type { AdminDashboardDTO, ProductCode } from '@storm-tips/types';
 import { env } from '../../lib/env.js';
 import { money } from '../../serializers/common.js';
 import { statistics } from '../../services/statistics.service.js';

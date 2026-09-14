@@ -10,8 +10,8 @@ import {
   resendVerificationSchema,
   resetPasswordSchema,
   verifyEmailSchema,
-} from '@profit-tips/types';
-import { prisma } from '@profit-tips/database';
+} from '@storm-tips/types';
+import { prisma } from '@storm-tips/database';
 import { parseBody } from '../lib/validate.js';
 import { env } from '../lib/env.js';
 import { noStore } from '../lib/http.js';

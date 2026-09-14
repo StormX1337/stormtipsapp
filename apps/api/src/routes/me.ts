@@ -1,11 +1,11 @@
 import type { FastifyInstance } from 'fastify';
-import { prisma } from '@profit-tips/database';
+import { prisma } from '@storm-tips/database';
 import {
   idParamSchema,
   paginationSchema,
   registerDeviceSchema,
   updateProfileSchema,
-} from '@profit-tips/types';
+} from '@storm-tips/types';
 import { parseBody, parseParams, parseQuery } from '../lib/validate.js';
 import { noStore, paginate, skipTake } from '../lib/http.js';
 import { serializeNotification, serializeUser } from '../serializers/user.js';
@@ -57,7 +57,7 @@ export async function meRoutes(app: FastifyInstance): Promise<void> {
   /** Soft delete: the account is anonymised and every session revoked. */
   app.delete('/', async (request) => {
     const userId = request.auth!.userId;
-    const anonymised = `deleted+${userId}@profittips.invalid`;
+    const anonymised = `deleted+${userId}@stormtips.invalid`;
     await prisma.$transaction([
       prisma.user.update({
         where: { id: userId },

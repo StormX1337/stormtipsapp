@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { EventDTO, Paginated, TipDTO } from '@profit-tips/types';
-import { MARKET_SELECTIONS, MarketType, marketRequiresLine } from '@profit-tips/types';
+import type { EventDTO, Paginated, TipDTO } from '@storm-tips/types';
+import { MARKET_SELECTIONS, MarketType, marketRequiresLine } from '@storm-tips/types';
 import { api } from '@/lib/api';
 import { Button, ErrorBox, Field, Modal, Select, TextArea, Toggle } from './ui';
 

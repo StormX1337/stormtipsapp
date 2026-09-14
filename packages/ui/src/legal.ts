@@ -48,7 +48,7 @@ const de: Record<LegalSlug, LegalDocument> = {
       { type: 'h2', text: '1. Leistungsgegenstand' },
       {
         type: 'p',
-        text: 'PROFIT TIPS stellt redaktionell erstellte Sportanalysen bereit. Eine Analyse enthält Wettmarkt, Auswahl, Quote, Buchmacherangabe und eine schriftliche Begründung. Es handelt sich um Einschätzungen, nicht um Anlage- oder Rechtsberatung und nicht um eine Wettvermittlung.',
+        text: 'STORM TIPS stellt redaktionell erstellte Sportanalysen bereit. Eine Analyse enthält Wettmarkt, Auswahl, Quote, Buchmacherangabe und eine schriftliche Begründung. Es handelt sich um Einschätzungen, nicht um Anlage- oder Rechtsberatung und nicht um eine Wettvermittlung.',
       },
       { type: 'h2', text: '2. Konto' },
       {
@@ -143,7 +143,7 @@ const de: Record<LegalSlug, LegalDocument> = {
     slug: 'responsible-gambling',
     title: 'Verantwortungsvolles Spielen',
     intro:
-      'PROFIT TIPS veröffentlicht Sportanalysen zu Informations- und Unterhaltungszwecken. Wir sind kein Buchmacher, nehmen keine Wetten an und verwalten keine Kundengelder.',
+      'STORM TIPS veröffentlicht Sportanalysen zu Informations- und Unterhaltungszwecken. Wir sind kein Buchmacher, nehmen keine Wetten an und verwalten keine Kundengelder.',
     blocks: [
       { type: 'h2', text: 'Was wir ausdrücklich nicht versprechen' },
       {
@@ -269,7 +269,7 @@ const en: Record<LegalSlug, LegalDocument> = {
       { type: 'h2', text: '1. What we provide' },
       {
         type: 'p',
-        text: 'PROFIT TIPS publishes editorially produced sports analyses. An analysis contains the betting market, the selection, the odds, the bookmaker and a written rationale. These are opinions — not financial or legal advice, and not bet brokering.',
+        text: 'STORM TIPS publishes editorially produced sports analyses. An analysis contains the betting market, the selection, the odds, the bookmaker and a written rationale. These are opinions — not financial or legal advice, and not bet brokering.',
       },
       { type: 'h2', text: '2. Your account' },
       {
@@ -364,7 +364,7 @@ const en: Record<LegalSlug, LegalDocument> = {
     slug: 'responsible-gambling',
     title: 'Responsible Gambling',
     intro:
-      'PROFIT TIPS publishes sports analyses for information and entertainment. We are not a bookmaker, we do not accept bets and we do not hold customer funds.',
+      'STORM TIPS publishes sports analyses for information and entertainment. We are not a bookmaker, we do not accept bets and we do not hold customer funds.',
     blocks: [
       { type: 'h2', text: 'What we explicitly do not promise' },
       {

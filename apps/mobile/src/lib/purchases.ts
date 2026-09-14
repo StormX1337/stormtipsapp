@@ -1,6 +1,6 @@
 import { Platform } from 'react-native';
 import type * as ReactNativeIap from 'react-native-iap';
-import type { SubscriptionDTO } from '@profit-tips/types';
+import type { SubscriptionDTO } from '@storm-tips/types';
 import { api } from './api';
 
 /**

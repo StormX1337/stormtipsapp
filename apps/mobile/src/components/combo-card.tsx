@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import type { ComboDTO } from '@profit-tips/types';
-import { formatDateTime } from '@profit-tips/ui';
+import type { ComboDTO } from '@storm-tips/types';
+import { formatDateTime } from '@storm-tips/ui';
 import { theme, shared } from '@/lib/theme';
 import { useI18n } from '@/lib/i18n';
 import { StatusBadge, TeamCrest } from './primitives';

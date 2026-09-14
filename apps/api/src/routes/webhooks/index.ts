@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { AppError, ErrorCode } from '@profit-tips/types';
+import { AppError, ErrorCode } from '@storm-tips/types';
 import { billing } from '../../services/billing.service.js';
 import { referrals } from '../../services/referral.service.js';
 import { logger } from '../../lib/logger.js';

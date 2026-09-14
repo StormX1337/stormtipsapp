@@ -1,4 +1,4 @@
-import { disconnectPrisma } from '@profit-tips/database';
+import { disconnectPrisma } from '@storm-tips/database';
 import { buildServer } from './server.js';
 import { env } from './lib/env.js';
 import { logger } from './lib/logger.js';
@@ -38,7 +38,7 @@ async function start(): Promise<void> {
   });
 
   await app.listen({ port: env.API_PORT, host: env.API_HOST });
-  logger.info(`PROFIT TIPS API listening on http://${env.API_HOST}:${env.API_PORT}`);
+  logger.info(`STORM TIPS API listening on http://${env.API_HOST}:${env.API_PORT}`);
 }
 
 start().catch((error) => {

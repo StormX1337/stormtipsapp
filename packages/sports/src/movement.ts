@@ -1,4 +1,4 @@
-import type { OddsMovement } from '@profit-tips/types';
+import type { OddsMovement } from '@storm-tips/types';
 
 /**
  * Classifies an odds change relative to its opening price.

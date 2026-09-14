@@ -1,8 +1,8 @@
 import { apiBase } from './config';
 import { secureStorage } from './storage';
 
-const ACCESS_KEY = 'pt.accessToken';
-const REFRESH_KEY = 'pt.refreshToken';
+const ACCESS_KEY = 'st.accessToken';
+const REFRESH_KEY = 'st.refreshToken';
 
 export interface ApiError extends Error {
   code: string;

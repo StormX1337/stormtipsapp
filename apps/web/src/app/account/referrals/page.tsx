@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Copy, Check } from 'lucide-react';
-import type { ReferralSummaryDTO } from '@profit-tips/types';
+import type { ReferralSummaryDTO } from '@storm-tips/types';
 import { api } from '@/lib/api';
 import { useI18n } from '@/lib/i18n';
 import { AppShell } from '@/components/navigation';

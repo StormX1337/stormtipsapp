@@ -1,4 +1,4 @@
-import { prisma } from '@profit-tips/database';
+import { prisma } from '@storm-tips/database';
 import {
   AppleAdapter,
   GoogleAdapter,
@@ -6,14 +6,14 @@ import {
   applyDiscount,
   type NormalizedSubscription,
   type NormalizedWebhookEvent,
-} from '@profit-tips/payments';
+} from '@storm-tips/payments';
 import {
   AppError,
   ErrorCode,
   type CouponPreviewDTO,
   type PaymentProvider,
   type ProductCode,
-} from '@profit-tips/types';
+} from '@storm-tips/types';
 import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { env } from '../lib/env.js';

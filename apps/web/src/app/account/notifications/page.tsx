@@ -2,7 +2,7 @@
 
 import { type ReactNode } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { NotificationPreferences, UserDTO } from '@profit-tips/types';
+import type { NotificationPreferences, UserDTO } from '@storm-tips/types';
 import { api } from '@/lib/api';
 import { useI18n } from '@/lib/i18n';
 import { AppShell } from '@/components/navigation';

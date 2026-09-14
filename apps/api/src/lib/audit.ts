@@ -1,4 +1,4 @@
-import { prisma } from '@profit-tips/database';
+import { prisma } from '@storm-tips/database';
 import type { FastifyRequest } from 'fastify';
 import { logger } from './logger.js';
 

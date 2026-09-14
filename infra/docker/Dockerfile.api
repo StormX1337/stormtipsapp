@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 #
-# PROFIT TIPS API.
+# STORM TIPS API.
 #
 # The API is bundled by tsup into a single ESM file; only the Prisma client and
 # the Argon2 native addon stay external, so the runtime image carries just the
@@ -21,15 +21,15 @@ COPY apps/web/package.json ./apps/web/
 COPY apps/admin/package.json ./apps/admin/
 
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm install --frozen-lockfile --filter @profit-tips/api...
+    pnpm install --frozen-lockfile --filter @storm-tips/api...
 
 COPY apps/api ./apps/api
-RUN pnpm --filter @profit-tips/api build
+RUN pnpm --filter @storm-tips/api build
 
 # Production tree + the bundle + the schema, then generate the client against
 # the very node_modules the runtime will use.
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm deploy --filter @profit-tips/api --prod --legacy /out \
+    pnpm deploy --filter @storm-tips/api --prod --legacy /out \
     && cp -r apps/api/dist /out/dist \
     && cp -r packages/database/prisma /out/prisma \
     && cd /out \

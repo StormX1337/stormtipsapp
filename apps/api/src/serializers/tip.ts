@@ -1,5 +1,5 @@
-import type { Prisma } from '@profit-tips/database';
-import type { ComboDTO, ProductCode, TipDTO, TipResultDTO } from '@profit-tips/types';
+import type { Prisma } from '@storm-tips/database';
+import type { ComboDTO, ProductCode, TipDTO, TipResultDTO } from '@storm-tips/types';
 import { dec, decOr, iso } from './common.js';
 import {
   eventInclude,

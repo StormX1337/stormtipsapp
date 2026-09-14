@@ -4,7 +4,7 @@ import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
 import cookie from '@fastify/cookie';
 import type { FastifyInstance } from 'fastify';
-import { ErrorCode } from '@profit-tips/types';
+import { ErrorCode } from '@storm-tips/types';
 import { env } from '../lib/env.js';
 import { redis } from '../lib/redis.js';
 
@@ -63,7 +63,7 @@ export const securityPlugin = fp(async function securityPlugin(app: FastifyInsta
     max: env.RATE_LIMIT_MAX,
     timeWindow: env.RATE_LIMIT_WINDOW,
     redis,
-    nameSpace: 'pt-rl:',
+    nameSpace: 'st-rl:',
     // Authenticated callers get their own bucket so one NAT cannot exhaust another user's quota.
     keyGenerator: (request) => request.auth?.userId ?? request.ip,
     allowList: (request) => request.url === '/health' || request.url === '/ready',

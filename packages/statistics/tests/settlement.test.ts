@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MarketType } from '@profit-tips/types';
+import { MarketType } from '@storm-tips/types';
 import {
   comboOdds,
   isHalfLine,

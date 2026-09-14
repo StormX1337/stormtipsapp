@@ -1,6 +1,6 @@
 # Payments
 
-Three providers, one internal shape. Every adapter in `@profit-tips/payments`
+Three providers, one internal shape. Every adapter in `@storm-tips/payments`
 converts its vendor's payload into a `NormalizedSubscription` (and, where
 applicable, a `NormalizedPayment`), so `apps/api/src/services/billing.service.ts`
 has exactly one code path for granting, extending and revoking access.

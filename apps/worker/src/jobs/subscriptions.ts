@@ -1,9 +1,9 @@
 import type { Job } from 'bullmq';
-import { prisma } from '@profit-tips/database';
-import { entitlements, notifications } from '@profit-tips/api/services';
-import { logger } from '@profit-tips/api/lib/logger';
-import { sendMail, subscriptionExpiringEmail } from '@profit-tips/api/lib/mailer';
-import type { ProductCode } from '@profit-tips/types';
+import { prisma } from '@storm-tips/database';
+import { entitlements, notifications } from '@storm-tips/api/services';
+import { logger } from '@storm-tips/api/lib/logger';
+import { sendMail, subscriptionExpiringEmail } from '@storm-tips/api/lib/mailer';
+import type { ProductCode } from '@storm-tips/types';
 
 /**
  * Expires subscriptions whose paid period has elapsed and revokes the
@@ -70,7 +70,7 @@ export async function expiringRemindersJob(job: Job): Promise<unknown> {
         type: 'SUBSCRIPTION_EXPIRING',
         title: 'Dein Abo läuft bald ab',
         body: `Noch ${days} Tage Zugriff auf ${product}.`,
-        deepLink: 'profittips://subscription',
+        deepLink: 'stormtips://subscription',
         data: { days, product },
       });
       await sendMail({

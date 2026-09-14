@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import type { FastifyInstance } from 'fastify';
-import { prisma } from '@profit-tips/database';
-import { hashPassword, generateReferralCode } from '@profit-tips/auth';
+import { prisma } from '@storm-tips/database';
+import { hashPassword, generateReferralCode } from '@storm-tips/auth';
 import { buildServer } from '../src/server.js';
 import { entitlements } from '../src/services/entitlement.service.js';
 

@@ -1,7 +1,7 @@
 import Fastify from 'fastify';
 import websocket from '@fastify/websocket';
 import { randomUUID } from 'node:crypto';
-import { API_PREFIX } from '@profit-tips/config';
+import { API_PREFIX } from '@storm-tips/config';
 import { env } from './lib/env.js';
 import { logger } from './lib/logger.js';
 import { securityPlugin } from './plugins/security.js';

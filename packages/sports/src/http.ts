@@ -1,4 +1,4 @@
-import { AppError, ErrorCode } from '@profit-tips/types';
+import { AppError, ErrorCode } from '@storm-tips/types';
 
 export interface HttpClientOptions {
   baseUrl: string;
@@ -80,7 +80,7 @@ export class HttpClient {
 
     const headers: Record<string, string> = {
       accept: 'application/json',
-      'user-agent': 'ProfitTips/1.0 (+https://profittips.app)',
+      'user-agent': 'StormTips/1.0 (+https://stormtips.app)',
       ...this.options.defaultHeaders,
     };
     if (this.options.apiKey && !this.options.apiKeyQueryParam) {

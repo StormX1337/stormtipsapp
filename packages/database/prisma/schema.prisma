@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-//  PROFIT TIPS — Prisma schema
+//  STORM TIPS — Prisma schema
 //  Postgres 16. All money is stored as integer minor units (cents) to avoid
 //  floating point drift; all odds/factors are stored as Decimal.
 // ─────────────────────────────────────────────────────────────────────────────

@@ -1,6 +1,6 @@
-import type { Prisma } from '@profit-tips/database';
-import { formatMoney } from '@profit-tips/ui';
-import type { Money } from '@profit-tips/types';
+import type { Prisma } from '@storm-tips/database';
+import { formatMoney } from '@storm-tips/ui';
+import type { Money } from '@storm-tips/types';
 
 /** Prisma Decimal → number. Safe for the magnitudes we store (odds, money). */
 export function dec(value: Prisma.Decimal | number | null | undefined): number | null {

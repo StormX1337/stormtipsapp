@@ -1,4 +1,4 @@
-import { AppError, ErrorCode } from '@profit-tips/types';
+import { AppError, ErrorCode } from '@storm-tips/types';
 import type { SportsDataProvider } from './provider.js';
 import type { ProviderConfig } from './types.js';
 import { MockProvider } from './providers/mock.js';

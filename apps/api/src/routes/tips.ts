@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { prisma } from '@profit-tips/database';
+import { prisma } from '@storm-tips/database';
 import {
   AppError,
   historyQuerySchema,
@@ -7,7 +7,7 @@ import {
   paginationSchema,
   tipFeedQuerySchema,
   type ProductCode,
-} from '@profit-tips/types';
+} from '@storm-tips/types';
 import { parseParams, parseQuery } from '../lib/validate.js';
 import { noStore, publicCache } from '../lib/http.js';
 import { tips } from '../services/tip.service.js';

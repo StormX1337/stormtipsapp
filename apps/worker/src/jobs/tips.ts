@@ -1,14 +1,14 @@
 import type { Job } from 'bullmq';
-import { prisma } from '@profit-tips/database';
-import { WS_TOPICS, type ProductCode } from '@profit-tips/types';
-import { notifications } from '@profit-tips/api/services';
-import { logger } from '@profit-tips/api/lib/logger';
+import { prisma } from '@storm-tips/database';
+import { WS_TOPICS, type ProductCode } from '@storm-tips/types';
+import { notifications } from '@storm-tips/api/services';
+import { logger } from '@storm-tips/api/lib/logger';
 import {
   serializeTip,
   tipInclude,
   serializeCombo,
   comboInclude,
-} from '@profit-tips/api/serializers/tip';
+} from '@storm-tips/api/serializers/tip';
 import { publish } from '../lib/broadcast.js';
 
 const TOPIC_BY_PRODUCT: Record<ProductCode, string> = {
@@ -82,7 +82,7 @@ export async function publishDueTipsJob(job: Job): Promise<unknown> {
       type: 'NEW_COMBO',
       title: 'Neue Combo verfügbar',
       body: updated.subtitle ?? updated.title,
-      deepLink: `profittips://combo/${updated.id}`,
+      deepLink: `stormtips://combo/${updated.id}`,
       audience: { products: ['COMBO'] },
       dedupeKey: `combo:${updated.id}`,
     });
@@ -139,7 +139,7 @@ export async function kickoffRemindersJob(job: Job): Promise<unknown> {
       type: 'KICKOFF_REMINDER',
       title: `Anstoß in 30 Minuten`,
       body: `${tip.event.homeTeam.name} – ${tip.event.awayTeam.name}: ${tip.selectionLabel}`,
-      deepLink: `profittips://tips/${tip.id}`,
+      deepLink: `stormtips://tips/${tip.id}`,
       audience: tip.product === 'FREE' ? {} : { products: [tip.product as ProductCode] },
       dedupeKey: `kickoff:${tip.id}`,
     });
@@ -229,7 +229,7 @@ async function announce(
     type: NOTIFICATION_BY_PRODUCT[product] as never,
     title: full.league.name,
     body: `${full.event.homeTeam.name} – ${full.event.awayTeam.name}: ${full.selectionLabel}`,
-    deepLink: `profittips://tips/${full.id}`,
+    deepLink: `stormtips://tips/${full.id}`,
     audience: product === 'FREE' ? {} : { products: [product] },
     dedupeKey: `tip:${full.id}`,
   });

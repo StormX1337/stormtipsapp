@@ -1,15 +1,15 @@
-# PROFIT TIPS — full stack.
+# STORM TIPS — full stack.
 #
 #   docker compose -f infra/docker/docker-compose.yml --env-file .env up -d --build
 #
 # Every secret comes from the environment; nothing is baked into an image.
-name: profit-tips
+name: storm-tips
 
 x-app-env: &app-env
   NODE_ENV: ${NODE_ENV:-production}
   LOG_LEVEL: ${LOG_LEVEL:-info}
-  DATABASE_URL: postgresql://${POSTGRES_USER:-profit}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-profit_tips}?schema=public
-  DIRECT_DATABASE_URL: postgresql://${POSTGRES_USER:-profit}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-profit_tips}?schema=public
+  DATABASE_URL: postgresql://${POSTGRES_USER:-storm}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-storm_tips}?schema=public
+  DIRECT_DATABASE_URL: postgresql://${POSTGRES_USER:-storm}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-storm_tips}?schema=public
   REDIS_URL: redis://redis:6379
   JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:?set JWT_ACCESS_SECRET}
   JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?set JWT_REFRESH_SECRET}
@@ -26,12 +26,12 @@ x-app-env: &app-env
   STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
   STRIPE_SUCCESS_URL: ${STRIPE_SUCCESS_URL:-http://localhost:3000/billing/success}
   STRIPE_CANCEL_URL: ${STRIPE_CANCEL_URL:-http://localhost:3000/billing/cancelled}
-  APPLE_BUNDLE_ID: ${APPLE_BUNDLE_ID:-com.profittips.app}
+  APPLE_BUNDLE_ID: ${APPLE_BUNDLE_ID:-com.stormtips.app}
   APPLE_ISSUER_ID: ${APPLE_ISSUER_ID:-}
   APPLE_KEY_ID: ${APPLE_KEY_ID:-}
   APPLE_PRIVATE_KEY: ${APPLE_PRIVATE_KEY:-}
   APPLE_ENVIRONMENT: ${APPLE_ENVIRONMENT:-Sandbox}
-  GOOGLE_PLAY_PACKAGE_NAME: ${GOOGLE_PLAY_PACKAGE_NAME:-com.profittips.app}
+  GOOGLE_PLAY_PACKAGE_NAME: ${GOOGLE_PLAY_PACKAGE_NAME:-com.stormtips.app}
   GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_BASE64: ${GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_BASE64:-}
   EXPO_ACCESS_TOKEN: ${EXPO_ACCESS_TOKEN:-}
   FCM_SERVICE_ACCOUNT_JSON_BASE64: ${FCM_SERVICE_ACCOUNT_JSON_BASE64:-}
@@ -40,7 +40,7 @@ x-app-env: &app-env
   APNS_PRIVATE_KEY: ${APNS_PRIVATE_KEY:-}
   SMTP_HOST: ${SMTP_HOST:-mailpit}
   SMTP_PORT: ${SMTP_PORT:-1025}
-  SMTP_FROM: ${SMTP_FROM:-PROFIT TIPS <no-reply@profittips.app>}
+  SMTP_FROM: ${SMTP_FROM:-STORM TIPS <no-reply@stormtips.app>}
   SENTRY_DSN: ${SENTRY_DSN:-}
 
 services:
@@ -48,13 +48,13 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-profit}
+      POSTGRES_USER: ${POSTGRES_USER:-storm}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB:-profit_tips}
+      POSTGRES_DB: ${POSTGRES_DB:-storm_tips}
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-profit} -d ${POSTGRES_DB:-profit_tips}']
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-storm} -d ${POSTGRES_DB:-storm_tips}']
       interval: 10s
       timeout: 5s
       retries: 10

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BarChart3 } from 'lucide-react';
 import clsx from 'clsx';
-import type { Paginated, PollDTO } from '@profit-tips/types';
+import type { Paginated, PollDTO } from '@storm-tips/types';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { useI18n } from '@/lib/i18n';

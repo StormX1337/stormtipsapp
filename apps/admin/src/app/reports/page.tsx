@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Download } from 'lucide-react';
-import type { ProductCode, StatisticsDTO, StatsWindow } from '@profit-tips/types';
+import type { ProductCode, StatisticsDTO, StatsWindow } from '@storm-tips/types';
 import { api } from '@/lib/api';
 import { Button, DataTable, ErrorBox, PageHeader, Select, type Column } from '@/components/ui';
 
@@ -79,7 +79,7 @@ export default function ReportsPage(): ReactNode {
             onClick={() => {
               if (!stats.data) return;
               download(
-                `profit-tips-${product}-${window}.csv`,
+                `storm-tips-${product}-${window}.csv`,
                 toCsv(
                   stats.data.byDay.map((row) => ({
                     Tag: row.date,

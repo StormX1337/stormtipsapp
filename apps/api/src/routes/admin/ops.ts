@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
-import { prisma } from '@profit-tips/database';
-import { encryptSecret, maskSecret } from '@profit-tips/auth';
-import { AVAILABLE_PROVIDERS } from '@profit-tips/sports';
+import { prisma } from '@storm-tips/database';
+import { encryptSecret, maskSecret } from '@storm-tips/auth';
+import { AVAILABLE_PROVIDERS } from '@storm-tips/sports';
 import {
   idParamSchema,
   paginationSchema,
@@ -10,7 +10,7 @@ import {
   updateSettingsSchema,
   upsertApiProviderSchema,
   upsertPollSchema,
-} from '@profit-tips/types';
+} from '@storm-tips/types';
 import { parseBody, parseParams, parseQuery } from '../../lib/validate.js';
 import { assertFound, paginate, skipTake } from '../../lib/http.js';
 import { audit } from '../../lib/audit.js';

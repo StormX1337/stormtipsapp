@@ -14,7 +14,7 @@ import {
   type MessageKey,
   type SupportedLocale,
   type TranslateValues,
-} from '@profit-tips/ui';
+} from '@storm-tips/ui';
 import { preferences } from './storage';
 
 interface I18nValue {

@@ -1,4 +1,4 @@
-import { MarketType, type EventStatus } from '@profit-tips/types';
+import { MarketType, type EventStatus } from '@storm-tips/types';
 import { BaseProvider } from '../provider.js';
 import {
   CATALOGUE_BOOKMAKERS,
@@ -48,7 +48,7 @@ const DAY_MS = 86_400_000;
  * the same `providerEventId` would resolve to different fixtures and a later
  * sync would silently rewrite the teams of an already-stored event.
  */
-export const DEFAULT_MOCK_SEED = process.env.MOCK_PROVIDER_SEED ?? 'profit-tips';
+export const DEFAULT_MOCK_SEED = process.env.MOCK_PROVIDER_SEED ?? 'storm-tips';
 
 function startOfUtcDay(date: Date): Date {
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));

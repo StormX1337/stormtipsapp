@@ -88,6 +88,6 @@ jobs:
           fi
           install -m 600 /dev/null key && printf '%s' "${DEPLOY_KEY}" > key
           ssh -i key -o StrictHostKeyChecking=accept-new "${DEPLOY_USER}@${DEPLOY_HOST}" \
-            "cd /srv/profit-tips && IMAGE_TAG=${IMAGE_TAG} docker compose -f infra/docker/docker-compose.yml pull && \
+            "cd /srv/storm-tips && IMAGE_TAG=${IMAGE_TAG} docker compose -f infra/docker/docker-compose.yml pull && \
              docker compose -f infra/docker/docker-compose.yml up -d --remove-orphans"
           rm -f key

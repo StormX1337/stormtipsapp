@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Pencil, RefreshCw } from 'lucide-react';
-import type { EventDTO, OddDTO, Paginated } from '@profit-tips/types';
+import type { EventDTO, OddDTO, Paginated } from '@storm-tips/types';
 import { api } from '@/lib/api';
 import {
   Badge,

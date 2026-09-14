@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
-import { prisma } from '@profit-tips/database';
-import { ALL_PRODUCTS, CACHE_TTL } from '@profit-tips/config';
+import { prisma } from '@storm-tips/database';
+import { ALL_PRODUCTS, CACHE_TTL } from '@storm-tips/config';
 import {
   AppError,
   ErrorCode,
@@ -9,7 +9,7 @@ import {
   validateCouponSchema,
   verifyStorePurchaseSchema,
   type ProductCode,
-} from '@profit-tips/types';
+} from '@storm-tips/types';
 import { parseBody } from '../lib/validate.js';
 import { assertFound, noStore, publicCache } from '../lib/http.js';
 import { env } from '../lib/env.js';
@@ -123,7 +123,7 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
       legal: {
         minimumAge: 18,
         disclaimer:
-          'PROFIT TIPS veröffentlicht Sportanalysen zu Informationszwecken. Alle Zahlen sind geprüfte historische Ergebnisse. Kein Ergebnis ist garantiert.',
+          'STORM TIPS veröffentlicht Sportanalysen zu Informationszwecken. Alle Zahlen sind geprüfte historische Ergebnisse. Kein Ergebnis ist garantiert.',
       },
     };
   });

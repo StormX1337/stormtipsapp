@@ -1,5 +1,5 @@
 import { Queue, type JobsOptions } from 'bullmq';
-import { QUEUE_NAMES } from '@profit-tips/config';
+import { QUEUE_NAMES } from '@storm-tips/config';
 import { redis } from './redis.js';
 import { logger } from './logger.js';
 

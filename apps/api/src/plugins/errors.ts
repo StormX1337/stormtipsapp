@@ -1,6 +1,6 @@
 import fp from 'fastify-plugin';
 import type { FastifyError, FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { AppError, ErrorCode, ERROR_STATUS, isAppError } from '@profit-tips/types';
+import { AppError, ErrorCode, ERROR_STATUS, isAppError } from '@storm-tips/types';
 import { env } from '../lib/env.js';
 
 interface PrismaLikeError {

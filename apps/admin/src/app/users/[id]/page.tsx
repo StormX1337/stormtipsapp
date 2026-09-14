@@ -2,7 +2,7 @@
 
 import { use, useState, type ReactNode } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { EntitlementDTO, PaymentDTO, SubscriptionDTO, UserDTO } from '@profit-tips/types';
+import type { EntitlementDTO, PaymentDTO, SubscriptionDTO, UserDTO } from '@storm-tips/types';
 import { api } from '@/lib/api';
 import { useAdminAuth } from '@/lib/auth';
 import {

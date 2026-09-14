@@ -1,5 +1,5 @@
 {
-  "name": "@profit-tips/database",
+  "name": "@storm-tips/database",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -33,9 +33,9 @@
     "tsx": "^4.20.6",
     "typescript": "~5.9.3",
     "dotenv-cli": "^10.0.0",
-    "@profit-tips/auth": "workspace:*",
-    "@profit-tips/sports": "workspace:*",
-    "@profit-tips/statistics": "workspace:*",
-    "@profit-tips/types": "workspace:*"
+    "@storm-tips/auth": "workspace:*",
+    "@storm-tips/sports": "workspace:*",
+    "@storm-tips/statistics": "workspace:*",
+    "@storm-tips/types": "workspace:*"
   }
 }

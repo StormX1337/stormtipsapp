@@ -1,11 +1,11 @@
-import type { Prisma } from '@profit-tips/database';
+import type { Prisma } from '@storm-tips/database';
 import {
   DEFAULT_NOTIFICATION_PREFERENCES,
   type EntitlementDTO,
   type NotificationDTO,
   type NotificationPreferences,
   type UserDTO,
-} from '@profit-tips/types';
+} from '@storm-tips/types';
 import { iso } from './common.js';
 
 export function mergePreferences(raw: unknown): NotificationPreferences {

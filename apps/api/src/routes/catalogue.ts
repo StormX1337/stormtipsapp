@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
-import { prisma } from '@profit-tips/database';
-import { CACHE_TTL } from '@profit-tips/config';
-import { eventsQuerySchema, idParamSchema, oddsQuerySchema } from '@profit-tips/types';
+import { prisma } from '@storm-tips/database';
+import { CACHE_TTL } from '@storm-tips/config';
+import { eventsQuerySchema, idParamSchema, oddsQuerySchema } from '@storm-tips/types';
 import { parseParams, parseQuery } from '../lib/validate.js';
 import { assertFound, paginate, publicCache, skipTake } from '../lib/http.js';
 import { cached } from '../lib/cache.js';

@@ -9,7 +9,7 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   splitting: false,
-  noExternal: [/^@profit-tips\//],
+  noExternal: [/^@storm-tips\//],
   // Native addons (and Prisma's generated client) must stay external: esbuild
   // cannot inline a platform-specific .node binary.
   external: ['@prisma/client', '.prisma', '@node-rs/argon2'],

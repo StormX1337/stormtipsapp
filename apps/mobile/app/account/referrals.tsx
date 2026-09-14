@@ -3,7 +3,7 @@ import { Alert, Share, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import * as Clipboard from 'expo-clipboard';
-import type { ReferralSummaryDTO } from '@profit-tips/types';
+import type { ReferralSummaryDTO } from '@storm-tips/types';
 import { theme } from '@/lib/theme';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';

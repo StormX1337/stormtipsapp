@@ -1,4 +1,4 @@
-# PROFIT TIPS — Architecture
+# STORM TIPS — Architecture
 
 ## 1. System overview
 

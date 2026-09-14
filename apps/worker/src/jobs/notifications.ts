@@ -1,11 +1,11 @@
 import type { Job } from 'bullmq';
-import { prisma } from '@profit-tips/database';
-import { PushService, type PushTarget } from '@profit-tips/notifications';
-import { notifications } from '@profit-tips/api/services';
-import { env } from '@profit-tips/api/lib/env';
-import { logger } from '@profit-tips/api/lib/logger';
-import { redis } from '@profit-tips/api/lib/redis';
-import type { NotificationType } from '@profit-tips/types';
+import { prisma } from '@storm-tips/database';
+import { PushService, type PushTarget } from '@storm-tips/notifications';
+import { notifications } from '@storm-tips/api/services';
+import { env } from '@storm-tips/api/lib/env';
+import { logger } from '@storm-tips/api/lib/logger';
+import { redis } from '@storm-tips/api/lib/redis';
+import type { NotificationType } from '@storm-tips/types';
 
 const pushService = new PushService({
   expoAccessToken: env.EXPO_ACCESS_TOKEN ?? null,

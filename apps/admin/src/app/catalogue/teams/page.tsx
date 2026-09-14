@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import type { Paginated } from '@profit-tips/types';
+import type { Paginated } from '@storm-tips/types';
 import { api } from '@/lib/api';
 import { DataTable, ErrorBox, PageHeader, Pagination, type Column } from '@/components/ui';
 

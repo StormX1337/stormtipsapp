@@ -1,7 +1,7 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text, View, type ViewStyle } from 'react-native';
 import type { ReactNode } from 'react';
-import type { ProductCode, TipOutcome } from '@profit-tips/types';
-import type { MessageKey } from '@profit-tips/ui';
+import type { ProductCode, TipOutcome } from '@storm-tips/types';
+import type { MessageKey } from '@storm-tips/ui';
 import { theme, shared } from '@/lib/theme';
 import { useT } from '@/lib/i18n';
 

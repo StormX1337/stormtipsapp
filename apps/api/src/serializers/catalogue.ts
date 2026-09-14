@@ -1,4 +1,4 @@
-import type { Prisma } from '@profit-tips/database';
+import type { Prisma } from '@storm-tips/database';
 import type {
   CountryDTO,
   EventDTO,
@@ -7,7 +7,7 @@ import type {
   TeamDTO,
   BookmakerDTO,
   OddDTO,
-} from '@profit-tips/types';
+} from '@storm-tips/types';
 import { dec, iso } from './common.js';
 
 export const leagueInclude = { sport: true, country: true } satisfies Prisma.LeagueInclude;

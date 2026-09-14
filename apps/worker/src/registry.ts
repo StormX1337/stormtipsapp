@@ -1,5 +1,5 @@
 import type { Processor } from 'bullmq';
-import { QUEUE_NAMES } from '@profit-tips/config';
+import { QUEUE_NAMES } from '@storm-tips/config';
 import { syncFixturesJob, syncLiveJob, syncOddsJob } from './jobs/sports.js';
 import { settleDueJob, syncResultsJob } from './jobs/results.js';
 import {

@@ -19,11 +19,11 @@ import {
   CATALOGUE_COUNTRIES,
   CATALOGUE_LEAGUES,
   CATALOGUE_SPORTS,
-} from '@profit-tips/sports';
-import { profitFor, returnFactor, settleCombo } from '@profit-tips/statistics';
-import { generateReferralCode, hashPassword } from '@profit-tips/auth';
-import type { MatchResult, SettlementOutcome } from '@profit-tips/statistics';
-import type { ProductCode } from '@profit-tips/types';
+} from '@storm-tips/sports';
+import { profitFor, returnFactor, settleCombo } from '@storm-tips/statistics';
+import { generateReferralCode, hashPassword } from '@storm-tips/auth';
+import type { MatchResult, SettlementOutcome } from '@storm-tips/statistics';
+import type { ProductCode } from '@storm-tips/types';
 import {
   SEED_COUPONS,
   SEED_FIX_ODDS_PLANS,
@@ -275,7 +275,7 @@ async function seedCommerce(): Promise<Map<string, string>> {
         subtitle:
           'Abonnieren Sie unseren Newsletter und erhalten Sie jedes Wochenende noch mehr Fußballtipps und Sonderangebote',
         ctaLabel: 'Jetzt abonnieren',
-        deepLink: 'profittips://paywall/COMBO',
+        deepLink: 'stormtips://paywall/COMBO',
         badge: 'NONE',
         audience: 'FREE_USERS',
         product: 'COMBO',
@@ -287,7 +287,7 @@ async function seedCommerce(): Promise<Map<string, string>> {
         title: 'Combo + VIP + Extra',
         subtitle: 'Alle Premium-Produkte in einem Abo — spare 21,98 €',
         ctaLabel: 'Bundle sichern',
-        deepLink: 'profittips://paywall/BUNDLE',
+        deepLink: 'stormtips://paywall/BUNDLE',
         badge: 'MOST_POPULAR',
         audience: 'ALL',
         planId: planIds.get('bundle-1m') ?? null,
@@ -299,7 +299,7 @@ async function seedCommerce(): Promise<Map<string, string>> {
         title: 'Dein VIP-Zugang endet bald',
         subtitle: 'Verlängere jetzt und verpasse keine Analyse',
         ctaLabel: 'Verlängern',
-        deepLink: 'profittips://subscription',
+        deepLink: 'stormtips://subscription',
         badge: 'LIMITED',
         audience: 'EXPIRING_SUBSCRIBERS',
         product: 'VIP',
@@ -326,7 +326,7 @@ async function seedUsers(): Promise<SeededUsers> {
 
   const admin = await prisma.user.create({
     data: {
-      email: (process.env.SEED_ADMIN_EMAIL ?? 'admin@profittips.app').toLowerCase(),
+      email: (process.env.SEED_ADMIN_EMAIL ?? 'admin@stormtips.app').toLowerCase(),
       passwordHash: adminPassword,
       emailVerifiedAt: new Date(),
       displayName: 'Platform Admin',
@@ -340,7 +340,7 @@ async function seedUsers(): Promise<SeededUsers> {
 
   const moderator = await prisma.user.create({
     data: {
-      email: 'tipster@profittips.app',
+      email: 'tipster@stormtips.app',
       passwordHash: adminPassword,
       emailVerifiedAt: new Date(),
       displayName: 'Chef-Analyst',
@@ -654,7 +654,7 @@ function buildTip(
     isStandalone: options.isStandalone ?? true,
     analysis: buildAnalysis(event.homeName, event.awayName, label, random),
     tags: [event.leagueKey, candidate.marketKey],
-    source: 'PROFIT TIPS Analyse-Team',
+    source: 'STORM TIPS Analyse-Team',
     publishAt,
     expiresAt: event.startsAt,
     settledAt: finished ? new Date(event.startsAt.getTime() + 115 * 60_000) : null,
@@ -1251,13 +1251,13 @@ async function summary(): Promise<void> {
     successfulComboAnalyses: comboTips,
   });
   console.log(
-    `\n  Admin login: ${process.env.SEED_ADMIN_EMAIL ?? 'admin@profittips.app'} / ${process.env.SEED_ADMIN_PASSWORD ?? 'ChangeMe!2026'}`,
+    `\n  Admin login: ${process.env.SEED_ADMIN_EMAIL ?? 'admin@stormtips.app'} / ${process.env.SEED_ADMIN_PASSWORD ?? 'ChangeMe!2026'}`,
   );
   console.log('  Demo user login: any seeded @example.com address / DemoUser!2026\n');
 }
 
 async function main(): Promise<void> {
-  console.log('\nSeeding PROFIT TIPS development database…\n');
+  console.log('\nSeeding STORM TIPS development database…\n');
   guardProduction();
   await reset();
   const catalogue = await seedCatalogue();

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import type { MessageKey } from '@profit-tips/ui';
+import type { MessageKey } from '@storm-tips/ui';
 import { theme, shared } from '@/lib/theme';
 import { useI18n } from '@/lib/i18n';
 import { preferences } from '@/lib/storage';

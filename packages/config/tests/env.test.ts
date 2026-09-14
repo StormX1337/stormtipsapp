@@ -4,7 +4,7 @@ import { envSchema, isDevelopment, isProduction, isTest, loadEnv, type Env } fro
 /** Minimal valid environment; individual tests override single keys. */
 const base: NodeJS.ProcessEnv = {
   NODE_ENV: 'test',
-  DATABASE_URL: 'postgresql://user:pass@localhost:5432/profit_tips',
+  DATABASE_URL: 'postgresql://user:pass@localhost:5432/storm_tips',
   JWT_ACCESS_SECRET: 'a'.repeat(32),
   JWT_REFRESH_SECRET: 'b'.repeat(32),
   ENCRYPTION_KEY: 'c'.repeat(64),

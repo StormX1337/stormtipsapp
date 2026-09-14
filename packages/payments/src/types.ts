@@ -3,7 +3,7 @@ import type {
   PaymentStatus,
   ProductCode,
   SubscriptionStatus,
-} from '@profit-tips/types';
+} from '@storm-tips/types';
 
 /**
  * Provider-agnostic subscription shape.

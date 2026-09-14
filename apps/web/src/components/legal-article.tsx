@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { LEGAL_FOOTNOTE, getLegalDocument, type LegalSlug } from '@profit-tips/ui';
+import { LEGAL_FOOTNOTE, getLegalDocument, type LegalSlug } from '@storm-tips/ui';
 import { useI18n } from '@/lib/i18n';
 
 /**

@@ -1,11 +1,11 @@
 import type { FastifyInstance } from 'fastify';
-import { prisma } from '@profit-tips/database';
-import { AppError, idParamSchema, paginationSchema, voteSchema } from '@profit-tips/types';
+import { prisma } from '@storm-tips/database';
+import { AppError, idParamSchema, paginationSchema, voteSchema } from '@storm-tips/types';
 import { parseBody, parseParams, parseQuery } from '../lib/validate.js';
 import { assertFound, noStore, paginate, skipTake } from '../lib/http.js';
 import { pollInclude, serializePoll } from '../serializers/poll.js';
 import { broadcast } from '../ws/gateway.js';
-import { WS_TOPICS } from '@profit-tips/types';
+import { WS_TOPICS } from '@storm-tips/types';
 
 export async function pollRoutes(app: FastifyInstance): Promise<void> {
   app.addHook('preHandler', app.optionalAuth);

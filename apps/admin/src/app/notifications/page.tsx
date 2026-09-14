@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Send } from 'lucide-react';
-import type { Paginated } from '@profit-tips/types';
+import type { Paginated } from '@storm-tips/types';
 import { api } from '@/lib/api';
 import {
   Badge,
@@ -165,7 +165,7 @@ export default function NotificationsPage(): ReactNode {
               label="Deep-Link"
               value={form.deepLink}
               onChange={(event) => setForm({ ...form, deepLink: event.target.value })}
-              placeholder="profittips://combo"
+              placeholder="stormtips://combo"
             />
 
             <div>

@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import type { Paginated, UserDTO } from '@profit-tips/types';
+import type { Paginated, UserDTO } from '@storm-tips/types';
 import { api } from '@/lib/api';
 import {
   Badge,

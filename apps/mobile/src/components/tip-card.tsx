@@ -1,8 +1,8 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import type { ReactNode } from 'react';
-import type { TipDTO, TipFeedGroupDTO } from '@profit-tips/types';
-import { formatKickoff } from '@profit-tips/ui';
+import type { TipDTO, TipFeedGroupDTO } from '@storm-tips/types';
+import { formatKickoff } from '@storm-tips/ui';
 import { theme, shared } from '@/lib/theme';
 import { useI18n } from '@/lib/i18n';
 import { OddsText, ProductBadge, StatusBadge, TeamCrest } from './primitives';

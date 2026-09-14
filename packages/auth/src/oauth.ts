@@ -1,5 +1,5 @@
 import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose';
-import { AppError, ErrorCode } from '@profit-tips/types';
+import { AppError, ErrorCode } from '@storm-tips/types';
 
 export interface OAuthProfile {
   provider: 'GOOGLE' | 'APPLE';

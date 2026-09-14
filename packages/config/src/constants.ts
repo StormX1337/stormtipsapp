@@ -1,7 +1,7 @@
 /** Application-wide constants that are not environment specific. */
 
-export const APP_NAME = 'PROFIT TIPS';
-export const APP_SLUG = 'profit-tips';
+export const APP_NAME = 'STORM TIPS';
+export const APP_SLUG = 'storm-tips';
 export const API_VERSION = 'v1';
 export const API_PREFIX = `/api/${API_VERSION}`;
 
@@ -59,7 +59,7 @@ export const REDIS_KEYS = {
 
 /** Redis pub/sub channels used to fan WebSocket messages across API instances. */
 export const REDIS_CHANNELS = {
-  broadcast: 'pt:broadcast',
+  broadcast: 'st:broadcast',
 } as const;
 
 /** BullMQ queue names. */

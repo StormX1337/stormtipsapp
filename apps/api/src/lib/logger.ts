@@ -32,7 +32,7 @@ export const logger: Logger = pino({
     ],
     censor: '[redacted]',
   },
-  base: { service: 'profit-tips-api', env: env.NODE_ENV },
+  base: { service: 'storm-tips-api', env: env.NODE_ENV },
   transport:
     env.NODE_ENV === 'development'
       ? { target: 'pino-pretty', options: { colorize: true, translateTime: 'HH:MM:ss.l' } }

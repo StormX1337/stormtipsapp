@@ -8,11 +8,11 @@
     },
     "preview": {
       "distribution": "internal",
-      "env": { "EXPO_PUBLIC_API_URL": "https://staging-api.profittips.app" }
+      "env": { "EXPO_PUBLIC_API_URL": "https://staging-api.stormtips.app" }
     },
     "production": {
       "autoIncrement": true,
-      "env": { "EXPO_PUBLIC_API_URL": "https://api.profittips.app" }
+      "env": { "EXPO_PUBLIC_API_URL": "https://api.stormtips.app" }
     }
   },
   "submit": { "production": {} }

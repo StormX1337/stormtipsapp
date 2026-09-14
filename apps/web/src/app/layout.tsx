@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     template: `%s · ${config.appName}`,
   },
   description:
-    'PROFIT TIPS veröffentlicht täglich Fußball- und Sportanalysen mit Quote, Wettmarkt und schriftlicher Begründung. Alle Statistiken beruhen auf geprüften, abgerechneten Ergebnissen.',
+    'STORM TIPS veröffentlicht täglich Fußball- und Sportanalysen mit Quote, Wettmarkt und schriftlicher Begründung. Alle Statistiken beruhen auf geprüften, abgerechneten Ergebnissen.',
   applicationName: config.appName,
   robots: { index: true, follow: true },
   openGraph: {

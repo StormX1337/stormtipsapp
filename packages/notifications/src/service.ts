@@ -1,4 +1,4 @@
-import type { NotificationType } from '@profit-tips/types';
+import type { NotificationType } from '@storm-tips/types';
 import { ExpoPushTransport, summarise } from './transports/expo.js';
 import { FcmPushTransport } from './transports/fcm.js';
 import { ApnsPushTransport } from './transports/apns.js';

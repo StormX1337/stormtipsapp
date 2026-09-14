@@ -1,4 +1,4 @@
-# PROFIT TIPS
+# STORM TIPS
 
 Sports-analysis platform: a public feed of free tips, paid VIP / Combo / Extra /
 Fix Odds products, verified performance statistics, an admin back office and a

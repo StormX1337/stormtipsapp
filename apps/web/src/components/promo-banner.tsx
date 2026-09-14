@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import type { PromotionDTO } from '@profit-tips/types';
+import type { PromotionDTO } from '@storm-tips/types';
 import { PromoBadge } from './primitives';
 
 function targetHref(promotion: PromotionDTO): string {
   if (promotion.ctaUrl) return promotion.ctaUrl;
-  if (promotion.deepLink?.startsWith('profittips://paywall/')) {
+  if (promotion.deepLink?.startsWith('stormtips://paywall/')) {
     const product = promotion.deepLink.split('/').pop()?.toLowerCase() ?? 'combo';
     return `/paywall/${product === 'bundle' ? 'combo' : product}`;
   }

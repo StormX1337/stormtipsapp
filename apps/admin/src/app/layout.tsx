@@ -5,7 +5,7 @@ import { AdminShell } from '@/components/shell';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: { default: 'PROFIT TIPS Verwaltung', template: '%s · PROFIT TIPS Admin' },
+  title: { default: 'STORM TIPS Verwaltung', template: '%s · STORM TIPS Admin' },
   robots: { index: false, follow: false },
 };
 

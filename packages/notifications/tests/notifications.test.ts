@@ -31,7 +31,7 @@ describe('templates', () => {
     });
     expect(rendered.title).toBe('Neue VIP-Analyse');
     expect(rendered.body).toContain('Elversberg – Bayern');
-    expect(rendered.deepLink).toBe('profittips://vip/tip-1');
+    expect(rendered.deepLink).toBe('stormtips://vip/tip-1');
   });
 
   it('renders English copy', () => {

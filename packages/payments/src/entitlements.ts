@@ -1,5 +1,5 @@
-import type { ProductCode, SubscriptionStatus } from '@profit-tips/types';
-import { ACCESS_GRANTING_STATUSES } from '@profit-tips/types';
+import type { ProductCode, SubscriptionStatus } from '@storm-tips/types';
+import { ACCESS_GRANTING_STATUSES } from '@storm-tips/types';
 import type { NormalizedSubscription } from './types.js';
 
 /**

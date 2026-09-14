@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import type { Paginated, SubscriptionDTO } from '@profit-tips/types';
+import type { Paginated, SubscriptionDTO } from '@storm-tips/types';
 import { api } from '@/lib/api';
 import { Badge, DataTable, ErrorBox, PageHeader, Pagination, type Column } from '@/components/ui';
 

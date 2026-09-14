@@ -18,8 +18,8 @@ const config: TokenConfig = {
   refreshSecret: 'b'.repeat(48),
   accessTtl: '15m',
   refreshTtl: '30d',
-  issuer: 'profit-tips',
-  audience: 'profit-tips-api',
+  issuer: 'storm-tips',
+  audience: 'storm-tips-api',
 };
 
 describe('password hashing', () => {

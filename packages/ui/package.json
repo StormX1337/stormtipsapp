@@ -1,5 +1,5 @@
 {
-  "name": "@profit-tips/ui",
+  "name": "@storm-tips/ui",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -14,7 +14,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@profit-tips/types": "workspace:*"
+    "@storm-tips/types": "workspace:*"
   },
   "devDependencies": {
     "typescript": "~5.9.3"

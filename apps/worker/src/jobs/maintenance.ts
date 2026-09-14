@@ -1,8 +1,8 @@
 import type { Job } from 'bullmq';
-import { prisma } from '@profit-tips/database';
-import { statistics } from '@profit-tips/api/services';
-import { logger } from '@profit-tips/api/lib/logger';
-import type { ProductCode, StatsWindow } from '@profit-tips/types';
+import { prisma } from '@storm-tips/database';
+import { statistics } from '@storm-tips/api/services';
+import { logger } from '@storm-tips/api/lib/logger';
+import type { ProductCode, StatsWindow } from '@storm-tips/types';
 
 const PRODUCTS: (ProductCode | 'ALL')[] = ['ALL', 'FREE', 'VIP', 'EXTRA', 'COMBO', 'FIX_ODDS'];
 const WINDOWS: StatsWindow[] = ['D7', 'D30', 'D90', 'M6', 'M12', 'ALL'];

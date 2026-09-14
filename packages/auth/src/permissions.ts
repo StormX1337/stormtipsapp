@@ -1,4 +1,4 @@
-import { ROLE_RANK, type UserRole } from '@profit-tips/types';
+import { ROLE_RANK, type UserRole } from '@storm-tips/types';
 
 /** True when `role` is at least as privileged as `required`. */
 export function hasRole(role: UserRole, required: UserRole): boolean {

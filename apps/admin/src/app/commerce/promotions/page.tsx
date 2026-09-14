@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, Trash2 } from 'lucide-react';
-import type { PromotionDTO } from '@profit-tips/types';
+import type { PromotionDTO } from '@storm-tips/types';
 import { api } from '@/lib/api';
 import {
   Badge,
@@ -25,7 +25,7 @@ export default function PromotionsPage(): ReactNode {
     title: '',
     subtitle: '',
     ctaLabel: '',
-    deepLink: 'profittips://paywall/COMBO',
+    deepLink: 'stormtips://paywall/COMBO',
     badge: 'NONE',
     audience: 'ALL',
     product: '',

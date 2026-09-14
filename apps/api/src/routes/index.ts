@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { API_VERSION, APP_NAME } from '@profit-tips/config';
+import { API_VERSION, APP_NAME } from '@storm-tips/config';
 import { authRoutes } from './auth.js';
 import { meRoutes } from './me.js';
 import { catalogueRoutes } from './catalogue.js';

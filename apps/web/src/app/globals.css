@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 /*
- * PROFIT TIPS design tokens.
+ * STORM TIPS design tokens.
  * Mirrors packages/ui/src/tokens.ts — that file stays the source of truth and
  * is what the React Native app consumes; this block is its CSS projection.
  */

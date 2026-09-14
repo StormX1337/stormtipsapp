@@ -1,7 +1,7 @@
-import { REDIS_CHANNELS } from '@profit-tips/config';
-import type { BroadcastEnvelope } from '@profit-tips/types';
-import { redisPublisher } from '@profit-tips/api/lib/redis';
-import { logger } from '@profit-tips/api/lib/logger';
+import { REDIS_CHANNELS } from '@storm-tips/config';
+import type { BroadcastEnvelope } from '@storm-tips/types';
+import { redisPublisher } from '@storm-tips/api/lib/redis';
+import { logger } from '@storm-tips/api/lib/logger';
 
 /**
  * Publishes a realtime message from the worker.

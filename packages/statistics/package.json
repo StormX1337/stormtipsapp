@@ -1,5 +1,5 @@
 {
-  "name": "@profit-tips/statistics",
+  "name": "@storm-tips/statistics",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -13,7 +13,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@profit-tips/types": "workspace:*"
+    "@storm-tips/types": "workspace:*"
   },
   "devDependencies": {
     "typescript": "~5.9.3",

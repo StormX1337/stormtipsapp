@@ -1,9 +1,9 @@
 import { useState, type ReactNode } from 'react';
 import { RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
-import type { MessageKey } from '@profit-tips/ui';
-import type { ProductCode, StatisticsDTO, StatsWindow } from '@profit-tips/types';
-import { formatPercent, formatSignedUnits } from '@profit-tips/ui';
+import type { MessageKey } from '@storm-tips/ui';
+import type { ProductCode, StatisticsDTO, StatsWindow } from '@storm-tips/types';
+import { formatPercent, formatSignedUnits } from '@storm-tips/ui';
 import { theme } from '@/lib/theme';
 import { api } from '@/lib/api';
 import { useI18n } from '@/lib/i18n';

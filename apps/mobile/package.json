@@ -1,5 +1,5 @@
 {
-  "name": "@profit-tips/mobile",
+  "name": "@storm-tips/mobile",
   "version": "1.0.0",
   "private": true,
   "main": "expo-router/entry",
@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",
-    "@profit-tips/types": "workspace:*",
-    "@profit-tips/ui": "workspace:*",
+    "@storm-tips/types": "workspace:*",
+    "@storm-tips/ui": "workspace:*",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@tanstack/react-query": "^5.90.2",
     "expo": "~54.0.12",

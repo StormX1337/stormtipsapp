@@ -1,8 +1,8 @@
 import { Worker, Queue } from 'bullmq';
-import { disconnectPrisma } from '@profit-tips/database';
-import { env } from '@profit-tips/api/lib/env';
-import { logger } from '@profit-tips/api/lib/logger';
-import { redis, closeRedis } from '@profit-tips/api/lib/redis';
+import { disconnectPrisma } from '@storm-tips/database';
+import { env } from '@storm-tips/api/lib/env';
+import { logger } from '@storm-tips/api/lib/logger';
+import { redis, closeRedis } from '@storm-tips/api/lib/redis';
 import { CONCURRENCY, HANDLERS, SCHEDULES } from './registry.js';
 
 const workers: Worker[] = [];
@@ -79,7 +79,7 @@ async function shutdown(signal: string): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  logger.info({ env: env.NODE_ENV, provider: env.SPORTS_PROVIDER }, 'PROFIT TIPS worker starting');
+  logger.info({ env: env.NODE_ENV, provider: env.SPORTS_PROVIDER }, 'STORM TIPS worker starting');
   startWorkers();
   await registerSchedules();
 

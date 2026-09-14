@@ -3,8 +3,8 @@
 import clsx from 'clsx';
 import { Lock } from 'lucide-react';
 import type { ReactNode } from 'react';
-import type { ComboDTO } from '@profit-tips/types';
-import { formatDateTime } from '@profit-tips/ui';
+import type { ComboDTO } from '@storm-tips/types';
+import { formatDateTime } from '@storm-tips/ui';
 import { useI18n } from '@/lib/i18n';
 import { StatusBadge, TeamCrest } from './primitives';
 

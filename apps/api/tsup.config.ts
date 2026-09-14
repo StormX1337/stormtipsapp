@@ -10,7 +10,7 @@ export default defineConfig({
   clean: true,
   splitting: false,
   // Workspace packages ship TypeScript source, so they are bundled in.
-  noExternal: [/^@profit-tips\//],
+  noExternal: [/^@storm-tips\//],
   // Native addons (and Prisma's generated client) must stay external: esbuild
   // cannot inline a platform-specific .node binary.
   external: ['@prisma/client', '.prisma', '@node-rs/argon2'],

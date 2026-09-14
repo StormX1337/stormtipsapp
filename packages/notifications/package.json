@@ -1,5 +1,5 @@
 {
-  "name": "@profit-tips/notifications",
+  "name": "@storm-tips/notifications",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -13,7 +13,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@profit-tips/types": "workspace:*",
+    "@storm-tips/types": "workspace:*",
     "google-auth-library": "^10.5.0",
     "jose": "^6.1.0"
   },

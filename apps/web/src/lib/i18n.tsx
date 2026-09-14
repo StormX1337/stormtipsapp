@@ -16,9 +16,9 @@ import {
   type MessageKey,
   type SupportedLocale,
   type TranslateValues,
-} from '@profit-tips/ui';
+} from '@storm-tips/ui';
 
-const STORAGE_KEY = 'pt.locale';
+const STORAGE_KEY = 'st.locale';
 
 interface I18nContextValue {
   locale: SupportedLocale;

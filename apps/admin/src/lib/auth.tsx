@@ -9,8 +9,8 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import type { AuthResponseDTO, UserDTO, UserRole } from '@profit-tips/types';
-import { ROLE_RANK } from '@profit-tips/types';
+import type { AuthResponseDTO, UserDTO, UserRole } from '@storm-tips/types';
+import { ROLE_RANK } from '@storm-tips/types';
 import { api, tokenStore } from './api';
 
 interface AdminAuthValue {

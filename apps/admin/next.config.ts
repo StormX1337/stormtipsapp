@@ -7,7 +7,7 @@ const config: NextConfig = {
   // Emits a self-contained server bundle for the container image.
   output: 'standalone',
   outputFileTracingRoot: path.join(import.meta.dirname, '../..'),
-  transpilePackages: ['@profit-tips/ui', '@profit-tips/types'],
+  transpilePackages: ['@storm-tips/ui', '@storm-tips/types'],
   eslint: { ignoreDuringBuilds: true },
   webpack(webpackConfig) {
     webpackConfig.resolve.extensionAlias = {

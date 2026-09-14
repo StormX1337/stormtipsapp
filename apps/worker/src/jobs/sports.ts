@@ -1,6 +1,6 @@
 import type { Job } from 'bullmq';
-import { sync } from '@profit-tips/api/services';
-import { logger } from '@profit-tips/api/lib/logger';
+import { sync } from '@storm-tips/api/services';
+import { logger } from '@storm-tips/api/lib/logger';
 
 export interface FixtureJobData {
   providerSlug?: string;

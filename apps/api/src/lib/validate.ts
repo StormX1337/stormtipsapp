@@ -1,6 +1,6 @@
 import type { FastifyRequest } from 'fastify';
 import type { z } from 'zod';
-import { AppError, ErrorCode } from '@profit-tips/types';
+import { AppError, ErrorCode } from '@storm-tips/types';
 
 function parse<T extends z.ZodType>(schema: T, value: unknown, source: string): z.infer<T> {
   const result = schema.safeParse(value);

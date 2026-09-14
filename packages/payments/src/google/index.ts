@@ -1,5 +1,5 @@
 import { JWT, OAuth2Client } from 'google-auth-library';
-import { AppError, ErrorCode, type SubscriptionStatus } from '@profit-tips/types';
+import { AppError, ErrorCode, type SubscriptionStatus } from '@storm-tips/types';
 import type { NormalizedSubscription, NormalizedWebhookEvent } from '../types.js';
 
 export interface GoogleConfig {

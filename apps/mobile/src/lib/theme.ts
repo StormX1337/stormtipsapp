@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors, fontSize, radii, sizes, spacing } from '@profit-tips/ui';
+import { colors, fontSize, radii, sizes, spacing } from '@storm-tips/ui';
 
 /**
  * Native theme.

@@ -2,14 +2,14 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { MessageKey } from '@profit-tips/ui';
+import type { MessageKey } from '@storm-tips/ui';
 import type {
   NotificationDTO,
   NotificationPreferences,
   Paginated,
   UserDTO,
-} from '@profit-tips/types';
-import { formatRelative } from '@profit-tips/ui';
+} from '@storm-tips/types';
+import { formatRelative } from '@storm-tips/ui';
 import { theme } from '@/lib/theme';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';

@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto';
-import { MarketType } from '@profit-tips/types';
-import { settleSelection, type MatchResult, type SettlementOutcome } from '@profit-tips/statistics';
+import { MarketType } from '@storm-tips/types';
+import { settleSelection, type MatchResult, type SettlementOutcome } from '@storm-tips/statistics';
 
 /** Monotonic, sortable, collision-safe id — lets us pre-assign ids for `createMany`. */
 let counter = 0;
