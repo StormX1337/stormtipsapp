@@ -83,6 +83,78 @@ else entirely.
 Each failure prints the command or the admin page that fixes it, and the
 command exits non-zero when anything failed, so it works as a deployment gate.
 
+## Moving the heavy directories to a second volume
+
+When the root filesystem fills up, everything stops in confusing ways — Redis
+refuses writes, Postgres cannot extend a file, builds fail halfway. Attaching a
+volume and moving the four things that actually grow is the durable fix.
+
+Take the volume's mount point from `df -h` (on Hetzner it looks like
+`/mnt/HC_Volume_123456789`) and use it in place of `$VOL` below.
+
+**First, make sure it survives a reboot.** If the volume is not in `/etc/fstab`,
+nothing mounts at boot and Postgres will not start:
+
+```bash
+grep -q "$VOL" /etc/fstab && echo "in fstab" || echo "NOT in fstab — add it"
+```
+
+### 1. The checkout (easiest, usually the biggest single win)
+
+`node_modules` across this workspace is several GB. Stop the apps, move the
+directory, and leave a symlink so every path and script keeps working:
+
+```bash
+mv /root/stormtipsapp "$VOL/stormtipsapp"
+ln -s "$VOL/stormtipsapp" /root/stormtipsapp
+```
+
+### 2. The pnpm store
+
+```bash
+pnpm config set store-dir "$VOL/pnpm-store"
+pnpm store prune
+```
+
+### 3. Redis
+
+```bash
+systemctl stop redis-server
+mkdir -p "$VOL/redis" && mv /var/lib/redis/* "$VOL/redis/"
+chown -R redis:redis "$VOL/redis"
+# set `dir $VOL/redis` in /etc/redis/redis.conf
+systemctl start redis-server
+redis-cli CONFIG GET dir          # must print the new path
+```
+
+### 4. PostgreSQL
+
+The one that needs care. Take a dump first — it costs a minute and is the
+difference between a mistake and a disaster:
+
+```bash
+sudo -u postgres pg_dumpall > "$VOL/backup-$(date +%F).sql"
+systemctl stop postgresql
+rsync -a /var/lib/postgresql/16/main/ "$VOL/postgresql/16/main/"
+chown -R postgres:postgres "$VOL/postgresql"
+chmod 700 "$VOL/postgresql/16/main"
+# set `data_directory = '$VOL/postgresql/16/main'` in
+# /etc/postgresql/16/main/postgresql.conf
+systemctl start postgresql
+sudo -u postgres psql -c "SHOW data_directory;"
+```
+
+Keep the old directory until the new one has served for a few days, then remove
+it:
+
+```bash
+mv /var/lib/postgresql/16/main /var/lib/postgresql/16/main.old
+```
+
+`pnpm health` reports every mount it can find, so after the move it shows both
+the volume and the root filesystem — the point being that `/` filling up again
+stays visible instead of hiding behind a roomy volume.
+
 ## The worker is not optional
 
 The API serves requests; **everything that happens on a schedule happens in

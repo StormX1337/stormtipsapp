@@ -49,31 +49,67 @@ const message = (error: unknown): string =>
  * accepting writes when it cannot save, and Postgres stops accepting them when
  * it cannot extend a file.
  */
-function checkDisk(): void {
+interface Filesystem {
+  mount: string;
+  availableKb: number;
+  usedPercent: number;
+}
+
+/** One `df` reading, or null when the path is not on a filesystem we can read. */
+function measure(path: string): Filesystem | null {
   let output: string;
   try {
-    output = execFileSync('df', ['-Pk', process.cwd()], { encoding: 'utf8' });
-  } catch (error) {
-    warn('Disk', `could not be measured (${message(error)})`);
-    return;
+    output = execFileSync('df', ['-Pk', path], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    });
+  } catch {
+    return null;
   }
-
-  const line = output.trim().split('\n').at(-1) ?? '';
-  const columns = line.split(/\s+/);
+  const columns = (output.trim().split('\n').at(-1) ?? '').split(/\s+/);
   const availableKb = Number(columns[3]);
   const usedPercent = Number((columns[4] ?? '').replace('%', ''));
-  if (!Number.isFinite(availableKb) || !Number.isFinite(usedPercent)) {
+  const mount = columns[5] ?? path;
+  if (!Number.isFinite(availableKb) || !Number.isFinite(usedPercent)) return null;
+  return { mount, availableKb, usedPercent };
+}
+
+/**
+ * Checked first because it is upstream of almost everything else: Redis stops
+ * accepting writes when it cannot save, and Postgres stops accepting them when
+ * it cannot extend a file.
+ *
+ * Several filesystems are read, not just this one, because moving the heavy
+ * directories onto a second volume is the usual answer to a full disk — and
+ * then watching only the new volume misses the root filesystem quietly filling
+ * up again, which is the failure that started all this. Each mount is reported
+ * once, so the common single-disk case still prints one line.
+ */
+function checkDisk(): void {
+  const candidates = [process.cwd(), '/', '/var/lib/postgresql', '/var/lib/redis', '/var/log'];
+  const byMount = new Map<string, Filesystem>();
+  for (const path of candidates) {
+    const reading = measure(path);
+    if (reading) byMount.set(reading.mount, reading);
+  }
+
+  if (byMount.size === 0) {
     warn('Disk', 'could not be measured');
     return;
   }
 
-  const free = `${(availableKb / 1024 / 1024).toFixed(1)} GB free, ${usedPercent}% used`;
-  if (usedPercent >= 95) {
-    fail('Disk', free, 'Free space now — Redis and Postgres both refuse writes when full.');
-  } else if (usedPercent >= 85) {
-    warn('Disk', free, 'Free space before it reaches 95%.');
-  } else {
-    ok('Disk', free);
+  for (const filesystem of [...byMount.values()].sort((a, b) => b.usedPercent - a.usedPercent)) {
+    // The mount goes in the detail, not the name: a long volume path in the
+    // name column would widen every other row in the report.
+    const where = byMount.size === 1 ? '' : `${filesystem.mount} — `;
+    const free = `${where}${(filesystem.availableKb / 1024 / 1024).toFixed(1)} GB free, ${filesystem.usedPercent}% used`;
+    if (filesystem.usedPercent >= 95) {
+      fail('Disk', free, 'Free space now — Redis and Postgres both refuse writes when full.');
+    } else if (filesystem.usedPercent >= 85) {
+      warn('Disk', free, 'Free space before it reaches 95%.');
+    } else {
+      ok('Disk', free);
+    }
   }
 }
 
