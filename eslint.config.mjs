@@ -59,6 +59,7 @@ export default tseslint.config(
       '**/prisma/set-password.ts',
       '**/prisma/merge-leagues.ts',
       '**/prisma/stripe-sync-prices.ts',
+      '**/prisma/health.ts',
       '**/scripts/**',
     ],
     rules: { 'no-console': 'off', '@typescript-eslint/no-explicit-any': 'off' },

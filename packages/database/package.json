@@ -23,7 +23,8 @@
     "validate": "dotenv -e ../../.env -- prisma validate",
     "build": "prisma generate",
     "typecheck": "tsc --noEmit",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "health": "dotenv -e ../../.env -- tsx prisma/health.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -34,11 +35,13 @@
   },
   "devDependencies": {
     "@storm-tips/auth": "workspace:*",
+    "@storm-tips/config": "workspace:*",
     "@storm-tips/payments": "workspace:*",
     "@storm-tips/sports": "workspace:*",
     "@storm-tips/statistics": "workspace:*",
     "@storm-tips/types": "workspace:*",
     "dotenv-cli": "^10.0.0",
+    "ioredis": "^5.11.1",
     "stripe": "^19.3.1",
     "tsx": "^4.20.6",
     "typescript": "~5.9.3"

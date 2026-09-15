@@ -451,6 +451,9 @@ importers:
       '@storm-tips/auth':
         specifier: workspace:*
         version: link:../auth
+      '@storm-tips/config':
+        specifier: workspace:*
+        version: link:../config
       '@storm-tips/payments':
         specifier: workspace:*
         version: link:../payments
@@ -466,6 +469,9 @@ importers:
       dotenv-cli:
         specifier: ^10.0.0
         version: 10.0.0
+      ioredis:
+        specifier: ^5.11.1
+        version: 5.11.1
       stripe:
         specifier: ^19.3.1
         version: 19.3.1(@types/node@22.20.2)

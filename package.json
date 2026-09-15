@@ -30,6 +30,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "health": "pnpm --filter @storm-tips/database health",
     "db:generate": "pnpm --filter @storm-tips/database generate",
     "db:migrate": "pnpm --filter @storm-tips/database migrate",
     "db:migrate:deploy": "pnpm --filter @storm-tips/database migrate:deploy",

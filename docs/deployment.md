@@ -57,6 +57,32 @@ once, against a fresh database:
 pnpm db:seed
 ```
 
+## Checking a deployment
+
+```bash
+pnpm health
+```
+
+Read-only, and it answers the question every outage here has actually started
+with: _why is nothing happening?_ Each check exists because the failure it
+catches was silent — the app kept serving and the symptom appeared somewhere
+else entirely.
+
+| Check          | Catches                                                                  |
+| -------------- | ------------------------------------------------------------------------ |
+| Disk           | the full disk that makes Redis and Postgres refuse writes                |
+| Redis          | unreachable, wrong password, or refusing writes after a failed snapshot  |
+| Worker         | no heartbeat, or jobs piling up and failing                              |
+| Database       | unreachable, or migrations unfinished                                    |
+| Stripe keys    | placeholders, a secret key in the publishable slot, mismatched test/live |
+| Plans          | active plans with no usable Stripe price — nothing can be bought         |
+| Store products | plans with no Apple or Google product id — in-app purchase fails         |
+| Provider keys  | a stored API key that the current `ENCRYPTION_KEY` can no longer decrypt |
+| Configuration  | values still left at their `.env.example` placeholder                    |
+
+Each failure prints the command or the admin page that fixes it, and the
+command exits non-zero when anything failed, so it works as a deployment gate.
+
 ## The worker is not optional
 
 The API serves requests; **everything that happens on a schedule happens in
