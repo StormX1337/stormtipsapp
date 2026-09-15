@@ -79,18 +79,73 @@ npx eas build --profile development --platform android
 web and native, so the two stay in visual lockstep. `src/lib/theme.ts` re-exports
 those tokens as React Native styles.
 
-## Building and submitting
+## Building for iOS
+
+An iOS binary can only be produced by Apple's toolchain, so there are two routes
+and neither runs on this machine:
+
+- **EAS Build** — Expo's hosted macOS builders. Works from Linux or Windows, and
+  is the route this project is set up for.
+- **Xcode on a Mac** — `npx expo prebuild -p ios`, then open
+  `ios/stormtips.xcworkspace`. Only worth it if you already have the Mac.
+
+Either way you need a paid **Apple Developer Program** membership for TestFlight
+or the App Store. Without one you can still run the app on your own device
+through a development build, but you cannot distribute it.
+
+### First time
 
 ```bash
-npx eas build --profile production --platform all
+cd apps/mobile
+npx eas login                 # your Expo account
+npx eas init                  # writes the real extra.eas.projectId into app.json
+```
+
+`extra.eas.projectId` ships as an all-zero placeholder; `eas init` replaces it.
+A build against the placeholder fails immediately.
+
+### The builds
+
+```bash
+# On your own iPhone, with the dev server — includes native modules Expo Go lacks.
+npx eas build --profile development --platform ios
+
+# A TestFlight-ready build.
+npx eas build --profile production --platform ios
 npx eas submit --profile production --platform ios
+```
+
+EAS asks for your Apple ID on the first production build and manages the
+signing certificate and provisioning profile for you. The profiles in
+`eas.json` decide which API the binary talks to — check `EXPO_PUBLIC_API_URL`
+there before a production build, because it is compiled in and cannot be
+changed afterwards.
+
+### Before the first submission
+
+- **App icon** — `assets/icon.png` is a plain placeholder mark in the product's
+  own colours. Replace it with real artwork before release; it must stay
+  1024×1024 and must not carry an alpha channel, which Apple rejects.
+- **In-app purchases** — payments on iOS go through `react-native-iap`, not
+  Stripe, and Apple requires that. Create each subscription in App Store
+  Connect and put its product id on the matching plan
+  (Admin → Plans → Apple product id). A plan with an empty `appleProductId`
+  cannot be bought in the app; the seed ships them all empty.
+- **Push** — `UIBackgroundModes: remote-notification` is already declared. Upload
+  an APNs key and set `APNS_KEY_ID`, `APNS_TEAM_ID`, `APNS_PRIVATE_KEY` on the
+  server.
+- Bump `expo.version` for a new public version; the build number is handled by
+  `autoIncrement` in the production profile.
+
+## Building for Android
+
+```bash
+npx eas build --profile production --platform android
 npx eas submit --profile production --platform android
 ```
 
-`eas.json` defines `development`, `preview` and `production` profiles with the
-API URL each one targets. Set the real EAS project id in `app.json`
-(`extra.eas.projectId`) before the first build — the placeholder value is not a
-real project.
+Same profiles, and the same requirement that every plan carries its
+`googleProductId`.
 
 ### Store review checklist
 

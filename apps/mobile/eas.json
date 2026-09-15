@@ -4,15 +4,27 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "env": { "EXPO_PUBLIC_API_URL": "http://localhost:4000" }
+      "env": {
+        "EXPO_PUBLIC_API_URL": "http://localhost:4000",
+        "EXPO_PUBLIC_WS_URL": "ws://localhost:4000/ws",
+        "EXPO_PUBLIC_APP_NAME": "STORM TIPS"
+      }
     },
     "preview": {
       "distribution": "internal",
-      "env": { "EXPO_PUBLIC_API_URL": "https://staging-api.stormtips.app" }
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://tips.stormclient.xyz",
+        "EXPO_PUBLIC_WS_URL": "wss://tips.stormclient.xyz/ws",
+        "EXPO_PUBLIC_APP_NAME": "STORM TIPS"
+      }
     },
     "production": {
       "autoIncrement": true,
-      "env": { "EXPO_PUBLIC_API_URL": "https://api.stormtips.app" }
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://tips.stormclient.xyz",
+        "EXPO_PUBLIC_WS_URL": "wss://tips.stormclient.xyz/ws",
+        "EXPO_PUBLIC_APP_NAME": "STORM TIPS"
+      }
     }
   },
   "submit": { "production": {} }

@@ -13,19 +13,29 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.stormtips.app",
-      "config": { "usesNonExemptEncryption": false },
+      "config": {
+        "usesNonExemptEncryption": false
+      },
       "infoPlist": {
         "UIBackgroundModes": ["remote-notification"],
         "ITSAppUsesNonExemptEncryption": false
-      }
+      },
+      "icon": "./assets/icon.png"
     },
     "android": {
       "package": "com.stormtips.app",
-      "adaptiveIcon": { "backgroundColor": "#0A0C10" },
+      "adaptiveIcon": {
+        "backgroundColor": "#0A0C10",
+        "foregroundImage": "./assets/adaptive-icon.png"
+      },
       "permissions": ["POST_NOTIFICATIONS"],
       "edgeToEdgeEnabled": true
     },
-    "web": { "bundler": "metro", "output": "single" },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/favicon.png"
+    },
     "plugins": [
       "expo-router",
       "expo-secure-store",
@@ -35,27 +45,40 @@
         {
           "backgroundColor": "#0A0C10",
           "imageWidth": 180,
-          "resizeMode": "contain"
+          "resizeMode": "contain",
+          "image": "./assets/splash-icon.png"
         }
       ],
       [
         "expo-notifications",
         {
           "color": "#12E17F",
-          "defaultChannel": "tips"
+          "defaultChannel": "tips",
+          "icon": "./assets/notification-icon.png"
         }
       ],
       [
         "expo-build-properties",
         {
-          "ios": { "deploymentTarget": "15.1" },
-          "android": { "compileSdkVersion": 35, "targetSdkVersion": 35, "minSdkVersion": 24 }
+          "ios": {
+            "deploymentTarget": "15.1"
+          },
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "minSdkVersion": 24
+          }
         }
       ]
     ],
-    "experiments": { "typedRoutes": true },
+    "experiments": {
+      "typedRoutes": true
+    },
     "extra": {
-      "eas": { "projectId": "00000000-0000-0000-0000-000000000000" }
-    }
+      "eas": {
+        "projectId": "00000000-0000-0000-0000-000000000000"
+      }
+    },
+    "icon": "./assets/icon.png"
   }
 }
