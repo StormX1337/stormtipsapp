@@ -8,6 +8,7 @@ import { disconnectPrisma } from '@storm-tips/database';
 import { env } from '@storm-tips/api/lib/env';
 import { logger } from '@storm-tips/api/lib/logger';
 import { redis, closeRedis } from '@storm-tips/api/lib/redis';
+import { explainRedisFailure } from './redis-errors.js';
 import { CONCURRENCY, HANDLERS, SCHEDULES } from './registry.js';
 
 const workers: Worker[] = [];
@@ -32,7 +33,10 @@ async function beat(): Promise<void> {
       WORKER_HEARTBEAT_TTL_SECONDS,
     );
   } catch (error) {
-    logger.error({ err: error }, 'failed to write the worker heartbeat');
+    const reason = explainRedisFailure(error);
+    // Every 15 seconds, so never the full reply payload.
+    if (reason) logger.error(`the worker heartbeat could not be written — ${reason}`);
+    else logger.error({ err: error }, 'failed to write the worker heartbeat');
   }
 }
 
@@ -80,12 +84,22 @@ function startWorkers(): void {
     );
 
     worker.on('failed', (job, error) => {
-      logger.error(
-        { queue: queueName, job: job?.name, attempts: job?.attemptsMade, err: error },
-        'job failed',
-      );
+      const reason = explainRedisFailure(error);
+      if (reason) {
+        logger.error({ queue: queueName, job: job?.name }, `job failed — ${reason}`);
+      } else {
+        logger.error(
+          { queue: queueName, job: job?.name, attempts: job?.attemptsMade, err: error },
+          'job failed',
+        );
+      }
     });
-    worker.on('error', (error) => logger.error({ err: error, queue: queueName }, 'worker error'));
+    worker.on('error', (error) => {
+      const reason = explainRedisFailure(error);
+      // Redis being down means every worker emits this, several times a second.
+      if (reason) logger.error({ queue: queueName }, `worker error — ${reason}`);
+      else logger.error({ err: error, queue: queueName }, 'worker error');
+    });
 
     workers.push(worker);
   }
@@ -130,6 +144,8 @@ async function main(): Promise<void> {
 }
 
 main().catch((error) => {
-  logger.fatal({ err: error }, 'worker failed to start');
+  const reason = explainRedisFailure(error);
+  if (reason) logger.fatal(`worker failed to start — ${reason}`);
+  else logger.fatal({ err: error }, 'worker failed to start');
   process.exit(1);
 });
