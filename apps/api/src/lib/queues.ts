@@ -29,14 +29,30 @@ export function getQueue(name: string): Queue {
   return queue;
 }
 
+/**
+ * BullMQ refuses a custom job id containing `:` — the separator in its own Redis
+ * keys — and every id below was written with one. Each was rejected at runtime
+ * and the job silently dropped, which is how this shipped: scheduled publishing
+ * and every push notification had been failing, visible only as one line in the
+ * worker log.
+ *
+ * Sanitising here rather than at each call site is deliberate. The ids that
+ * matter most are `dedupeKey`s built by route handlers, so a rule that lives
+ * with the callers is a rule that the next caller misses.
+ */
+export function safeJobId(value: string): string {
+  return value.replace(/:/g, '-');
+}
+
 export async function enqueue<T extends object>(
   queueName: string,
   jobName: string,
   payload: T,
   options: JobsOptions = {},
 ): Promise<void> {
+  const safe = options.jobId ? { ...options, jobId: safeJobId(options.jobId) } : options;
   try {
-    await getQueue(queueName).add(jobName, payload, options);
+    await getQueue(queueName).add(jobName, payload, safe);
   } catch (error) {
     logger.error({ err: error, queueName, jobName }, 'failed to enqueue job');
   }

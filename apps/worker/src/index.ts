@@ -8,6 +8,7 @@ import { disconnectPrisma } from '@storm-tips/database';
 import { env } from '@storm-tips/api/lib/env';
 import { logger } from '@storm-tips/api/lib/logger';
 import { redis, closeRedis } from '@storm-tips/api/lib/redis';
+import { safeJobId } from '@storm-tips/api/lib/queues';
 import { explainRedisFailure } from './redis-errors.js';
 import { CONCURRENCY, HANDLERS, SCHEDULES } from './registry.js';
 
@@ -51,7 +52,7 @@ async function registerSchedules(): Promise<void> {
     }
     await queue.add(schedule.name, schedule.data ?? {}, {
       repeat: { pattern: schedule.cron, tz: env.DEFAULT_TIMEZONE },
-      jobId: `repeat:${schedule.name}`,
+      jobId: safeJobId(`repeat:${schedule.name}`),
       removeOnComplete: { age: 3_600, count: 200 },
       removeOnFail: { age: 86_400 },
     });
