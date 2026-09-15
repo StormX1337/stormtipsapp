@@ -1,0 +1,40 @@
+[Unit]
+Description=STORM TIPS web app
+Documentation=https://github.com/StormX1337/stormtipsapp/blob/main/docs/deployment.md
+After=network-online.target storm-tips-api.service
+Wants=network-online.target
+# The checkout lives on the data volume: without the mount this would start
+# against a directory that is not there.
+RequiresMountsFor=/mnt/HC_Volume_106874042
+# A crash loop should surface as a failed unit rather than hide behind endless
+# restarts. These belong in [Unit]; systemd ignores them under [Service].
+StartLimitBurst=5
+StartLimitIntervalSec=60
+
+[Service]
+Type=simple
+User=root
+# The standalone bundle, not the source tree: `next start` refuses to run
+# against an `output: 'standalone'` build.
+WorkingDirectory=/root/stormtipsapp/apps/web/.next/standalone/apps/web
+EnvironmentFile=/root/stormtipsapp/.env
+# nginx is the only thing in front, so the server binds to loopback rather
+# than to every interface.
+Environment=PORT=3000
+Environment=HOSTNAME=127.0.0.1
+# The standalone server never reads next.config, so every runtime value
+# (API_INTERNAL_URL among them) has to arrive through the environment.
+ExecStart=/usr/bin/env node server.js
+
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+Restart=always
+RestartSec=5
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=storm-tips-web
+
+[Install]
+WantedBy=multi-user.target

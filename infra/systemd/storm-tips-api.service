@@ -1,0 +1,35 @@
+[Unit]
+Description=STORM TIPS API
+Documentation=https://github.com/StormX1337/stormtipsapp/blob/main/docs/deployment.md
+After=network-online.target postgresql.service docker.service
+Wants=network-online.target
+Requires=docker.service
+# The checkout lives on the data volume: without the mount this would start
+# against a directory that is not there.
+RequiresMountsFor=/mnt/HC_Volume_106874042
+# A crash loop should surface as a failed unit rather than hide behind endless
+# restarts. These belong in [Unit]; systemd ignores them under [Service].
+StartLimitBurst=5
+StartLimitIntervalSec=60
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/stormtipsapp/apps/api
+EnvironmentFile=/root/stormtipsapp/.env
+# The compiled entry point, not a package manager: one process to supervise,
+# and no shell in between to swallow the exit code.
+ExecStart=/usr/bin/env node dist/index.js
+
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+Restart=always
+RestartSec=5
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=storm-tips-api
+
+[Install]
+WantedBy=multi-user.target
