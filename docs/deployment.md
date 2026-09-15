@@ -111,19 +111,39 @@ ln -s "$VOL/stormtipsapp" /root/stormtipsapp
 
 ### 2. The pnpm store
 
+Pointing pnpm at a new store does not reclaim the old one — it is simply
+abandoned where it is, and the move across filesystems has already turned the
+workspace's hardlinks into full copies. So delete it and reinstall, which links
+everything back into the store on the volume:
+
 ```bash
+du -sh /root/.local/share/pnpm/store /root/.pnpm-store 2>/dev/null
 pnpm config set store-dir "$VOL/pnpm-store"
-pnpm store prune
+rm -rf /root/.local/share/pnpm/store /root/.pnpm-store
+pnpm install
 ```
 
 ### 3. Redis
 
+Find how Redis is actually installed first — the service name and paths differ
+between a distribution package, a container and a self-compiled build, and
+guessing wastes a stopped service:
+
 ```bash
-systemctl stop redis-server
-mkdir -p "$VOL/redis" && mv /var/lib/redis/* "$VOL/redis/"
+systemctl list-units --type=service | grep -i redis
+redis-cli CONFIG GET dir          # where it saves today
+redis-cli INFO server | grep config_file
+```
+
+Then, with `$SVC` as the service name from the first command and `$OLD` as the
+directory from the second:
+
+```bash
+systemctl stop "$SVC"
+mkdir -p "$VOL/redis" && mv "$OLD"/* "$VOL/redis/"
 chown -R redis:redis "$VOL/redis"
-# set `dir $VOL/redis` in /etc/redis/redis.conf
-systemctl start redis-server
+# set `dir $VOL/redis` in the config file the third command named
+systemctl start "$SVC"
 redis-cli CONFIG GET dir          # must print the new path
 ```
 
@@ -132,14 +152,25 @@ redis-cli CONFIG GET dir          # must print the new path
 The one that needs care. Take a dump first — it costs a minute and is the
 difference between a mistake and a disaster:
 
+Read the major version from the running server rather than assuming one — the
+paths carry it, and a wrong guess makes every command below fail silently
+against a directory that does not exist:
+
+```bash
+pg_lsclusters                     # version, cluster and data directory
+VER=$(pg_lsclusters -h | awk 'NR==1{print $1}')
+```
+
 ```bash
 sudo -u postgres pg_dumpall > "$VOL/backup-$(date +%F).sql"
+ls -lh "$VOL"/backup-*.sql        # confirm it is not empty before going on
 systemctl stop postgresql
-rsync -a /var/lib/postgresql/16/main/ "$VOL/postgresql/16/main/"
+mkdir -p "$VOL/postgresql/$VER"
+rsync -a "/var/lib/postgresql/$VER/main/" "$VOL/postgresql/$VER/main/"
 chown -R postgres:postgres "$VOL/postgresql"
-chmod 700 "$VOL/postgresql/16/main"
-# set `data_directory = '$VOL/postgresql/16/main'` in
-# /etc/postgresql/16/main/postgresql.conf
+chmod 700 "$VOL/postgresql/$VER/main"
+# set `data_directory = '$VOL/postgresql/$VER/main'` in
+# /etc/postgresql/$VER/main/postgresql.conf
 systemctl start postgresql
 sudo -u postgres psql -c "SHOW data_directory;"
 ```
@@ -148,7 +179,7 @@ Keep the old directory until the new one has served for a few days, then remove
 it:
 
 ```bash
-mv /var/lib/postgresql/16/main /var/lib/postgresql/16/main.old
+mv "/var/lib/postgresql/$VER/main" "/var/lib/postgresql/$VER/main.old"
 ```
 
 `pnpm health` reports every mount it can find, so after the move it shows both
