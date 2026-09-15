@@ -208,21 +208,44 @@ async function checkWorker(redis: Redis): Promise<void> {
 
   let waiting = 0;
   let failed = 0;
+  /** How often each distinct failure message appears, across every queue. */
+  const reasons = new Map<string, number>();
+
   for (const queue of Object.values(QUEUE_NAMES)) {
     try {
       waiting += Number(await redis.llen(`bull:${queue}:wait`));
-      failed += Number(await redis.zcard(`bull:${queue}:failed`));
+
+      /**
+       * A count alone sends the reader to the worker log to find out what broke,
+       * and by then the line may have scrolled past or aged out. BullMQ keeps
+       * the message on the job itself, so the reason can be reported here — and
+       * a failure from before a fix reads very differently from a live one.
+       */
+      const ids = await redis.zrange(`bull:${queue}:failed`, 0, -1);
+      failed += ids.length;
+      for (const id of ids.slice(0, 50)) {
+        const reason = await redis.hget(`bull:${queue}:${id}`, 'failedReason');
+        const text = (reason ?? 'no reason recorded').split('\n')[0]!.slice(0, 90);
+        reasons.set(text, (reasons.get(text) ?? 0) + 1);
+      }
     } catch {
       /* a queue that has never existed simply has nothing to count */
     }
   }
 
   const depth = `${waiting} job(s) waiting, ${failed} failed`;
-  if (failed > 0) {
-    warn('Worker', `running — ${depth}`, 'Check the worker log for what is failing.');
-  } else {
+  if (failed === 0) {
     ok('Worker', `running — ${depth}`);
+    return;
   }
+
+  const [top] = [...reasons.entries()].sort((a, b) => b[1] - a[1]);
+  warn(
+    'Worker',
+    top ? `running — ${depth}, most often: ${top[0]}` : `running — ${depth}`,
+    'Failures are kept for 24 hours. If they predate a fix, clear them: ' +
+      'redis-cli DEL bull:<queue>:failed',
+  );
 }
 
 // ── database ─────────────────────────────────────────────────────────────────
