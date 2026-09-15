@@ -141,6 +141,15 @@
   }
 
   /* The neon promo border from the reference banner. */
+  /*
+   * Promotional banner frame.
+   *
+   * The gradient is the operator's, set per promotion in the admin, so this is
+   * only the fallback and the frame around it. The frame used to glow in two
+   * colours at once — green outside, cyan inside — which fought both the accent
+   * and whatever gradient the operator had chosen. One hairline in the accent,
+   * held well back, reads as a frame instead of a second brand.
+   */
   .neon-frame {
     position: relative;
     border-radius: var(--radius-lg);
@@ -151,10 +160,7 @@
     position: absolute;
     inset: 6px;
     border-radius: 12px;
-    border: 1.5px solid rgb(18 225 127 / 0.75);
-    box-shadow:
-      0 0 12px rgb(18 225 127 / 0.35),
-      inset 0 0 12px rgb(40 216 245 / 0.25);
+    border: 1px solid rgb(18 225 127 / 0.45);
     pointer-events: none;
   }
 

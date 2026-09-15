@@ -16,10 +16,11 @@ function targetHref(promotion: PromotionDTO): string {
 }
 
 /**
- * Promotional banner.
+ * Promotional banner. Every word, colour and destination is set in the admin.
  *
- * Recreates the reference banner: a gradient card with a neon inner frame and a
- * decorative ball glyph. Content is fully admin-configurable.
+ * The type is sized for a phone and steps up from `md`, where the same banner
+ * runs the full width of a desktop column and 10px copy in it looks like a
+ * mistake rather than a deliberately quiet subtitle.
  */
 export function PromoBanner({ promotion }: { promotion: PromotionDTO }): ReactNode {
   const gradient =
@@ -43,7 +44,7 @@ export function PromoBanner({ promotion }: { promotion: PromotionDTO }): ReactNo
       <svg
         aria-hidden
         viewBox="0 0 100 100"
-        className="absolute -right-4 bottom-[-10px] h-20 w-20 opacity-90"
+        className="absolute -right-4 bottom-[-10px] h-20 w-20 opacity-90 md:right-2 md:bottom-[-6px] md:h-28 md:w-28"
       >
         <circle cx="50" cy="50" r="34" fill="#0E1117" stroke="#12E17F" strokeWidth="2.5" />
         <path
@@ -53,17 +54,17 @@ export function PromoBanner({ promotion }: { promotion: PromotionDTO }): ReactNo
         />
       </svg>
 
-      <div className="relative z-[1] py-4 pr-20 pl-4">
-        <p className="text-[14px] leading-tight font-extrabold text-accent-300">
+      <div className="relative z-[1] py-4 pr-20 pl-4 md:py-6 md:pr-36 md:pl-6">
+        <p className="text-[14px] leading-tight font-extrabold text-accent-300 md:text-[19px]">
           {promotion.title}
         </p>
         {promotion.subtitle ? (
-          <p className="mt-1 line-clamp-3 max-w-[30ch] text-[10.5px] leading-[1.35] text-white/85">
+          <p className="mt-1 line-clamp-3 max-w-[30ch] text-[10.5px] leading-[1.35] text-white/85 md:mt-2 md:max-w-[52ch] md:text-[13px] md:leading-[1.45]">
             {promotion.subtitle}
           </p>
         ) : null}
         {promotion.ctaLabel ? (
-          <span className="mt-2.5 inline-block rounded-sm bg-accent-500 px-2.5 py-1 text-[10.5px] font-bold text-ink-inverse">
+          <span className="mt-2.5 inline-block rounded-sm bg-accent-500 px-2.5 py-1 text-[10.5px] font-bold text-ink-inverse md:mt-4 md:px-4 md:py-1.5 md:text-[13px]">
             {promotion.ctaLabel}
           </span>
         ) : null}

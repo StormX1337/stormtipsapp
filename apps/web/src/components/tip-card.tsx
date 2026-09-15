@@ -10,23 +10,28 @@ import { useI18n } from '@/lib/i18n';
 import { CountryFlag, OddsBadge, ProductBadge, StatusBadge, TeamCrest } from './primitives';
 
 /**
- * League header.
- *
- * Mirrors the reference layout: country flag, "Country : League", and the
- * bookmaker wordmark right-aligned in its brand colour.
+ * League header: flag, country and league, and the bookmaker the price came
+ * from. The bookmaker is an attribution, not a headline — set as a quiet chip
+ * rather than bold italic, where a red wordmark floating at the end of the row
+ * read as an error message.
  */
 export function LeagueHeader({ group }: { group: TipFeedGroupDTO }): ReactNode {
   const { league, bookmaker } = group;
   return (
-    <div className="flex items-center gap-2 px-1 pt-4 pb-2">
+    <div className="flex items-center gap-2 px-1 pt-5 pb-2">
       <CountryFlag emoji={league.country?.flagEmoji} code={league.country?.code} />
       <h2 className="min-w-0 flex-1 truncate text-[13px] font-semibold text-ink">
-        {league.country?.name ? `${league.country.name} : ` : ''}
+        {league.country?.name ? (
+          <>
+            <span className="text-ink-muted">{league.country.name}</span>
+            <span className="px-1.5 text-ink-dim">·</span>
+          </>
+        ) : null}
         {league.name}
       </h2>
       {bookmaker ? (
         <span
-          className="shrink-0 text-[12px] font-black tracking-tight italic"
+          className="shrink-0 rounded-sm bg-bg-card-alt px-1.5 py-0.5 text-[10.5px] font-semibold tracking-wide"
           style={{ color: bookmaker.color ?? '#9BA5B7' }}
         >
           {bookmaker.name}
@@ -79,7 +84,7 @@ export function TipCard({ tip, href }: { tip: TipDTO; href?: string }): ReactNod
   const body = (
     <article
       className={clsx(
-        'card relative flex gap-3 p-3 transition-colors duration-150',
+        'card relative flex gap-3 p-3 transition-colors duration-150 md:gap-3.5 md:p-3.5',
         href && 'hover:border-line-strong',
         tip.isLocked && 'overflow-hidden',
       )}
@@ -125,7 +130,7 @@ export function TipCard({ tip, href }: { tip: TipDTO; href?: string }): ReactNod
               {t('feed.lockedTitle')}
             </span>
           ) : (
-            <span className="min-w-0 flex-1 text-[12px] leading-[1.25] font-bold tracking-[0.2px] text-accent-500 uppercase">
+            <span className="min-w-0 flex-1 text-[12px] leading-[1.25] font-bold tracking-[0.2px] text-accent-500 uppercase md:text-[12.5px]">
               {tip.selectionLabel}
             </span>
           )}
@@ -133,7 +138,13 @@ export function TipCard({ tip, href }: { tip: TipDTO; href?: string }): ReactNod
       </div>
 
       <div className="flex shrink-0 flex-col items-end gap-1.5">
-        <StatusBadge outcome={tip.outcome} />
+        {/*
+          A pending tip has no outcome to show, and its placeholder dash sat
+          alone in the corner of the card reading as something broken. The badge
+          appears once there is a result — which is also when a reader looks for
+          it.
+        */}
+        {tip.outcome === 'PENDING' ? null : <StatusBadge outcome={tip.outcome} />}
         <ProductBadge product={tip.product} />
       </div>
     </article>
@@ -150,7 +161,7 @@ export function TipCard({ tip, href }: { tip: TipDTO; href?: string }): ReactNod
 /** A whole league block: header plus its stacked tip cards. */
 export function TipGroup({ group }: { group: TipFeedGroupDTO }): ReactNode {
   return (
-    <section>
+    <section className="break-inside-avoid lg:mb-1">
       <LeagueHeader group={group} />
       <div className="flex flex-col gap-2">
         {group.tips.map((tip) => (

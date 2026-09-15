@@ -97,7 +97,7 @@ export function ProductFeed({
         {banner ? <PromoBanner promotion={banner} /> : null}
       </div>
 
-      <div className="sticky top-[52px] z-10 -mx-[var(--page-gutter)] bg-bg-base/95 px-[var(--page-gutter)] backdrop-blur">
+      <div className="sticky top-[52px] z-10 -mx-[var(--page-gutter)] bg-bg-base/95 px-[var(--page-gutter)] backdrop-blur md:top-[60px] md:-mx-6 md:px-6">
         <DateStrip value={date} onChange={setDate} />
       </div>
 
@@ -125,8 +125,8 @@ export function ProductFeed({
         ) : null}
 
         {feed.isPending ? (
-          <div className="mt-4 flex flex-col gap-2">
-            {Array.from({ length: 5 }, (_, index) => (
+          <div className="mt-4 flex flex-col gap-2 lg:grid lg:grid-cols-2 lg:gap-x-5">
+            {Array.from({ length: 6 }, (_, index) => (
               <TipCardSkeleton key={index} />
             ))}
           </div>
@@ -139,7 +139,7 @@ export function ProductFeed({
             <NoResults />
           </div>
         ) : (
-          <div className="flex flex-col">
+          <div className="flex flex-col lg:block lg:columns-2 lg:gap-x-5">
             {feed.data.groups.map((group) => (
               <TipGroup key={group.league.id} group={group} />
             ))}
