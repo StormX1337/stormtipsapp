@@ -198,6 +198,10 @@ pnpm --filter @storm-tips/worker dev     # development
 pnpm --filter @storm-tips/worker start   # production
 ```
 
+In production run it as a service rather than from a terminal, or it dies with
+the session and never comes back after a reboot — `infra/systemd/` carries a
+unit and the steps.
+
 With the worker stopped nothing announces it: the API answers, the admin loads,
 the site renders — the data simply stops moving, which looks like a data
 provider that has gone quiet. So the worker writes a heartbeat key to Redis
