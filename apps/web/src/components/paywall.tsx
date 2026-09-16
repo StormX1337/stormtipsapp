@@ -143,12 +143,19 @@ export function PlanCard({
         })}
       </span>
       <span className="text-[17px] font-extrabold text-ink">{plan.price.formatted}</span>
+      {/*
+        The per-month price used to sit in a solid gold bar — louder than
+        anything else on the card, including the price. Since only the longer
+        plans carry one, the row read as though two of the three were already
+        selected and the one-month card was unfinished. Gold belongs to the
+        selected state, which the border and shadow above already carry.
+      */}
       {plan.pricePerMonth ? (
-        <span className="mt-1 w-full rounded-sm bg-gold-400 px-1 py-1 text-[11px] font-bold text-ink-inverse">
+        <span className="mt-1 text-[11px] font-semibold text-gold-300">
           {t('paywall.perMonth', { price: plan.pricePerMonth.formatted })}
         </span>
       ) : (
-        <span className="mt-1 h-[25px]" aria-hidden />
+        <span className="mt-1 h-[16px]" aria-hidden />
       )}
       {plan.trialDays > 0 ? (
         <span className="text-[10px] text-accent-500">

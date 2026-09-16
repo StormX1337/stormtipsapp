@@ -101,7 +101,11 @@ export default function ComboPage(): ReactNode {
         ) : paywall.isError ? (
           <ErrorState error={paywall.error} onRetry={() => void paywall.refetch()} />
         ) : (
-          <Paywall data={paywall.data} />
+          /* Same measure as the standalone paywall route: a purchase decision
+             reads better in a column than spread across the full page. */
+          <div className="mx-auto w-full max-w-2xl">
+            <Paywall data={paywall.data} />
+          </div>
         )}
       </div>
     </AppShell>
