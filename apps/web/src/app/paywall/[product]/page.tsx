@@ -27,6 +27,7 @@ export default function PaywallPage({
 
   return (
     <AppShell
+      measure="narrow"
       title={query.data?.product.name ?? t('common.loading')}
       left={
         <button
@@ -39,7 +40,7 @@ export default function PaywallPage({
         </button>
       }
     >
-      <div id="main" className="mx-auto w-full max-w-2xl">
+      <div id="main">
         {query.isPending ? (
           <div className="flex flex-col gap-3 pt-6">
             <Skeleton className="h-8 w-2/3" />

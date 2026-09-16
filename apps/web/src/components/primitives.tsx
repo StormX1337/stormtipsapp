@@ -178,6 +178,11 @@ export function StatusBadge({
     );
   }
 
+  /*
+   * The glyph is how the compact badge says anything at all. Beside the written
+   * label it only repeats it — and for a pending tip the glyph is a dash, so the
+   * badge read "– PENDING", which looks like a rendering fault.
+   */
   return (
     <span
       className={clsx(
@@ -185,7 +190,7 @@ export function StatusBadge({
         OUTCOME_STYLE[outcome],
       )}
     >
-      {OUTCOME_GLYPH[outcome]} {label}
+      {label}
     </span>
   );
 }

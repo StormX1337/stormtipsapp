@@ -45,6 +45,7 @@ export default function TipDetailPage({ params }: { params: Promise<{ id: string
 
   return (
     <AppShell
+      measure="narrow"
       title={tip ? tip.league.name : t('common.loading')}
       left={
         <button
@@ -71,7 +72,8 @@ export default function TipDetailPage({ params }: { params: Promise<{ id: string
               <div className="flex items-center gap-2 pb-3 text-[12px] text-ink-muted">
                 <CountryFlag emoji={tip.country?.flagEmoji} code={tip.country?.code} />
                 <span className="truncate">
-                  {tip.country?.name ? `${tip.country.name} : ` : ''}
+                  {/* Same separator as the feed; a spaced colon reads as a label. */}
+                  {tip.country?.name ? `${tip.country.name} · ` : ''}
                   {tip.league.name}
                 </span>
                 <span className="ml-auto">

@@ -183,11 +183,18 @@ export function AppShell({
   title,
   left,
   right,
+  /**
+   * `narrow` for a page that is one column of reading — an analysis, a purchase
+   * decision. It caps the whole shell rather than a wrapper inside it, so the
+   * title stays with the column instead of floating out at the page edge.
+   */
+  measure = 'wide',
   children,
 }: {
   title: string;
   left?: ReactNode;
   right?: ReactNode;
+  measure?: 'wide' | 'narrow';
   children: ReactNode;
 }): ReactNode {
   return (
@@ -198,7 +205,12 @@ export function AppShell({
         The column stays phone-width on a phone and widens from `md`, where the
         header carries the navigation and the page has room to use.
       */}
-      <main className="safe-bottom mx-auto max-w-2xl px-[var(--page-gutter)] md:max-w-6xl md:px-6">
+      <main
+        className={clsx(
+          'safe-bottom mx-auto max-w-2xl px-[var(--page-gutter)] md:px-6',
+          measure === 'narrow' ? 'md:max-w-3xl' : 'md:max-w-6xl',
+        )}
+      >
         {/* The phone header carries its own <h1>, so this one only exists where
             that header is hidden — one per document at every width. */}
         <h1 className="hidden pt-6 pb-1 text-[24px] font-extrabold tracking-tight md:block">
