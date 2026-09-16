@@ -131,7 +131,9 @@ export default function PollPage(): ReactNode {
         </Link>
       }
     >
-      <div id="main" className="flex flex-col gap-3 py-4">
+      {/* A poll is a short question with short answers; one stretched across the
+          full width is harder to scan than two side by side. */}
+      <div id="main" className="flex flex-col gap-3 py-4 lg:grid lg:grid-cols-2 lg:items-start">
         <OfflineBanner />
         {polls.isPending ? (
           Array.from({ length: 3 }, (_, index) => <Skeleton key={index} className="h-44 w-full" />)

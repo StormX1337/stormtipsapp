@@ -131,18 +131,23 @@ function DesktopNav(): ReactNode {
               </Link>
             );
           })}
-          <Link
-            href="/statistics"
-            aria-current={pathname.startsWith('/statistics') ? 'page' : undefined}
-            className={clsx(
-              'flex items-center gap-2 rounded-md px-3 py-2 text-[13px] font-semibold transition-colors',
-              pathname.startsWith('/statistics')
-                ? 'bg-bg-card text-ink'
-                : 'text-ink-dim hover:bg-bg-card hover:text-ink',
-            )}
-          >
-            {t('nav.statistics')}
-          </Link>
+          {/* Live and Statistics do not fit five phone tabs, but there is room
+              for them here, and both were otherwise unreachable without a URL. */}
+          {(['/live', '/statistics'] as const).map((href) => (
+            <Link
+              key={href}
+              href={href}
+              aria-current={pathname.startsWith(href) ? 'page' : undefined}
+              className={clsx(
+                'flex items-center gap-2 rounded-md px-3 py-2 text-[13px] font-semibold transition-colors',
+                pathname.startsWith(href)
+                  ? 'bg-bg-card text-ink'
+                  : 'text-ink-dim hover:bg-bg-card hover:text-ink',
+              )}
+            >
+              {t(href === '/live' ? 'nav.live' : 'nav.statistics')}
+            </Link>
+          ))}
         </nav>
         <div className="flex items-center gap-1">
           <HeaderActions />
