@@ -2,8 +2,12 @@
 
 import { useState, type ReactNode } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
-import type { ProductCode, SubscriptionPlanDTO } from '@storm-tips/types';
+import { AlertTriangle, Pencil, Plus, Trash2 } from 'lucide-react';
+import {
+  isUsableStripePriceId,
+  type ProductCode,
+  type SubscriptionPlanDTO,
+} from '@storm-tips/types';
 import { api } from '@/lib/api';
 import {
   Badge,
@@ -117,7 +121,11 @@ export default function PlansPage(): ReactNode {
       header: 'Plan',
       render: (plan) => (
         <div>
-          <p className="font-medium">{plan.name}</p>
+          <p className="flex items-center gap-2 font-medium">
+            {plan.name}
+            {/* A plan taken off sale looked exactly like a live one. */}
+            {plan.isActive ? null : <Badge tone="neutral">Inactive</Badge>}
+          </p>
           <p className="text-[11px] text-ink-dim">{plan.slug}</p>
         </div>
       ),
@@ -161,9 +169,26 @@ export default function PlansPage(): ReactNode {
     {
       key: 'store',
       header: 'Store IDs',
+      /**
+       * An active plan with no usable Stripe price cannot be bought, and the
+       * checkout only says so to the buyer — as a dash among two other dashes
+       * this was indistinguishable from a plan that simply sells on one store.
+       * It is the single most common reason nothing can be purchased, so it
+       * says so here, where it is fixed.
+       */
       render: (plan) => (
         <div className="text-[11px] text-ink-dim">
-          <p>{plan.stripePriceId ?? 'stripe: —'}</p>
+          {plan.isActive && !isUsableStripePriceId(plan.stripePriceId) ? (
+            <p
+              className="flex items-center gap-1 font-semibold text-lost"
+              title="Create the price in Stripe, or run stripe-sync-prices --apply"
+            >
+              <AlertTriangle size={11} aria-hidden />
+              stripe: not set — cannot be bought
+            </p>
+          ) : (
+            <p>{plan.stripePriceId ?? 'stripe: —'}</p>
+          )}
           <p>{plan.appleProductId ?? 'apple: —'}</p>
           <p>{plan.googleProductId ?? 'google: —'}</p>
         </div>

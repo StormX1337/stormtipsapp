@@ -204,7 +204,11 @@ export function AdminShell({ children }: { children: ReactNode }): ReactNode {
     <div className="flex min-h-dvh">
       <aside
         className={clsx(
-          'fixed inset-y-0 left-0 z-40 w-60 shrink-0 overflow-y-auto border-r border-line-subtle bg-bg-subtle transition-transform lg:static lg:translate-x-0',
+          // `sticky` rather than `static`: as a static flex child the navigation
+          // scrolled away with a long page, so reaching Settings from the bottom
+          // of Users meant scrolling back up first. It keeps its own scrollbar
+          // for when the list itself is taller than the screen.
+          'fixed inset-y-0 left-0 z-40 w-60 shrink-0 overflow-y-auto border-r border-line-subtle bg-bg-subtle transition-transform lg:sticky lg:top-0 lg:h-dvh lg:translate-x-0',
           menuOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >

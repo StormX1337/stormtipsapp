@@ -59,6 +59,7 @@ export function serializePlan(
     badge: plan.badge,
     highlight: plan.highlight,
     isPopular: plan.isPopular,
+    isActive: plan.isActive,
     stripePriceId: plan.stripePriceId,
     appleProductId: plan.appleProductId,
     googleProductId: plan.googleProductId,

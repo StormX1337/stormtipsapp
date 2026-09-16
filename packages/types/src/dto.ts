@@ -315,6 +315,11 @@ export interface SubscriptionPlanDTO {
   badge: PromoBadge;
   highlight: string | null;
   isPopular: boolean;
+  /**
+   * Whether the plan is on sale. The public paywall only ever receives active
+   * plans, but the admin lists them all and had no way to tell the two apart.
+   */
+  isActive: boolean;
   stripePriceId: string | null;
   appleProductId: string | null;
   googleProductId: string | null;
