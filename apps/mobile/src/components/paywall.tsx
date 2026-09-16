@@ -25,6 +25,7 @@ export interface PaywallStatistics {
   days: number;
   successfulAnalyses: number;
   returnOnStake: number;
+  roi: number;
   averageOdds: number;
   winRate: number;
   totalTips: number;
@@ -75,7 +76,7 @@ export function StatCirclePanel({ statistics }: { statistics: PaywallStatistics 
     },
     {
       label: t('stats.returnOnPurchase'),
-      value: `${numberFormat.format(Math.round(statistics.returnOnStake))}%`,
+      value: `${statistics.roi.toFixed(1)}%`,
       size: 'lg',
     },
     { label: t('stats.averageOdds'), value: statistics.averageOdds.toFixed(2), size: 'sm' },

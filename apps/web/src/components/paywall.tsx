@@ -15,6 +15,7 @@ export interface PaywallStatistics {
   days: number;
   successfulAnalyses: number;
   returnOnStake: number;
+  roi: number;
   averageOdds: number;
   winRate: number;
   totalTips: number;
@@ -60,8 +61,15 @@ export function StatCirclePanel({ statistics }: { statistics: PaywallStatistics 
       size: 'md',
     },
     {
+      /**
+       * ROI, not `returnOnStake`. The latter is profit as a percentage of one
+       * flat stake, so over a few hundred settled analyses it reads "9,235%" —
+       * a number that sounds like a promise of riches rather than a record, and
+       * one no reader would take at face value. Profit against the money
+       * actually staked is the figure that means something.
+       */
       label: t('stats.returnOnPurchase'),
-      value: `${numberFormat.format(Math.round(statistics.returnOnStake))}%`,
+      value: `${statistics.roi.toFixed(1)}%`,
       size: 'lg',
     },
     {
@@ -76,11 +84,16 @@ export function StatCirclePanel({ statistics }: { statistics: PaywallStatistics 
       <h2 className="text-[15px] font-bold">
         {t('stats.successRateLastDays', { days: statistics.days })}
       </h2>
-      <dl className="mt-4 flex flex-col gap-3">
+      <dl className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
         {rows.map((row) => (
-          <div key={row.label} className="flex items-center justify-between gap-4">
-            <dt className="text-[14px] font-semibold text-ink">{row.label}</dt>
-            <dd>
+          <div
+            key={row.label}
+            className="flex items-center justify-between gap-4 sm:flex-1 sm:flex-col-reverse sm:justify-start sm:gap-2 sm:text-center"
+          >
+            <dt className="text-[14px] font-semibold text-ink sm:text-[13px]">{row.label}</dt>
+            {/* A fixed slot so three circles of different sizes still put their
+                labels on one line. */}
+            <dd className="sm:grid sm:h-[92px] sm:place-items-center">
               <StatCircle value={row.value} size={row.size} />
             </dd>
           </div>

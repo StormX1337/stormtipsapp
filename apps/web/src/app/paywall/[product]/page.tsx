@@ -39,7 +39,7 @@ export default function PaywallPage({
         </button>
       }
     >
-      <div id="main">
+      <div id="main" className="mx-auto w-full max-w-2xl">
         {query.isPending ? (
           <div className="flex flex-col gap-3 pt-6">
             <Skeleton className="h-8 w-2/3" />

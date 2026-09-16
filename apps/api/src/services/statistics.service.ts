@@ -127,6 +127,7 @@ export class StatisticsService {
     days: number;
     successfulAnalyses: number;
     returnOnStake: number;
+    roi: number;
     averageOdds: number;
     winRate: number;
     totalTips: number;
@@ -149,6 +150,7 @@ export class StatisticsService {
       days: stats.days,
       successfulAnalyses: stats.won + stats.halfWon,
       returnOnStake: stats.returnOnStake,
+      roi: stats.roi,
       averageOdds,
       winRate: stats.winRate,
       totalTips: stats.settledTips,
