@@ -35,7 +35,7 @@ export default function NotificationSettingsPage(): ReactNode {
   });
 
   return (
-    <AppShell title={t('profile.notifications')}>
+    <AppShell measure="narrow" title={t('profile.notifications')}>
       <div id="main" className="py-4">
         {profile.isPending ? (
           <Skeleton className="h-80 w-full" />
@@ -48,7 +48,7 @@ export default function NotificationSettingsPage(): ReactNode {
                 <span className="flex-1 text-[13.5px]">{t(`notifications.${key}` as never)}</span>
                 <input
                   type="checkbox"
-                  className="h-5 w-5 accent-[#12E17F]"
+                  className="h-5 w-5 h-4 w-4 shrink-0 accent-[#12E17F]"
                   checked={profile.data.notificationPrefs[key]}
                   onChange={(event) => update.mutate({ [key]: event.target.checked })}
                   disabled={update.isPending}

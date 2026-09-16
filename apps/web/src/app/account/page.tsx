@@ -51,7 +51,7 @@ export default function AccountPage(): ReactNode {
   }
 
   return (
-    <AppShell title={t('profile.title')}>
+    <AppShell measure="narrow" title={t('profile.title')}>
       <div id="main" className="flex flex-col gap-4 py-4">
         {loading || !user ? (
           <Skeleton className="h-28 w-full" />

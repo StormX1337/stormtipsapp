@@ -31,7 +31,7 @@ export default function ReferralsPage(): ReactNode {
   }
 
   return (
-    <AppShell title={t('referral.title')}>
+    <AppShell measure="narrow" title={t('referral.title')}>
       <div id="main" className="flex flex-col gap-4 py-4">
         {summary.isPending ? (
           <Skeleton className="h-56 w-full" />

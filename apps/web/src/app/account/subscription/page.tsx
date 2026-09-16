@@ -43,6 +43,7 @@ export default function SubscriptionPage(): ReactNode {
 
   return (
     <AppShell
+      measure="narrow"
       title={t('subscription.title')}
       right={
         <button

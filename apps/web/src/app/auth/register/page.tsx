@@ -106,7 +106,7 @@ function RegisterForm(): ReactNode {
           type="checkbox"
           checked={ageConfirmed}
           onChange={(event) => setAgeConfirmed(event.target.checked)}
-          className="mt-0.5 accent-[#12E17F]"
+          className="mt-px h-4 w-4 shrink-0 accent-[#12E17F]"
           required
         />
         <span>{t('auth.confirmAge')}</span>
@@ -116,7 +116,7 @@ function RegisterForm(): ReactNode {
           type="checkbox"
           checked={accepted}
           onChange={(event) => setAccepted(event.target.checked)}
-          className="mt-0.5 accent-[#12E17F]"
+          className="mt-px h-4 w-4 shrink-0 accent-[#12E17F]"
           required
         />
         <span>
@@ -139,7 +139,7 @@ function RegisterForm(): ReactNode {
           type="checkbox"
           checked={marketingOptIn}
           onChange={(event) => setMarketingOptIn(event.target.checked)}
-          className="mt-0.5 accent-[#12E17F]"
+          className="mt-px h-4 w-4 shrink-0 accent-[#12E17F]"
         />
         <span>{t('auth.marketingOptIn')}</span>
       </label>
