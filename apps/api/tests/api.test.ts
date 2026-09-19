@@ -1,13 +1,18 @@
+import { randomUUID } from 'node:crypto';
 import { afterAll, describe, expect, it } from 'vitest';
 import { prisma } from '@storm-tips/database';
 import { authHeader, closeApp, createTestUser, deleteTestUser, getApp, login } from './helpers.js';
 
 const createdUsers: string[] = [];
 const createdCoupons: string[] = [];
+const createdPolls: string[] = [];
 
 afterAll(async () => {
   await prisma.couponRedemption.deleteMany({ where: { couponId: { in: createdCoupons } } });
   await prisma.coupon.deleteMany({ where: { id: { in: createdCoupons } } });
+  await prisma.pollVote.deleteMany({ where: { pollId: { in: createdPolls } } });
+  await prisma.pollOption.deleteMany({ where: { pollId: { in: createdPolls } } });
+  await prisma.poll.deleteMany({ where: { id: { in: createdPolls } } });
   for (const id of createdUsers) await deleteTestUser(id);
   await closeApp();
 });
@@ -217,10 +222,29 @@ describe('polls', () => {
     createdUsers.push(user.id);
     const tokens = await login(app, user);
 
-    const poll = await prisma.poll.findFirstOrThrow({
-      where: { status: 'ACTIVE', allowMultiple: false },
-      include: { options: true },
+    /**
+     * The poll is created here rather than taken from the seed. Picking one by
+     * `status: 'ACTIVE'` ignores `endsAt`, and the seeded polls close a week
+     * after they are written — so this passed for a week and then started
+     * returning 422 on a day nobody had changed anything.
+     */
+    const poll = await prisma.poll.create({
+      data: {
+        question: `Test poll ${randomUUID()}`,
+        status: 'ACTIVE',
+        allowMultiple: false,
+        startsAt: new Date(Date.now() - 60_000),
+        endsAt: new Date(Date.now() + 3_600_000),
+        options: {
+          create: [
+            { label: 'First', sortOrder: 0 },
+            { label: 'Second', sortOrder: 1 },
+          ],
+        },
+      },
+      include: { options: { orderBy: { sortOrder: 'asc' } } },
     });
+    createdPolls.push(poll.id);
     const optionId = poll.options[0]!.id;
     const before = poll.options[0]!.voteCount;
 

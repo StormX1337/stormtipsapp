@@ -140,8 +140,8 @@ export function ProductFeed({
           </div>
         ) : (
           <div className="flex flex-col lg:block lg:columns-2 lg:gap-x-5">
-            {feed.data.groups.map((group) => (
-              <TipGroup key={group.league.id} group={group} />
+            {feed.data.groups.map((group, index) => (
+              <TipGroup key={group.league.id} group={group} index={index} />
             ))}
           </div>
         )}

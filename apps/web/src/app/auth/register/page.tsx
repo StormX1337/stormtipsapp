@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import { useT } from '@/lib/i18n';
-import { AuthCard, Field, FormError } from '@/components/auth-form';
+import { AuthCard, Field, FormError, PasswordMeter } from '@/components/auth-form';
 import { Button } from '@/components/primitives';
 
 /**
@@ -92,16 +92,21 @@ function RegisterForm(): ReactNode {
         value={form.email}
         onChange={(event) => setForm({ ...form, email: event.target.value })}
       />
-      <Field
-        label={t('auth.password')}
-        name="password"
-        type="password"
-        autoComplete="new-password"
-        required
-        hint={t('auth.passwordRules')}
-        value={form.password}
-        onChange={(event) => setForm({ ...form, password: event.target.value })}
-      />
+      <div>
+        <Field
+          label={t('auth.password')}
+          name="password"
+          type="password"
+          autoComplete="new-password"
+          required
+          // The meter below carries the rules once typing starts, so the static
+          // hint would only repeat itself.
+          hint={form.password ? undefined : t('auth.passwordRules')}
+          value={form.password}
+          onChange={(event) => setForm({ ...form, password: event.target.value })}
+        />
+        <PasswordMeter value={form.password} />
+      </div>
       <Field
         label={`${t('auth.referralCode')} (${t('common.optional')})`}
         name="referralCode"

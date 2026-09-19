@@ -84,8 +84,8 @@ export function TipCard({ tip, href }: { tip: TipDTO; href?: string }): ReactNod
   const body = (
     <article
       className={clsx(
-        'card relative flex gap-3 p-3 transition-colors duration-150 md:gap-3.5 md:p-3.5',
-        href && 'hover:border-line-strong',
+        'card relative flex gap-3 p-3 md:gap-3.5 md:p-3.5',
+        href && 'card-interactive hover:border-line-strong',
         tip.isLocked && 'overflow-hidden',
       )}
     >
@@ -158,10 +158,24 @@ export function TipCard({ tip, href }: { tip: TipDTO; href?: string }): ReactNod
   );
 }
 
-/** A whole league block: header plus its stacked tip cards. */
-export function TipGroup({ group }: { group: TipFeedGroupDTO }): ReactNode {
+/**
+ * A whole league block: header plus its stacked tip cards.
+ *
+ * `index` staggers the blocks in as the feed arrives. Capped at eight, so a day
+ * with thirty leagues does not end with the reader waiting on the last one.
+ */
+export function TipGroup({
+  group,
+  index = 0,
+}: {
+  group: TipFeedGroupDTO;
+  index?: number;
+}): ReactNode {
   return (
-    <section className="break-inside-avoid lg:mb-1">
+    <section
+      className="animate-rise break-inside-avoid lg:mb-1"
+      style={{ animationDelay: `${Math.min(index, 8) * 45}ms` }}
+    >
       <LeagueHeader group={group} />
       <div className="flex flex-col gap-2">
         {group.tips.map((tip) => (

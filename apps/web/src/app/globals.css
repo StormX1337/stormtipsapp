@@ -204,6 +204,63 @@
 }
 
 /*
+ * Typing feedback.
+ *
+ * A field that only changes its border colour on focus gives the same answer
+ * whether it registered the click or not. The ring grows from the border, so
+ * the movement starts where the eye already is.
+ */
+.field-input {
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.16s ease;
+}
+.field-input:focus {
+  box-shadow: 0 0 0 3px rgb(18 225 127 / 0.16);
+}
+.field-input[aria-invalid='true']:focus {
+  box-shadow: 0 0 0 3px rgb(255 77 94 / 0.16);
+}
+
+/* The label follows the field, so the pair reads as one control. */
+.field-label {
+  transition: color 0.16s ease;
+}
+label:focus-within > .field-label {
+  color: var(--color-accent-500);
+}
+
+/*
+ * A card that lifts under the pointer says it can be opened. Kept to one pixel
+ * and a border: a feed of forty of these should not feel like a trampoline.
+ */
+.card-interactive {
+  transition:
+    border-color 0.16s ease,
+    transform 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (hover: hover) {
+  .card-interactive:hover {
+    transform: translateY(-1px);
+  }
+}
+.card-interactive:active {
+  transform: translateY(0);
+}
+
+/*
+ * A press that moves is a press that was received. Only on the pointer-down,
+ * and only just enough to see.
+ */
+.press:active:not(:disabled) {
+  transform: scale(0.985);
+}
+.press {
+  transition: transform 0.12s ease;
+}
+
+/*
  * Sign-in and sign-up motion.
  *
  * A form that answers instantly still feels like nothing happened, and one that

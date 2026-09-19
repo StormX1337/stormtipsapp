@@ -59,14 +59,16 @@ export function Field({
   const id = props.id ?? props.name;
   return (
     <label htmlFor={id} className="block">
-      <span className="mb-1 block text-[12px] font-semibold text-ink-muted">{label}</span>
+      <span className="field-label mb-1 block text-[12px] font-semibold text-ink-muted">
+        {label}
+      </span>
       <input
         {...props}
         id={id}
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
         className={clsx(
-          'w-full rounded-md border bg-bg-input px-3 py-2.5 text-[14px] text-ink outline-none',
+          'field-input w-full rounded-md border bg-bg-input px-3 py-2.5 text-[14px] text-ink outline-none',
           'placeholder:text-ink-disabled',
           error ? 'border-lost' : 'border-line focus:border-accent-500',
         )}
@@ -81,6 +83,52 @@ export function Field({
         </span>
       ) : null}
     </label>
+  );
+}
+
+/** The four things `passwordRules` asks for, checked as they are typed. */
+export function passwordScore(value: string): number {
+  return [/.{10,}/, /[a-z]/, /[A-Z]/, /\d/].filter((rule) => rule.test(value)).length;
+}
+
+/**
+ * Password strength, filling as the rules are met.
+ *
+ * The rules were written above the field and then never referred to again, so
+ * the only way to learn you had missed one was to submit. Four segments, one
+ * per rule, and a word for the ones that cannot see the colour.
+ */
+export function PasswordMeter({ value }: { value: string }): ReactNode {
+  const t = useT();
+  const score = passwordScore(value);
+  if (!value) return null;
+
+  const tone =
+    score === 4
+      ? 'bg-accent-500'
+      : score === 3
+        ? 'bg-gold-400'
+        : score === 2
+          ? 'bg-gold-300'
+          : 'bg-lost';
+
+  return (
+    <div className="mt-2">
+      <div className="flex gap-1" aria-hidden>
+        {[0, 1, 2, 3].map((index) => (
+          <span
+            key={index}
+            className={clsx(
+              'h-1 flex-1 rounded-full transition-colors duration-300',
+              index < score ? tone : 'bg-line-strong',
+            )}
+          />
+        ))}
+      </div>
+      <p className="mt-1 text-[11px] text-ink-dim" role="status">
+        {t(score === 4 ? 'auth.passwordStrong' : 'auth.passwordRules')}
+      </p>
+    </div>
   );
 }
 

@@ -202,6 +202,7 @@ export const en = {
   'auth.invalidCredentials': 'Email or password is incorrect.',
   'auth.accountBanned': 'This account has been suspended.',
   'auth.passwordRules': 'At least 10 characters, with upper case, lower case and a digit.',
+  'auth.passwordStrong': 'That meets every requirement.',
 
   // profile & settings
   'profile.title': 'Profile',

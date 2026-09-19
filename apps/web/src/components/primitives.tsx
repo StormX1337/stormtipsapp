@@ -326,7 +326,7 @@ export function Button({
       disabled={props.disabled || loading || done}
       aria-busy={loading || undefined}
       className={clsx(
-        'inline-flex items-center justify-center gap-2 rounded-md font-bold transition-colors duration-150',
+        'press inline-flex items-center justify-center gap-2 rounded-md font-bold transition-colors duration-150',
         'disabled:cursor-not-allowed',
         // A button that is working is not unavailable, so it keeps its colour.
         loading || done ? 'disabled:opacity-100' : 'disabled:opacity-50',
