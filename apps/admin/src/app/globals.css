@@ -105,6 +105,22 @@
 }
 
 @layer utilities {
+  /*
+   * Honour a reader who has asked the system for less movement. The web app has
+   * carried this guard from the start; the console never did, so anything added
+   * here would have ignored the setting.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
   .tabular {
     font-variant-numeric: tabular-nums;
   }
@@ -129,4 +145,48 @@
   background-size: 400px 100%;
   animation: pt-shimmer 1.4s linear infinite;
   border-radius: 8px;
+}
+
+/*
+ * Dialog entrance.
+ *
+ * A dialog that appears between two frames reads as the page having jumped
+ * rather than as something opening, and with a blurred backdrop there is no
+ * moment that connects the click to the result. The backdrop fades, the card
+ * rises a little behind it.
+ */
+@keyframes pt-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pt-dialog {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-backdrop {
+  animation: pt-fade 0.18s ease-out;
+}
+
+.animate-dialog {
+  animation: pt-dialog 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* A press that moves is a press that was received. */
+.press {
+  transition: transform 0.12s ease;
+}
+.press:active:not(:disabled) {
+  transform: scale(0.985);
 }

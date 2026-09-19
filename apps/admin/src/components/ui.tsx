@@ -26,7 +26,7 @@ export function Button({
     <button
       {...props}
       className={clsx(
-        'inline-flex items-center justify-center gap-1.5 rounded-sm font-semibold transition-colors',
+        'press inline-flex items-center justify-center gap-1.5 rounded-sm font-semibold transition-colors',
         'disabled:cursor-not-allowed disabled:opacity-50',
         size === 'sm' ? 'px-2.5 py-1.5 text-[12px]' : 'px-3.5 py-2 text-[13px]',
         variant === 'primary' && 'bg-accent-500 text-ink-inverse hover:bg-accent-400',
@@ -156,12 +156,12 @@ export function Modal({
       role="dialog"
       aria-modal="true"
       aria-label={title}
-      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 p-4 backdrop-blur-sm"
+      className="animate-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 p-4 backdrop-blur-sm"
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div className={clsx('card my-8 w-full', wide ? 'max-w-3xl' : 'max-w-xl')}>
+      <div className={clsx('card animate-dialog my-8 w-full', wide ? 'max-w-3xl' : 'max-w-xl')}>
         <header className="flex items-center justify-between border-b border-line-subtle px-4 py-3">
           <h2 className="text-[14px] font-bold">{title}</h2>
           <button
