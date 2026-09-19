@@ -1,6 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
+import { Check } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { ProductCode, TipOutcome } from '@storm-tips/types';
 import { useT } from '@/lib/i18n';
@@ -302,19 +303,33 @@ export function Button({
   children,
   variant = 'primary',
   size = 'md',
+  /**
+   * Keeps the label and adds a spinner rather than swapping the text for
+   * "Loading…": the button stays the same width, so nothing jumps, and the
+   * reader can still see what they pressed.
+   */
+  loading = false,
+  /** Briefly replaces the label with a tick, to confirm before a redirect. */
+  done = false,
   className,
   ...props
 }: {
   children: ReactNode;
   variant?: 'primary' | 'gold' | 'ghost' | 'outline' | 'danger';
   size?: 'sm' | 'md' | 'lg';
+  loading?: boolean;
+  done?: boolean;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>): ReactNode {
   return (
     <button
       {...props}
+      disabled={props.disabled || loading || done}
+      aria-busy={loading || undefined}
       className={clsx(
         'inline-flex items-center justify-center gap-2 rounded-md font-bold transition-colors duration-150',
-        'disabled:cursor-not-allowed disabled:opacity-50',
+        'disabled:cursor-not-allowed',
+        // A button that is working is not unavailable, so it keeps its colour.
+        loading || done ? 'disabled:opacity-100' : 'disabled:opacity-50',
         size === 'sm' && 'px-3 py-1.5 text-[12px]',
         size === 'md' && 'px-4 py-2.5 text-[13px]',
         size === 'lg' && 'w-full px-5 py-3.5 text-[15px]',
@@ -326,7 +341,19 @@ export function Button({
         className,
       )}
     >
-      {children}
+      {done ? (
+        <Check size={18} strokeWidth={3} className="animate-pop" aria-hidden />
+      ) : (
+        <>
+          {loading ? (
+            <span
+              aria-hidden
+              className="animate-spin-slow h-4 w-4 rounded-full border-2 border-current border-t-transparent opacity-70"
+            />
+          ) : null}
+          {children}
+        </>
+      )}
     </button>
   );
 }

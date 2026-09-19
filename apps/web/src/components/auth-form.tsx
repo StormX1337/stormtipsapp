@@ -21,19 +21,23 @@ export function AuthCard({
   const t = useT();
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-5 py-10">
-      <Link href="/free" className="mb-8 text-center">
+      {/* The wordmark, the card and the footer arrive as one movement rather
+          than three, which is what the small stagger buys. */}
+      <Link href="/free" className="animate-rise mb-8 text-center">
         <span className="text-[22px] font-black tracking-tight text-accent-500">
           {config.appName}
         </span>
       </Link>
 
-      <div className="card p-6">
+      <div className="card animate-rise animate-rise-1 p-6">
         <h1 className="text-[20px] font-extrabold">{title}</h1>
         {subtitle ? <p className="mt-1 text-[13px] text-ink-muted">{subtitle}</p> : null}
         <div className="mt-5">{children}</div>
       </div>
 
-      {footer ? <div className="mt-5 text-center text-[13px]">{footer}</div> : null}
+      {footer ? (
+        <div className="animate-rise animate-rise-2 mt-5 text-center text-[13px]">{footer}</div>
+      ) : null}
 
       <p className="mt-8 text-center text-[11px] leading-relaxed text-ink-dim">
         {t('legal.ageNotice')} {t('legal.noGuarantee')}
@@ -80,10 +84,26 @@ export function Field({
   );
 }
 
-export function FormError({ message }: { message: string | null }): ReactNode {
+export function FormError({
+  message,
+  /**
+   * Incremented by the caller on every failed attempt. The common failure is
+   * the same password typed twice, and keying on the text alone leaves the node
+   * in place — the shake would play once and never again, which reads as the
+   * button having stopped responding.
+   */
+  attempt = 0,
+}: {
+  message: string | null;
+  attempt?: number;
+}): ReactNode {
   if (!message) return null;
   return (
-    <p role="alert" className="rounded-md bg-lost/15 px-3 py-2 text-[12px] text-lost">
+    <p
+      key={`${attempt}:${message}`}
+      role="alert"
+      className="animate-shake rounded-md bg-lost/15 px-3 py-2 text-[12px] text-lost"
+    >
       {message}
     </p>
   );

@@ -38,11 +38,14 @@ function RegisterForm(): ReactNode {
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [marketingOptIn, setMarketingOptIn] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
   const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState(false);
 
   async function submit(event: FormEvent): Promise<void> {
     event.preventDefault();
     if (!accepted || !ageConfirmed) {
+      setAttempt((value) => value + 1);
       setError(t('auth.confirmRequired'));
       return;
     }
@@ -56,9 +59,14 @@ function RegisterForm(): ReactNode {
         referralCode: form.referralCode || undefined,
         marketingOptIn,
       });
-      router.push('/free');
+      // A beat on the tick, so an account being created registers as an event
+      // rather than the page simply becoming a different page.
+      setDone(true);
+      setTimeout(() => router.push('/free'), 420);
+      return;
     } catch (caught) {
       const details = (caught as { details?: { issues?: { message: string }[] } }).details;
+      setAttempt((value) => value + 1);
       setError(details?.issues?.[0]?.message ?? (caught as Error).message);
     } finally {
       setBusy(false);
@@ -67,7 +75,7 @@ function RegisterForm(): ReactNode {
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4" noValidate>
-      <FormError message={error} />
+      <FormError message={error} attempt={attempt} />
       <Field
         label={t('auth.displayName')}
         name="displayName"
@@ -144,8 +152,8 @@ function RegisterForm(): ReactNode {
         <span>{t('auth.marketingOptIn')}</span>
       </label>
 
-      <Button type="submit" size="lg" disabled={busy}>
-        {busy ? t('common.loading') : t('auth.register')}
+      <Button type="submit" size="lg" loading={busy} done={done}>
+        {t('auth.register')}
       </Button>
     </form>
   );

@@ -203,6 +203,87 @@
   }
 }
 
+/*
+ * Sign-in and sign-up motion.
+ *
+ * A form that answers instantly still feels like nothing happened, and one that
+ * takes a second feels broken. These carry the three moments worth marking: the
+ * card arriving, a rejected credential, and the instant before the redirect.
+ *
+ * The reduced-motion guard above flattens all of them; nothing here is load
+ * bearing, so that costs no meaning.
+ */
+@keyframes pt-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pt-shake {
+  0%,
+  100% {
+    transform: none;
+  }
+  20% {
+    transform: translateX(-5px);
+  }
+  40% {
+    transform: translateX(4px);
+  }
+  60% {
+    transform: translateX(-3px);
+  }
+  80% {
+    transform: translateX(2px);
+  }
+}
+
+@keyframes pt-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pt-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-rise {
+  animation: pt-rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* A stagger small enough to read as one movement rather than a sequence. */
+.animate-rise-1 {
+  animation-delay: 0.06s;
+}
+.animate-rise-2 {
+  animation-delay: 0.12s;
+}
+
+.animate-shake {
+  animation: pt-shake 0.4s ease-in-out;
+}
+
+.animate-pop {
+  animation: pt-pop 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-spin-slow {
+  animation: pt-spin 0.7s linear infinite;
+}
+
 @keyframes pt-pulse {
   0%,
   100% {
