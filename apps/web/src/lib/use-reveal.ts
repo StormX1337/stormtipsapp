@@ -53,3 +53,23 @@ export function useCountUp(value: number, durationMs = 900): number {
 
   return current;
 }
+
+/**
+ * Whether the reader has asked the system for less movement.
+ *
+ * The CSS guard cannot reach a chart library that animates from JavaScript, so
+ * anything driven that way has to ask.
+ */
+export function usePrefersReducedMotion(): boolean {
+  const [reduced, setReduced] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReduced(query.matches);
+    const listener = (event: MediaQueryListEvent): void => setReduced(event.matches);
+    query.addEventListener('change', listener);
+    return () => query.removeEventListener('change', listener);
+  }, []);
+
+  return reduced;
+}

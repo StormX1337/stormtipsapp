@@ -18,6 +18,7 @@ import {
 } from 'recharts';
 import type { AdminDashboardDTO } from '@storm-tips/types';
 import { api } from '@/lib/api';
+import { usePrefersReducedMotion } from '@/lib/use-reduced-motion';
 import { ErrorBox, PageHeader, Skeleton } from '@/components/ui';
 
 function Kpi({
@@ -64,6 +65,8 @@ const CHART_TOOLTIP = {
 };
 
 export default function DashboardPage(): ReactNode {
+  // Recharts animates from JavaScript; the CSS guard cannot reach it.
+  const stillCharts = usePrefersReducedMotion();
   const dashboard = useQuery({
     queryKey: ['admin-dashboard'],
     queryFn: () => api<AdminDashboardDTO>('/admin/dashboard'),
@@ -170,7 +173,12 @@ export default function DashboardPage(): ReactNode {
                   formatter={(value) => [`€${(Number(value ?? 0) / 100).toFixed(2)}`, 'Revenue']}
                   cursor={{ fill: '#1E2430' }}
                 />
-                <Bar dataKey="amountCents" fill="#FFC93C" radius={[3, 3, 0, 0]} />
+                <Bar
+                  isAnimationActive={!stillCharts}
+                  dataKey="amountCents"
+                  fill="#FFC93C"
+                  radius={[3, 3, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -197,6 +205,7 @@ export default function DashboardPage(): ReactNode {
                 />
                 <Tooltip {...CHART_TOOLTIP} />
                 <Line
+                  isAnimationActive={!stillCharts}
                   type="monotone"
                   dataKey="count"
                   stroke="#28D8F5"
@@ -238,6 +247,7 @@ export default function DashboardPage(): ReactNode {
                 />
                 <Tooltip {...CHART_TOOLTIP} />
                 <Area
+                  isAnimationActive={!stillCharts}
                   type="monotone"
                   dataKey="cumulativeProfit"
                   name="Cumulative"

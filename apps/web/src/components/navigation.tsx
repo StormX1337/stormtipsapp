@@ -39,10 +39,15 @@ const TABS: TabDefinition[] = [
 export function BottomNav(): ReactNode {
   const pathname = usePathname();
   const t = useT();
-
+  /*
+   * No sliding marker here, unlike the date strip. Each page renders its own
+   * shell, so this bar unmounts and remounts on every navigation: a measured
+   * marker would vanish for a frame and reappear in its new place, which is
+   * worse than not moving at all. The active tab carries its own colour.
+   */
   return (
     <nav
-      aria-label="Main navigation"
+      aria-label="Sections"
       className="fixed inset-x-0 bottom-0 z-30 border-t border-line-subtle bg-bg-subtle/95 backdrop-blur md:hidden"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >

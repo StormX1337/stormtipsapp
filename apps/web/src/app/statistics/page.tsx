@@ -18,6 +18,7 @@ import {
 import type { ProductCode, StatisticsDTO, StatsWindow } from '@storm-tips/types';
 import { api } from '@/lib/api';
 import { useI18n } from '@/lib/i18n';
+import { usePrefersReducedMotion } from '@/lib/use-reveal';
 import { AppShell } from '@/components/navigation';
 import { StatTile } from '@/components/stat-tiles';
 import { ErrorState, OfflineBanner, ResponsibleGamblingNote } from '@/components/states';
@@ -29,6 +30,12 @@ const PRODUCTS: (ProductCode | 'ALL')[] = ['ALL', 'FREE', 'VIP', 'EXTRA', 'COMBO
 
 export default function StatisticsPage(): ReactNode {
   const { t, locale } = useI18n();
+  /*
+   * Recharts animates from JavaScript, so the stylesheet's reduced-motion guard
+   * never reaches it: a reader who asked for less movement still got a second
+   * and a half of drawing on every chart.
+   */
+  const stillCharts = usePrefersReducedMotion();
   const [window, setWindow] = useState<StatsWindow>('D30');
   const [product, setProduct] = useState<ProductCode | 'ALL'>('ALL');
 
@@ -168,6 +175,7 @@ export default function StatisticsPage(): ReactNode {
                       labelStyle={{ color: '#9BA5B7' }}
                     />
                     <Area
+                      isAnimationActive={!stillCharts}
                       type="monotone"
                       dataKey="cumulativeProfit"
                       name={t('stats.cumulativeProfit')}
@@ -211,7 +219,12 @@ export default function StatisticsPage(): ReactNode {
                         fontSize: 12,
                       }}
                     />
-                    <Bar dataKey="profit" name={t('stats.profit')} radius={[3, 3, 0, 0]}>
+                    <Bar
+                      isAnimationActive={!stillCharts}
+                      dataKey="profit"
+                      name={t('stats.profit')}
+                      radius={[3, 3, 0, 0]}
+                    >
                       {stats.data.byDay.slice(-30).map((point) => (
                         <Cell key={point.date} fill={point.profit >= 0 ? '#12E17F' : '#FF4D5E'} />
                       ))}
