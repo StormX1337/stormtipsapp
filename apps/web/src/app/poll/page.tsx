@@ -8,6 +8,7 @@ import clsx from 'clsx';
 import type { Paginated, PollDTO } from '@storm-tips/types';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
+import { useReveal } from '@/lib/use-reveal';
 import { useI18n } from '@/lib/i18n';
 import { AppShell } from '@/components/navigation';
 import { ErrorState, NoResults, OfflineBanner } from '@/components/states';
@@ -19,6 +20,7 @@ function PollCard({ poll }: { poll: PollDTO }): ReactNode {
   const queryClient = useQueryClient();
   const [selected, setSelected] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const revealed = useReveal();
 
   const vote = useMutation({
     mutationFn: (optionId: string) =>
@@ -60,10 +62,13 @@ function PollCard({ poll }: { poll: PollDTO }): ReactNode {
                   <span
                     aria-hidden
                     className={clsx(
-                      'absolute inset-y-0 left-0 transition-[width] duration-500',
+                      'absolute inset-y-0 left-0 transition-[width] duration-700 ease-out',
                       option.isMyVote ? 'bg-accent-500/20' : 'bg-bg-card-alt',
                     )}
-                    style={{ width: `${option.percentage}%` }}
+                    // Grown on the frame after mount: rendered at its final
+                    // width there is nothing for the transition to run from,
+                    // and the tally just appears.
+                    style={{ width: revealed ? `${option.percentage}%` : '0%' }}
                   />
                 ) : null}
                 <span className="relative flex items-center justify-between gap-3">

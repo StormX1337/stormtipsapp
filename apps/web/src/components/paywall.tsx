@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Check, Crown, ShieldCheck, Ticket, Zap } from 'lucide-react';
 import type { ProductCode, PromotionDTO, SubscriptionPlanDTO } from '@storm-tips/types';
 import { useI18n } from '@/lib/i18n';
+import { useCountUp } from '@/lib/use-reveal';
 import { useAuth } from '@/lib/auth';
 import { api } from '@/lib/api';
 import { Button, PromoBadge } from './primitives';
@@ -32,12 +33,24 @@ export interface PaywallStatistics {
  */
 export function StatCircle({
   value,
+  /**
+   * The number behind the label. Given one, the circle counts up to it — these
+   * three figures are the case the page is making, and a number that arrives
+   * asks to be read in a way a number that is simply there does not.
+   */
+  countTo,
+  format,
   size = 'md',
 }: {
   value: string;
+  countTo?: number;
+  format?: (value: number) => string;
   size?: 'sm' | 'md' | 'lg';
 }): ReactNode {
+  const counted = useCountUp(countTo ?? 0);
+  const text = countTo !== undefined && format ? format(counted) : value;
   const dimension = size === 'lg' ? 84 : size === 'md' ? 64 : 54;
+  // Sized from the final text, so the circle does not resize as it counts.
   const fontSize =
     value.length > 6 ? dimension * 0.2 : value.length > 4 ? dimension * 0.24 : dimension * 0.3;
   return (
@@ -45,7 +58,7 @@ export function StatCircle({
       className="stat-circle shrink-0"
       style={{ width: dimension, height: dimension, fontSize }}
     >
-      {value}
+      {text}
     </span>
   );
 }
@@ -54,10 +67,18 @@ export function StatCirclePanel({ statistics }: { statistics: PaywallStatistics 
   const { t, locale } = useI18n();
   const numberFormat = new Intl.NumberFormat(intlLocale(locale));
 
-  const rows: { label: string; value: string; size: 'sm' | 'md' | 'lg' }[] = [
+  const rows: {
+    label: string;
+    value: string;
+    countTo: number;
+    format: (value: number) => string;
+    size: 'sm' | 'md' | 'lg';
+  }[] = [
     {
       label: t('stats.successfulAnalyses'),
       value: numberFormat.format(statistics.successfulAnalyses),
+      countTo: statistics.successfulAnalyses,
+      format: (value) => numberFormat.format(Math.round(value)),
       size: 'md',
     },
     {
@@ -70,11 +91,15 @@ export function StatCirclePanel({ statistics }: { statistics: PaywallStatistics 
        */
       label: t('stats.returnOnPurchase'),
       value: `${statistics.roi.toFixed(1)}%`,
+      countTo: statistics.roi,
+      format: (value) => `${value.toFixed(1)}%`,
       size: 'lg',
     },
     {
       label: t('stats.averageOdds'),
       value: statistics.averageOdds.toFixed(2),
+      countTo: statistics.averageOdds,
+      format: (value) => value.toFixed(2),
       size: 'sm',
     },
   ];
@@ -94,7 +119,12 @@ export function StatCirclePanel({ statistics }: { statistics: PaywallStatistics 
             {/* A fixed slot so three circles of different sizes still put their
                 labels on one line. */}
             <dd className="sm:grid sm:h-[92px] sm:place-items-center">
-              <StatCircle value={row.value} size={row.size} />
+              <StatCircle
+                value={row.value}
+                countTo={row.countTo}
+                format={row.format}
+                size={row.size}
+              />
             </dd>
           </div>
         ))}

@@ -5,6 +5,7 @@ import { Check } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { ProductCode, TipOutcome } from '@storm-tips/types';
 import { useT } from '@/lib/i18n';
+import { useChanged } from '@/lib/use-changed';
 
 /* ── team crest ─────────────────────────────────────────────────────────────
  * No third-party crest images are bundled. When a club supplies a logo URL it
@@ -115,10 +116,14 @@ export function OddsBadge({
   size?: 'sm' | 'md' | 'lg';
 }): ReactNode {
   const text = locked || odds === null ? '•••' : odds.toFixed(2);
+  // The price moving mid-session is the other thing worth noticing in a feed
+  // that refreshes itself.
+  const moved = useChanged(text);
   return (
     <span
       className={clsx(
         'tabular font-bold text-accent-500',
+        moved && 'animate-flash px-1',
         size === 'sm' && 'text-[13px]',
         size === 'md' && 'text-[17px]',
         size === 'lg' && 'text-[22px]',

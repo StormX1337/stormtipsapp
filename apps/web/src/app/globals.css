@@ -204,6 +204,29 @@
 }
 
 /*
+ * A value that just changed.
+ *
+ * The feed polls while a match is on, so a goal arrives as a number quietly
+ * becoming a different number. The flash is what makes it an event; it fades
+ * rather than blinking, so a card that updates twice in a minute does not
+ * strobe.
+ */
+@keyframes pt-flash {
+  0% {
+    background-color: rgb(18 225 127 / 0.28);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.animate-flash {
+  animation: pt-flash 1.4s ease-out;
+  border-radius: 4px;
+  box-decoration-break: clone;
+}
+
+/*
  * Typing feedback.
  *
  * A field that only changes its border colour on focus gives the same answer

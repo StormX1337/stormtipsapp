@@ -7,6 +7,7 @@ import type { ReactNode } from 'react';
 import type { TipDTO, TipFeedGroupDTO } from '@storm-tips/types';
 import { formatKickoff, intlLocale } from '@storm-tips/ui';
 import { useI18n } from '@/lib/i18n';
+import { useChanged } from '@/lib/use-changed';
 import { CountryFlag, OddsBadge, ProductBadge, StatusBadge, TeamCrest } from './primitives';
 
 /**
@@ -54,6 +55,9 @@ function TeamRow({
   score?: number | null;
   emphasised?: boolean;
 }): ReactNode {
+  // A goal arrives as one number becoming another, 30 seconds after it happened
+  // and with no other sign; the flash is what makes it readable as an event.
+  const scored = useChanged(score);
   return (
     <div className="flex items-center gap-2 py-[3px]">
       <TeamCrest name={name} logoUrl={logoUrl} color={color} />
@@ -66,7 +70,14 @@ function TeamRow({
         {name}
       </span>
       {score !== null && score !== undefined ? (
-        <span className="tabular shrink-0 text-[13px] font-bold text-ink">{score}</span>
+        <span
+          className={clsx(
+            'tabular shrink-0 px-1 text-[13px] font-bold text-ink',
+            scored && 'animate-flash',
+          )}
+        >
+          {score}
+        </span>
       ) : null}
     </div>
   );
