@@ -160,7 +160,9 @@
     position: absolute;
     inset: 6px;
     border-radius: 12px;
-    border: 1px solid rgb(18 225 127 / 0.45);
+    /* The component overrides this when the operator's gradient is light: a
+       green hairline on gold reads as a second brand rather than a frame. */
+    border: 1px solid var(--promo-line, rgb(18 225 127 / 0.45));
     pointer-events: none;
   }
 

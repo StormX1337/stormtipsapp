@@ -8,7 +8,10 @@ import {
   BookmarkCheck,
   ChevronRight,
   CreditCard,
+  FileText,
   Gift,
+  LifeBuoy,
+  Lock,
   LogOut,
   ShieldQuestion,
   Star,
@@ -36,7 +39,7 @@ function Item({
       href={href}
       className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-bg-card-alt"
     >
-      <span className="text-ink-dim">{icon}</span>
+      <span className="grid w-[18px] shrink-0 place-items-center text-ink-dim">{icon}</span>
       <span className="flex-1 text-[13.5px]">{label}</span>
       {value ? <span className="text-[12px] text-ink-dim">{value}</span> : null}
       <ChevronRight size={16} className="text-ink-dim" aria-hidden />
@@ -131,19 +134,22 @@ export default function AccountPage(): ReactNode {
                   icon={<ShieldQuestion size={18} aria-hidden />}
                   label={t('legal.responsible')}
                 />
+                {/* Typographic stand-ins (§, ◎, ?) sat at three different
+                    sizes next to the real icons above and pushed each label to
+                    its own margin. */}
                 <Item
                   href="/legal/terms"
-                  icon={<span aria-hidden>§</span>}
+                  icon={<FileText size={18} aria-hidden />}
                   label={t('legal.terms')}
                 />
                 <Item
                   href="/legal/privacy"
-                  icon={<span aria-hidden>◎</span>}
+                  icon={<Lock size={18} aria-hidden />}
                   label={t('legal.privacy')}
                 />
                 <Item
                   href="/legal/help"
-                  icon={<span aria-hidden>?</span>}
+                  icon={<LifeBuoy size={18} aria-hidden />}
                   label={t('legal.help')}
                 />
               </div>

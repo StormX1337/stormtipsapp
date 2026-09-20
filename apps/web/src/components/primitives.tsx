@@ -61,7 +61,7 @@ export function TeamCrest({
 }
 
 /** Picks black or white text for a background colour (WCAG relative luminance). */
-function contrastOn(hex: string): string {
+export function contrastOn(hex: string): string {
   const value = hex.replace('#', '');
   if (value.length < 6) return '#070A12';
   const [r, g, b] = [0, 2, 4].map((offset) => parseInt(value.slice(offset, offset + 2), 16) / 255);
