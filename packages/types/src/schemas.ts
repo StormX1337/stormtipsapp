@@ -193,6 +193,11 @@ export const tipFeedQuerySchema = paginationSchema.extend({
   outcome: nativeEnumOf(TipOutcome).optional(),
   live: z.coerce.boolean().optional(),
   includeSettled: z.coerce.boolean().default(true),
+  /** Free text over team and league names — never over the selection itself. */
+  q: z.string().trim().min(2).max(60).optional(),
+  marketType: nativeEnumOf(MarketType).optional(),
+  minOdds: z.coerce.number().min(1).max(1000).optional(),
+  maxOdds: z.coerce.number().min(1).max(1000).optional(),
 });
 export type TipFeedQuery = z.infer<typeof tipFeedQuerySchema>;
 

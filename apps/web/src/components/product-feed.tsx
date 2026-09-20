@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
@@ -15,6 +15,13 @@ import { DateStrip } from './date-strip';
 import { PromoBanner } from './promo-banner';
 import { TipCardSkeleton, TipGroup } from './tip-card';
 import { ErrorState, NoResults, OfflineBanner, ResponsibleGamblingNote } from './states';
+import {
+  EMPTY_FILTERS,
+  FeedFilters,
+  activeFilterCount,
+  filtersToQuery,
+  type FeedFilterState,
+} from './feed-filters';
 import { Button } from './primitives';
 
 const PATH_BY_PRODUCT: Record<ProductCode, string> = {
@@ -42,13 +49,16 @@ export function ProductFeed({
   const { t } = useI18n();
   const { has, loading: authLoading } = useAuth();
   const [date, setDate] = useState(() => toDateKey(new Date()));
+  const [filters, setFilters] = useState<FeedFilterState>(EMPTY_FILTERS);
 
   const unlocked = has(product);
   const path = PATH_BY_PRODUCT[product];
+  const filterQuery = filtersToQuery(filters);
+  const filtered = activeFilterCount(filters) > 0;
 
   const feed = useQuery({
-    queryKey: ['feed', product, date, unlocked],
-    queryFn: () => api<TipFeedDTO>(`/tips/${path}?date=${date}`, { auth: true }),
+    queryKey: ['feed', product, date, unlocked, filterQuery],
+    queryFn: () => api<TipFeedDTO>(`/tips/${path}?date=${date}${filterQuery}`, { auth: true }),
     /**
      * Scores and minutes move while a match is on, and the feed used to fetch
      * once and then sit there — so a fixture stayed 0-0 until the reader
@@ -80,6 +90,27 @@ export function ProductFeed({
 
   const banner = promotions.data?.items[0];
 
+  /*
+   * The markets offered in the dropdown are the ones this day actually has.
+   *
+   * They have to be remembered from an unfiltered response: once a market is
+   * picked the feed only contains that one, and reading the options back out of
+   * it would leave the reader unable to choose a different one.
+   */
+  const marketMemory = useRef<{ type: string; name: string }[]>([]);
+  const markets = useMemo(() => {
+    if (filters.marketType) return marketMemory.current;
+    const seen = new Map<string, string>();
+    for (const group of feed.data?.groups ?? []) {
+      for (const tip of group.tips) seen.set(tip.marketType, tip.marketName);
+    }
+    const options = [...seen]
+      .map(([type, name]) => ({ type, name }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+    marketMemory.current = options;
+    return options;
+  }, [feed.data, filters.marketType]);
+
   return (
     <AppShell
       title={title}
@@ -101,6 +132,8 @@ export function ProductFeed({
       <div className="sticky top-[52px] z-10 -mx-[var(--page-gutter)] bg-bg-base/95 px-[var(--page-gutter)] backdrop-blur md:top-[60px] md:-mx-6 md:px-6">
         <DateStrip value={date} onChange={setDate} />
       </div>
+
+      <FeedFilters value={filters} onChange={setFilters} markets={markets} />
 
       <div id="main" className="pt-1 pb-6">
         {!unlocked && !authLoading && product !== 'FREE' ? (
@@ -137,7 +170,13 @@ export function ProductFeed({
           </div>
         ) : feed.data.groups.length === 0 ? (
           <div className="mt-4">
-            <NoResults />
+            {filtered ? (
+              <p className="card px-4 py-8 text-center text-[13px] text-ink-muted">
+                {t('feed.filteredEmpty')}
+              </p>
+            ) : (
+              <NoResults />
+            )}
           </div>
         ) : (
           /*

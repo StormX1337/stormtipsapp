@@ -25,6 +25,10 @@ export interface FeedOptions extends PageParams {
   outcome?: string;
   live?: boolean;
   includeSettled?: boolean;
+  q?: string;
+  marketType?: string;
+  minOdds?: number;
+  maxOdds?: number;
   timezone?: string;
   /** Language the editorial text is returned in. */
 }
@@ -78,6 +82,40 @@ export class TipService {
     if (options.outcome) where.outcome = options.outcome as never;
     if (options.live !== undefined) where.isLive = options.live;
     if (options.includeSettled === false) where.outcome = { in: ['PENDING', 'LIVE'] };
+    if (options.marketType) where.marketType = options.marketType as never;
+
+    if (options.minOdds !== undefined || options.maxOdds !== undefined) {
+      where.odds = {
+        ...(options.minOdds !== undefined ? { gte: options.minOdds } : {}),
+        ...(options.maxOdds !== undefined ? { lte: options.maxOdds } : {}),
+      };
+    }
+
+    if (options.q) {
+      /*
+       * Teams and leagues only, never `selectionLabel`.
+       *
+       * A locked tip is returned with its pick stripped, but a search that
+       * matched the pick would hand it back a word at a time: "over 2.5"
+       * returning a locked VIP tip tells the reader exactly what they have not
+       * paid for. Names are public either way.
+       *
+       * Collected under AND so it cannot overwrite the `event` clause the date
+       * filter above may already have set.
+       */
+      const contains = { contains: options.q, mode: 'insensitive' } as const;
+      where.AND = [
+        {
+          OR: [
+            { league: { name: contains } },
+            { event: { homeTeam: { name: contains } } },
+            { event: { awayTeam: { name: contains } } },
+            { event: { homeTeam: { shortName: contains } } },
+            { event: { awayTeam: { shortName: contains } } },
+          ],
+        },
+      ];
+    }
 
     return where;
   }

@@ -157,6 +157,16 @@ export const en = {
   'favourites.saved': 'Saved',
   'favourites.empty': 'No league matches that search.',
 
+  // feed search and filters
+  'feed.search': 'Search team or league',
+  'feed.filters': 'Filters',
+  'feed.market': 'Market',
+  'feed.anyMarket': 'Any market',
+  'feed.minOdds': 'Min odds',
+  'feed.maxOdds': 'Max odds',
+  'feed.clearFilters': 'Clear',
+  'feed.filteredEmpty': 'No analyses match these filters on this day.',
+
   // paywall
   'paywall.getVip': 'GET VIP',
   'paywall.getCombo': 'GET COMBO',
