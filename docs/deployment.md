@@ -424,10 +424,39 @@ Almost always one of two things, and the API log now names which:
 
 ## Operational runbook
 
-| Symptom                 | First check                                                                                         |
-| ----------------------- | --------------------------------------------------------------------------------------------------- |
-| Feeds empty for today   | Is the worker running? `sync:fixtures` and `publish:due` in its logs                                |
-| Tips stuck as `PENDING` | Provider results: `sync:results`, then `settle:due`; check `/metrics` and Admin → Providers         |
-| Statistics look stale   | `stats:recompute` runs every 30 minutes; the API also caches for 5 minutes                          |
-| Purchases not unlocking | Webhook delivery, then the `WebhookEvent` table; replays are idempotent by design                   |
-| 429 responses           | `RATE_LIMIT_MAX` / `AUTH_RATE_LIMIT_MAX`; both buckets are Redis-backed and shared across instances |
+| Symptom                                          | First check                                                                                                                                              |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Feeds empty for today                            | Is the worker running? `sync:fixtures` and `publish:due` in its logs                                                                                     |
+| Tips stuck as `PENDING`                          | Provider results: `sync:results`, then `settle:due`; check `/metrics` and Admin → Providers                                                              |
+| Statistics look stale                            | `stats:recompute` runs every 30 minutes; the API also caches for 5 minutes                                                                               |
+| Purchases not unlocking                          | Webhook delivery, then the `WebhookEvent` table; replays are idempotent by design                                                                        |
+| 429 responses                                    | `RATE_LIMIT_MAX` / `AUTH_RATE_LIMIT_MAX`; both buckets are Redis-backed and shared across instances                                                      |
+| `Cannot find module for page: /…` during a build | A part-written `.next` from an earlier build. `pnpm build` now clears it first; if an old checkout still fails, `rm -rf apps/web/.next apps/admin/.next` |
+
+### `PageNotFoundError` during "Collecting page data"
+
+```
+[Error [PageNotFoundError]]: Cannot find module for page: /account/favourites
+> Build error occurred
+[Error]: Failed to collect page data for /account/favourites
+```
+
+The page it names exists and is correct — the error points at the source, but
+the fault is in `.next`. `next build` writes over that directory in place
+rather than replacing it, so a build that ended part-written (the disk filled,
+the machine was rebooted, a worker was killed) leaves a manifest listing routes
+whose compiled server modules are not there. The next build compiles happily
+and then dies looking for them.
+
+Both Next builds clear the previous output first
+(`scripts/clean-next-output.mjs`), keeping `.next/cache` so rebuilds stay fast.
+On a checkout from before that change, clear it by hand:
+
+```bash
+rm -rf apps/web/.next apps/admin/.next
+pnpm build
+```
+
+Check the disk at the same time (`df -h`, and `pnpm health`): a build that ran
+out of space is the most common way to get a half-written `.next` in the first
+place.
