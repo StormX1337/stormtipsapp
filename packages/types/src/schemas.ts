@@ -205,6 +205,22 @@ export const statisticsQuerySchema = z.object({
   stake: z.coerce.number().positive().max(10000).optional(),
 });
 
+// ── my record ────────────────────────────────────────────────────────────────
+
+/** The window picker on the reader's own record; no product, it is all of them. */
+export const recordQuerySchema = z.object({
+  window: nativeEnumOf(StatsWindow).default('D30'),
+});
+
+/**
+ * Following a tip. The stake is optional — left out, the published flat stake
+ * is used, which is what most readers will have done.
+ */
+export const followTipSchema = z.object({
+  stake: z.coerce.number().positive().max(1_000_000).optional(),
+});
+export type FollowTipInput = z.infer<typeof followTipSchema>;
+
 // ── admin: tips ──────────────────────────────────────────────────────────────
 
 const tipBaseSchema = z.object({

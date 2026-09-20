@@ -348,6 +348,7 @@ model User {
   referralsMade       Referral[]           @relation("ReferralReferrer")
   referralReceived    Referral?            @relation("ReferralReferee")
   referralRewards     ReferralReward[]
+  tipFollows          TipFollow[]
 
   @@index([status, role])
   @@index([createdAt])
@@ -681,6 +682,7 @@ model Tip {
 
   result     TipResult?
   comboItems ComboItem[]
+  follows    TipFollow[]
 
   @@index([product, status, publishAt])
   @@index([status, outcome])
@@ -695,6 +697,33 @@ model Tip {
 
 /// Immutable settlement record. `tipId` is unique, which is what makes the
 /// result engine idempotent: a second settlement attempt hits the unique index.
+/// A tip a reader says they backed, and with how much.
+///
+/// This is the reader's own record, kept apart from the published one: the
+/// published statistics are what STORM TIPS selected, this is what one person
+/// actually took. `stake` is theirs — the published flat stake is only its
+/// default — so their return is computed from their own money, not ours.
+///
+/// Settlement is not duplicated here. The outcome always comes from the tip's
+/// own `TipResult`, so a follow can never disagree with the published record.
+model TipFollow {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tipId  String
+  tip    Tip    @relation(fields: [tipId], references: [id], onDelete: Cascade)
+
+  stake Decimal @default(10) @db.Decimal(10, 2)
+  note  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, tipId])
+  @@index([userId, createdAt])
+  @@map("tip_follows")
+}
+
 model TipResult {
   id           String     @id @default(cuid())
   tipId        String     @unique

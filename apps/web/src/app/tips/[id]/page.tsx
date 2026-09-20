@@ -5,11 +5,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { ChevronLeft, Lock } from 'lucide-react';
+import { BookmarkCheck, BookmarkPlus, ChevronLeft, Lock } from 'lucide-react';
 import type { TipDTO } from '@storm-tips/types';
 import { formatDateTime } from '@storm-tips/ui';
 import { api } from '@/lib/api';
 import { useI18n } from '@/lib/i18n';
+import { useAuth } from '@/lib/auth';
+import { useFollowTip } from '@/lib/use-follows';
 import { AppShell } from '@/components/navigation';
 import { ErrorState } from '@/components/states';
 import {
@@ -28,6 +30,31 @@ function Row({ label, value }: { label: string; value: ReactNode }): ReactNode {
       <dt className="text-[12.5px] text-ink-muted">{label}</dt>
       <dd className="text-right text-[12.5px] font-semibold">{value}</dd>
     </div>
+  );
+}
+
+/**
+ * Adds this tip to the reader's own record.
+ *
+ * Only for someone signed in: the record belongs to an account, and a button
+ * that silently does nothing is worse than one that is not there.
+ */
+function FollowButton({ tipId }: { tipId: string }): ReactNode {
+  const { t } = useI18n();
+  const { user } = useAuth();
+  const { following, pending, toggle } = useFollowTip(tipId);
+  if (!user) return null;
+  return (
+    <Button
+      variant={following ? 'outline' : 'primary'}
+      size="sm"
+      disabled={pending}
+      onClick={toggle}
+      aria-pressed={following}
+    >
+      {following ? <BookmarkCheck size={15} aria-hidden /> : <BookmarkPlus size={15} aria-hidden />}
+      {following ? t('record.following') : t('record.follow')}
+    </Button>
   );
 }
 
@@ -157,6 +184,9 @@ export default function TipDetailPage({ params }: { params: Promise<{ id: string
                   <div className="mt-3 flex items-center gap-4">
                     <OddsBadge odds={tip.odds} size="lg" changed={tip.oddsChanged} />
                     <ConfidenceMeter value={tip.confidence} />
+                    <span className="ml-auto">
+                      <FollowButton tipId={tip.id} />
+                    </span>
                   </div>
 
                   <dl className="mt-3 divide-y divide-line-subtle border-t border-line-subtle pt-1">

@@ -1,8 +1,10 @@
 import type { FastifyInstance } from 'fastify';
 import { prisma } from '@storm-tips/database';
 import {
+  followTipSchema,
   idParamSchema,
   paginationSchema,
+  recordQuerySchema,
   registerDeviceSchema,
   updateProfileSchema,
 } from '@storm-tips/types';
@@ -12,6 +14,8 @@ import { serializeNotification, serializeUser } from '../serializers/user.js';
 import { serializePayment, serializeSubscription } from '../serializers/commerce.js';
 import { entitlements } from '../services/entitlement.service.js';
 import { referrals } from '../services/referral.service.js';
+import { follows } from '../services/follow.service.js';
+import { serializeTip, tipInclude } from '../serializers/tip.js';
 
 export async function meRoutes(app: FastifyInstance): Promise<void> {
   app.addHook('preHandler', app.authenticate);
@@ -190,4 +194,55 @@ export async function meRoutes(app: FastifyInstance): Promise<void> {
   app.get('/referrals/list', async (request) => ({
     items: await referrals.list(request.auth!.userId),
   }));
+
+  // ── the reader's own record ────────────────────────────────────────────────
+
+  /** Every followed tip id, so the feed can mark its own cards. */
+  app.get('/follows', async (request) => ({
+    items: await follows.followedIds(request.auth!.userId),
+  }));
+
+  /** The followed tips themselves, newest first. */
+  app.get('/follows/tips', async (request) => {
+    const query = parseQuery(request, paginationSchema);
+    const { skip, take } = skipTake(query);
+    const [rows, total] = await Promise.all([
+      prisma.tipFollow.findMany({
+        where: { userId: request.auth!.userId },
+        include: { tip: { include: tipInclude } },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take,
+      }),
+      prisma.tipFollow.count({ where: { userId: request.auth!.userId } }),
+    ]);
+    return paginate(
+      rows.map((row) => ({
+        stake: Number(row.stake),
+        followedAt: row.createdAt.toISOString(),
+        // A tip the reader followed was visible to them when they did, and its
+        // pick is already in their record; it stays readable afterwards.
+        tip: serializeTip(row.tip, true),
+      })),
+      total,
+      query,
+    );
+  });
+
+  app.put('/follows/:id', async (request) => {
+    const { id } = parseParams(request, idParamSchema);
+    const body = parseBody(request, followTipSchema);
+    return follows.follow(request.auth!.userId, id, body.stake);
+  });
+
+  app.delete('/follows/:id', async (request) => {
+    const { id } = parseParams(request, idParamSchema);
+    await follows.unfollow(request.auth!.userId, id);
+    return { ok: true };
+  });
+
+  app.get('/record', async (request) => {
+    const query = parseQuery(request, recordQuerySchema);
+    return follows.record(request.auth!.userId, query.window);
+  });
 }

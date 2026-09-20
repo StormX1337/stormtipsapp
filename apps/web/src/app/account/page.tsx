@@ -3,7 +3,16 @@
 import { useEffect, type ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Bell, ChevronRight, CreditCard, Gift, LogOut, ShieldQuestion, Trash2 } from 'lucide-react';
+import {
+  Bell,
+  BookmarkCheck,
+  ChevronRight,
+  CreditCard,
+  Gift,
+  LogOut,
+  ShieldQuestion,
+  Trash2,
+} from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { useI18n } from '@/lib/i18n';
 import { api } from '@/lib/api';
@@ -85,6 +94,11 @@ export default function AccountPage(): ReactNode {
                 ))}
               </div>
               <div className="divide-y divide-line-subtle">
+                <Item
+                  href="/account/record"
+                  icon={<BookmarkCheck size={18} aria-hidden />}
+                  label={t('record.title')}
+                />
                 <Item
                   href="/account/subscription"
                   icon={<CreditCard size={18} aria-hidden />}

@@ -122,6 +122,21 @@ export const en = {
     'All figures are verified historical results of published analyses, calculated with a flat {stake} unit stake. Past performance does not predict future results.',
   'stats.empty': 'Not enough settled analyses in this period yet.',
 
+  // my record — the reader's own results, kept apart from the published ones
+  'record.title': 'My record',
+  'record.nav': 'My record',
+  'record.follow': 'Track',
+  'record.following': 'Tracked',
+  'record.intro':
+    'Only the analyses you tracked, settled with the published result and your own stake.',
+  'record.empty': 'Nothing tracked yet. Open an analysis and tap Track to start your record.',
+  'record.waiting':
+    '{count} tracked analyses have not been settled yet. Your record fills in as they finish.',
+  'record.openTips': 'Still running',
+  'record.tracked': 'Tracked',
+  'record.stake': 'Your stake',
+  'record.browse': 'Browse today’s analyses',
+
   // paywall
   'paywall.getVip': 'GET VIP',
   'paywall.getCombo': 'GET COMBO',
