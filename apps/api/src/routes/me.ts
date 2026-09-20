@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { prisma } from '@storm-tips/database';
 import {
+  deactivateDeviceSchema,
   followTipSchema,
   idParamSchema,
   paginationSchema,
@@ -177,6 +178,21 @@ export async function meRoutes(app: FastifyInstance): Promise<void> {
       },
     });
     reply.status(201);
+    return { success: true };
+  });
+
+  /**
+   * Deactivates a device by its token in the body.
+   *
+   * A browser's push token is a JSON object, which cannot travel in a path
+   * segment without being mangled, so it goes in a body instead.
+   */
+  app.post('/devices/deactivate', async (request) => {
+    const body = parseBody(request, deactivateDeviceSchema);
+    await prisma.deviceToken.updateMany({
+      where: { token: body.token, userId: request.auth!.userId },
+      data: { isActive: false },
+    });
     return { success: true };
   });
 

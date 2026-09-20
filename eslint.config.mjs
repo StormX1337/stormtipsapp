@@ -51,6 +51,15 @@ export default tseslint.config(
     },
   },
   {
+    // The service worker runs in its own global scope: no `window`, and `self`
+    // is the registration rather than the page.
+    files: ['apps/web/public/sw.js'],
+    languageOptions: {
+      globals: { ...globals.serviceworker },
+      sourceType: 'script',
+    },
+  },
+  {
     files: [
       '**/*.test.ts',
       '**/*.spec.ts',

@@ -25,6 +25,11 @@ const pushService = new PushService({
     bundleId: env.APNS_BUNDLE_ID,
     production: env.APNS_PRODUCTION,
   },
+  webPush: {
+    publicKey: env.VAPID_PUBLIC_KEY ?? null,
+    privateKey: env.VAPID_PRIVATE_KEY ?? null,
+    subject: env.VAPID_SUBJECT,
+  },
 });
 
 const RECEIPT_KEY = 'push:receipts';

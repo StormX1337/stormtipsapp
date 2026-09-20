@@ -113,7 +113,7 @@ clearly reported error instead of pretending to work:
 | Apple IAP   | `APPLE_ISSUER_ID`, `APPLE_KEY_ID`, `APPLE_PRIVATE_KEY`, `APPLE_BUNDLE_ID` | Receipt verification is refused                          |
 | Google Play | `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_BASE64`, `GOOGLE_PLAY_PACKAGE_NAME`     | Purchase verification is refused                         |
 | Sports data | `SPORTS_PROVIDER`, `SPORTS_API_KEY`, `THEODDSAPI_KEY`                     | `mock` provider serves deterministic fixtures            |
-| Push        | `EXPO_ACCESS_TOKEN`, `FCM_*`, `APNS_*`                                    | Notifications are stored but not delivered               |
+| Push        | `EXPO_ACCESS_TOKEN`, `FCM_*`, `APNS_*`, `VAPID_*`                         | Notifications are stored but not delivered               |
 | Email       | `SMTP_*`                                                                  | Mail is logged instead of sent (use Mailpit locally)     |
 
 See [payments.md](payments.md), [sports-providers.md](sports-providers.md) and

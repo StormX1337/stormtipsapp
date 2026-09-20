@@ -2,6 +2,7 @@ import type { NotificationType } from '@storm-tips/types';
 import { ExpoPushTransport, summarise } from './transports/expo.js';
 import { FcmPushTransport } from './transports/fcm.js';
 import { ApnsPushTransport } from './transports/apns.js';
+import { WebPushTransport } from './transports/web-push.js';
 import { channelForType, renderTemplate } from './templates.js';
 import type { PushDelivery, PushMessage, PushResult, PushTarget, PushTransport } from './types.js';
 
@@ -15,6 +16,7 @@ export interface PushServiceOptions {
     bundleId?: string | null;
     production?: boolean;
   };
+  webPush?: { publicKey?: string | null; privateKey?: string | null; subject?: string | null };
   fetchImpl?: typeof fetch;
   /** Transports can be injected in tests. */
   transports?: PushTransport[];
@@ -43,6 +45,7 @@ export class PushService {
           fetchImpl: options.fetchImpl,
         }),
         new ApnsPushTransport(options.apns ?? {}),
+        new WebPushTransport(options.webPush ?? {}),
       ] as PushTransport[]);
 
     this.transports = new Map(transports.map((transport) => [transport.provider, transport]));

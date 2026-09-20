@@ -127,6 +127,14 @@ export const envSchema = z.object({
   APNS_PRIVATE_KEY: z.string().optional(),
   APNS_BUNDLE_ID: z.string().default('com.stormtips.app'),
   APNS_PRODUCTION: bool.default(false),
+  /**
+   * Web push (VAPID). Generate a pair once with `npx web-push generate-vapid-keys`
+   * and keep the private key out of anything the browser can read: the public
+   * key is handed to the browser, the private key signs from the server.
+   */
+  VAPID_PUBLIC_KEY: z.string().optional(),
+  VAPID_PRIVATE_KEY: z.string().optional(),
+  VAPID_SUBJECT: z.string().default('mailto:no-reply@stormtips.app'),
 
   // email
   SMTP_HOST: z.string().default('localhost'),

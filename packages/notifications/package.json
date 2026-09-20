@@ -15,9 +15,11 @@
   "dependencies": {
     "@storm-tips/types": "workspace:*",
     "google-auth-library": "^10.5.0",
-    "jose": "^6.1.0"
+    "jose": "^6.1.0",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
+    "@types/web-push": "^3.6.4",
     "typescript": "~5.9.3",
     "vitest": "^3.2.4"
   }

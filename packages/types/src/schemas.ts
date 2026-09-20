@@ -148,8 +148,13 @@ export const updateProfileSchema = z.object({
   favoriteTeamIds: z.array(idSchema).max(50).optional(),
 });
 
+/** Turning a device off again; the token is the only thing that identifies it. */
+export const deactivateDeviceSchema = z.object({ token: z.string().min(10).max(2048) });
+
 export const registerDeviceSchema = z.object({
-  token: z.string().min(10).max(512),
+  // A browser's subscription is a JSON object, not a short opaque string,
+  // and a push endpoint URL alone can run past 500 characters.
+  token: z.string().min(10).max(2048),
   platform: nativeEnumOf(DevicePlatform),
   provider: z.enum(['EXPO', 'FCM', 'APNS', 'WEB_PUSH']).default('EXPO'),
   deviceId: z.string().max(128).optional(),

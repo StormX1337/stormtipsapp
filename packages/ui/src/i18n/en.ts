@@ -137,6 +137,16 @@ export const en = {
   'record.stake': 'Your stake',
   'record.browse': 'Browse today’s analyses',
 
+  // browser notifications
+  'push.title': 'Notifications in this browser',
+  'push.body': 'Get the same alerts as the app, without installing it.',
+  'push.enable': 'Turn on',
+  'push.disable': 'Turn off',
+  'push.on': 'On for this browser',
+  'push.denied':
+    'This browser is blocking notifications. Allow them for this site in its settings, then try again.',
+  'push.unsupported': 'This browser cannot show notifications.',
+
   // paywall
   'paywall.getVip': 'GET VIP',
   'paywall.getCombo': 'GET COMBO',

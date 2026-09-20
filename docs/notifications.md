@@ -42,12 +42,13 @@ Fan-out filters on three things, in this order:
 
 ## Transports
 
-| Transport                  | Used for                                       | Credentials                                                                            |
-| -------------------------- | ---------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Expo (`ExpoPushTransport`) | Default for the Expo app on both platforms     | `EXPO_ACCESS_TOKEN` (optional, raises throughput)                                      |
-| FCM (`FcmPushTransport`)   | Direct Android delivery (HTTP v1)              | `FCM_SERVICE_ACCOUNT_JSON_BASE64`, `FCM_PROJECT_ID`                                    |
-| APNs (`ApnsPushTransport`) | Direct iOS delivery (token-based auth)         | `APNS_KEY_ID`, `APNS_TEAM_ID`, `APNS_PRIVATE_KEY`, `APNS_BUNDLE_ID`, `APNS_PRODUCTION` |
-| SMTP                       | Verification, password reset, billing receipts | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`     |
+| Transport                     | Used for                                       | Credentials                                                                            |
+| ----------------------------- | ---------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Expo (`ExpoPushTransport`)    | Default for the Expo app on both platforms     | `EXPO_ACCESS_TOKEN` (optional, raises throughput)                                      |
+| FCM (`FcmPushTransport`)      | Direct Android delivery (HTTP v1)              | `FCM_SERVICE_ACCOUNT_JSON_BASE64`, `FCM_PROJECT_ID`                                    |
+| APNs (`ApnsPushTransport`)    | Direct iOS delivery (token-based auth)         | `APNS_KEY_ID`, `APNS_TEAM_ID`, `APNS_PRIVATE_KEY`, `APNS_BUNDLE_ID`, `APNS_PRODUCTION` |
+| Web Push (`WebPushTransport`) | Browsers, including the installed PWA          | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`                               |
+| SMTP                          | Verification, password reset, billing receipts | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`     |
 
 Without credentials a transport reports that it is not configured; notifications
 are still stored and visible in the in-app inbox, but nothing is delivered and
@@ -71,7 +72,37 @@ POST /api/v1/me/devices
 ```
 
 Logging out calls `DELETE /me/devices/:token`, so a shared device stops
-receiving another account's notifications.
+receiving another account's notifications. A browser's token is a JSON object
+rather than a string and cannot travel in a path segment, so it is turned off
+with `POST /me/devices/deactivate` and the token in the body instead.
+
+## Browsers
+
+`GET /api/v1/push/config` returns `{ enabled, publicKey }`. The public half of
+the VAPID pair is meant to be public — it is what the browser encrypts to, and
+it is useless without the private half, which never leaves the server. When no
+pair is configured `enabled` is false and the web app hides the toggle rather
+than offering something that cannot work.
+
+Generate a pair once, per environment:
+
+```bash
+npx web-push generate-vapid-keys
+```
+
+The browser subscribes only from a click in Notifications settings: a page that
+asks on load is refused by the reader and often by the browser, and a refusal
+sticks until they change it in the site settings themselves.
+
+The subscription is stored as a device token like any other (`provider:
+WEB_PUSH`, `platform: WEB`), so the same fan-out, the same per-type preferences
+and the same dead-token cleanup apply. A `404` or `410` from the push endpoint
+is the browser saying the subscription is gone, and deactivates it.
+
+`apps/web/public/sw.js` handles delivery. It caches nothing — a feed served
+from yesterday's cache is worse than an error, because a price that has moved
+reads exactly like one that has not — and it tells open tabs about each push so
+the page behind the notification refetches instead of going stale.
 
 Android channels (`tips`, `results`, `reminders`, `account`, `promotions`) are
 created before the first notification so each category can be silenced
