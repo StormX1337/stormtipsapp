@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, type ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+import type { ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, CheckCircle2, LineChart, ShieldCheck } from 'lucide-react';
 import type { ProductDTO } from '@storm-tips/types';
@@ -52,22 +51,21 @@ function Figure({
 /**
  * The public front page.
  *
- * Until now `/` redirected straight into the free feed, so a first-time visitor
- * met a list of fixtures with no idea what the product was or why its numbers
- * could be trusted. Someone already signed in still goes to the feed — they
- * have read this once.
+ * `/` used to redirect straight into the free feed, so a first-time visitor met
+ * a list of fixtures with no idea what the product was or why its numbers could
+ * be trusted.
+ *
+ * It does not redirect a signed-in reader either. That version showed the page
+ * for one frame and then threw it away, which looks like a fault rather than a
+ * shortcut — and it left no way back to the front page at all. Signed in, the
+ * page keeps its content and swaps its calls to action for the way in.
  *
  * Every figure here is fetched, never written into the markup: the record has
  * to be the same one the statistics page shows, or it is marketing.
  */
 export default function HomePage(): ReactNode {
   const { t } = useI18n();
-  const router = useRouter();
-  const { user, loading } = useAuth();
-
-  useEffect(() => {
-    if (!loading && user) router.replace('/free');
-  }, [loading, user, router]);
+  const { user } = useAuth();
 
   const headline = useQuery({
     queryKey: ['headline', 'FREE'],
@@ -88,15 +86,25 @@ export default function HomePage(): ReactNode {
             {config.appName}
           </span>
           <div className="flex items-center gap-2">
-            <Link
-              href="/auth/login"
-              className="px-3 py-2 text-[13px] font-semibold text-ink-muted hover:text-ink"
-            >
-              {t('auth.login')}
-            </Link>
-            <Link href="/auth/register">
-              <Button size="sm">{t('landing.cta')}</Button>
-            </Link>
+            {user ? (
+              <Link href="/free">
+                <Button size="sm">
+                  {t('landing.openApp')} <ArrowRight size={14} aria-hidden />
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/auth/login"
+                  className="px-3 py-2 text-[13px] font-semibold text-ink-muted hover:text-ink"
+                >
+                  {t('auth.login')}
+                </Link>
+                <Link href="/auth/register">
+                  <Button size="sm">{t('landing.cta')}</Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -114,16 +122,33 @@ export default function HomePage(): ReactNode {
             {t('landing.sub')}
           </p>
           <div className="animate-rise animate-rise-2 mt-8 flex flex-wrap items-center gap-3">
-            <Link href="/auth/register">
-              <Button size="md">
-                {t('landing.cta')} <ArrowRight size={16} aria-hidden />
-              </Button>
-            </Link>
-            <Link href="/free">
-              <Button size="md" variant="outline">
-                {t('landing.secondary')}
-              </Button>
-            </Link>
+            {user ? (
+              <>
+                <Link href="/free">
+                  <Button size="md">
+                    {t('landing.openApp')} <ArrowRight size={16} aria-hidden />
+                  </Button>
+                </Link>
+                <Link href="/account/record">
+                  <Button size="md" variant="outline">
+                    {t('record.title')}
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/auth/register">
+                  <Button size="md">
+                    {t('landing.cta')} <ArrowRight size={16} aria-hidden />
+                  </Button>
+                </Link>
+                <Link href="/free">
+                  <Button size="md" variant="outline">
+                    {t('landing.secondary')}
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
 

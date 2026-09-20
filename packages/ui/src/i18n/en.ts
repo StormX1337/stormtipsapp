@@ -325,6 +325,7 @@ export const en = {
     'Every selection carries its market, its price, the bookmaker it came from and a written rationale. Results are settled automatically and the history stays public.',
   'landing.badge': 'Settled results, published',
   'landing.cta': 'Start free',
+  'landing.openApp': 'Open the feed',
   'landing.secondary': 'See today’s free analyses',
   'landing.recordTitle': 'The verified record',
   'landing.recordNote':
