@@ -274,6 +274,26 @@ export const en = {
   'legal.responsible': 'Responsible gambling',
   'legal.disclaimer': 'Disclaimer',
   'legal.help': 'Help & support',
+  'landing.headline': 'Sports analyses, with the record to check them against.',
+  'landing.sub':
+    'Every selection carries its market, its price, the bookmaker it came from and a written rationale. Results are settled automatically and the history stays public.',
+  'landing.badge': 'Settled results, published',
+  'landing.cta': 'Start free',
+  'landing.secondary': 'See today’s free analyses',
+  'landing.recordTitle': 'The verified record',
+  'landing.recordNote':
+    'Settled analyses only, over {days} days, at a flat {stake} unit stake. Past results do not predict future ones.',
+  'landing.productsTitle': 'What you get',
+  'landing.howTitle': 'How it works',
+  'landing.how1Title': 'Published before kick-off',
+  'landing.how1Body':
+    'Each analysis names the market and the selection, with the price and the bookmaker it was taken from.',
+  'landing.how2Title': 'Settled automatically',
+  'landing.how2Body':
+    'Results come from the fixture data, not from us. A settled analysis cannot be edited afterwards.',
+  'landing.how3Title': 'Counted either way',
+  'landing.how3Body':
+    'Wins and losses both go into the record. The statistics page is the same figure we publish here.',
   'legal.ageNotice': '18+. Betting involves financial risk.',
   'legal.noGuarantee':
     'STORM TIPS publishes sports analyses for informational purposes. No result is guaranteed and no outcome can be predicted with certainty.',

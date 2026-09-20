@@ -338,8 +338,10 @@ export function Button({
         size === 'sm' && 'px-3 py-1.5 text-[12px]',
         size === 'md' && 'px-4 py-2.5 text-[13px]',
         size === 'lg' && 'w-full px-5 py-3.5 text-[15px]',
-        variant === 'primary' && 'bg-accent-500 text-ink-inverse hover:bg-accent-400',
-        variant === 'gold' && 'bg-gold-400 text-ink-inverse hover:bg-gold-300',
+        variant === 'primary' &&
+          'accent-surface text-ink-inverse shadow-[0_6px_18px_rgb(18_225_127/0.2)] hover:brightness-110',
+        variant === 'gold' &&
+          'bg-gold-400 text-ink-inverse shadow-[0_6px_18px_rgb(255_201_60/0.2)] hover:brightness-110',
         variant === 'ghost' && 'text-ink-muted hover:bg-bg-card-alt hover:text-ink',
         variant === 'outline' && 'border border-line-strong text-ink hover:border-accent-500',
         variant === 'danger' && 'bg-lost/15 text-lost hover:bg-lost/25',

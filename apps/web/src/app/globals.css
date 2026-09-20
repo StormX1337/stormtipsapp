@@ -6,22 +6,22 @@
  * is what the React Native app consumes; this block is its CSS projection.
  */
 @theme {
-  --color-bg-base: #0a0c10;
-  --color-bg-subtle: #0e1117;
-  --color-bg-raised: #141821;
-  --color-bg-card: #181d27;
-  --color-bg-card-alt: #1e2430;
-  --color-bg-input: #11151d;
+  --color-bg-base: #070a12;
+  --color-bg-subtle: #0c101a;
+  --color-bg-raised: #121826;
+  --color-bg-card: #161c2a;
+  --color-bg-card-alt: #1e2637;
+  --color-bg-input: #0f1420;
 
-  --color-line-subtle: #222834;
-  --color-line: #2a3140;
-  --color-line-strong: #39424f;
+  --color-line-subtle: #242c3c;
+  --color-line: #303a4d;
+  --color-line-strong: #414e63;
 
   --color-ink: #ffffff;
-  --color-ink-muted: #9ba5b7;
-  --color-ink-dim: #6c7688;
-  --color-ink-disabled: #4a5263;
-  --color-ink-inverse: #0a0c10;
+  --color-ink-muted: #a6b0c2;
+  --color-ink-dim: #7b8699;
+  --color-ink-disabled: #58627a;
+  --color-ink-inverse: #070a12;
 
   --color-accent-50: #e6fff3;
   --color-accent-100: #b8ffdd;
@@ -164,10 +164,66 @@
     pointer-events: none;
   }
 
+  /*
+   * The surface everything sits on.
+   *
+   * A flat fill made a page of twenty cards read as one grey slab. The gradient
+   * is barely two steps of lightness, lit from the top the way the rest of the
+   * interface is, which is enough for each card to find its own edge; the inset
+   * hairline does the same job where the border is too dark to catch.
+   */
   .card {
+    background-image: linear-gradient(
+      180deg,
+      var(--color-bg-card-alt) 0%,
+      var(--color-bg-card) 42%
+    );
     background-color: var(--color-bg-card);
     border: 1px solid var(--color-line-subtle);
     border-radius: var(--radius-lg);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.03),
+      0 1px 2px rgb(0 0 0 / 0.3);
+  }
+
+  /*
+   * The accent as a surface rather than a swatch. A flat neon fill on a large
+   * button is the one place this green turns cheap; two stops of it reads as
+   * light falling on a solid thing.
+   */
+  .accent-surface {
+    background-image: linear-gradient(
+      180deg,
+      var(--color-accent-400) 0%,
+      var(--color-accent-600) 100%
+    );
+  }
+
+  /*
+   * The glow behind the front page headline. Not decoration for its own sake:
+   * the top of the page is otherwise the darkest thing on screen, and the eye
+   * has nothing to land on before the first card.
+   */
+  .ambient-accent {
+    position: relative;
+    isolation: isolate;
+  }
+  .ambient-accent::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: -180px;
+    left: 50%;
+    width: min(900px, 120%);
+    height: 460px;
+    transform: translateX(-50%);
+    background: radial-gradient(
+      50% 50% at 50% 50%,
+      rgb(18 225 127 / 0.13) 0%,
+      rgb(18 225 127 / 0.04) 45%,
+      transparent 72%
+    );
+    pointer-events: none;
   }
 
   .stat-circle {
@@ -280,7 +336,10 @@ label:focus-within > .field-label {
   transform: scale(0.985);
 }
 .press {
-  transition: transform 0.12s ease;
+  transition:
+    transform 0.12s ease,
+    filter 0.16s ease,
+    background-color 0.16s ease;
 }
 
 /*

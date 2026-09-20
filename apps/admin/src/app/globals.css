@@ -2,21 +2,21 @@
 
 /* Admin console theme — the same STORM TIPS tokens, tuned for desktop density. */
 @theme {
-  --color-bg-base: #0a0c10;
-  --color-bg-subtle: #0e1117;
-  --color-bg-raised: #141821;
-  --color-bg-card: #181d27;
-  --color-bg-card-alt: #1e2430;
-  --color-bg-input: #11151d;
+  --color-bg-base: #070a12;
+  --color-bg-subtle: #0c101a;
+  --color-bg-raised: #121826;
+  --color-bg-card: #161c2a;
+  --color-bg-card-alt: #1e2637;
+  --color-bg-input: #0f1420;
 
-  --color-line-subtle: #222834;
-  --color-line: #2a3140;
-  --color-line-strong: #39424f;
+  --color-line-subtle: #242c3c;
+  --color-line: #303a4d;
+  --color-line-strong: #414e63;
 
   --color-ink: #ffffff;
-  --color-ink-muted: #9ba5b7;
-  --color-ink-dim: #6c7688;
-  --color-ink-inverse: #0a0c10;
+  --color-ink-muted: #a6b0c2;
+  --color-ink-dim: #7b8699;
+  --color-ink-inverse: #070a12;
 
   --color-accent-300: #45f0a5;
   --color-accent-400: #21e88e;
@@ -141,7 +141,7 @@
   }
 }
 .skeleton {
-  background: linear-gradient(90deg, #181d27 0%, #1e2430 40%, #181d27 80%);
+  background: linear-gradient(90deg, #161c2a 0%, #1e2637 40%, #161c2a 80%);
   background-size: 400px 100%;
   animation: pt-shimmer 1.4s linear infinite;
   border-radius: 8px;

@@ -13,28 +13,28 @@
 export const colors = {
   /** Page and surface backgrounds, darkest → lightest. */
   bg: {
-    base: '#0A0C10',
-    subtle: '#0E1117',
-    raised: '#141821',
-    card: '#181D27',
-    cardAlt: '#1E2430',
-    input: '#11151D',
+    base: '#070A12',
+    subtle: '#0C101A',
+    raised: '#121826',
+    card: '#161C2A',
+    cardAlt: '#1E2637',
+    input: '#0F1420',
     overlay: 'rgba(6, 8, 12, 0.86)',
     scrim: 'rgba(6, 8, 12, 0.55)',
   },
   border: {
-    subtle: '#222834',
-    default: '#2A3140',
-    strong: '#39424F',
+    subtle: '#242c3c',
+    default: '#303A4D',
+    strong: '#414E63',
     accent: '#12E17F',
     gold: '#FFC93C',
   },
   text: {
     primary: '#FFFFFF',
-    secondary: '#9BA5B7',
-    muted: '#6C7688',
-    disabled: '#4A5263',
-    inverse: '#0A0C10',
+    secondary: '#A6B0C2',
+    muted: '#7B8699',
+    disabled: '#58627A',
+    inverse: '#070A12',
     onGold: '#14100A',
   },
   /** Primary brand accent — profit green. */
@@ -116,8 +116,8 @@ export const gradients = {
   promoNeon: ['#12E17F', '#28D8F5'],
   gold: ['#FFD65C', '#FFC93C'],
   vip: ['#3A2D06', '#151821'],
-  card: ['#1B2029', '#141821'],
-  paywall: ['#12151C', '#0A0C10'],
+  card: ['#1B2029', '#121826'],
+  paywall: ['#12151C', '#070A12'],
 } as const;
 
 export const spacing = {
