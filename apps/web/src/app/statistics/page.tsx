@@ -23,7 +23,27 @@ import { AppShell } from '@/components/navigation';
 import { StatTile } from '@/components/stat-tiles';
 import { ErrorState, OfflineBanner, ResponsibleGamblingNote } from '@/components/states';
 import { Skeleton } from '@/components/primitives';
-import { intlLocale } from '@storm-tips/ui';
+import { colors, intlLocale } from '@storm-tips/ui';
+
+/*
+ * Recharts is drawn from JavaScript, so it cannot read the stylesheet's tokens.
+ * These came from a hand-copied set of hex values that stayed behind the last
+ * time the palette moved, leaving the grid and the tooltip a shade off every
+ * other surface. Taken from the token module, they cannot drift again.
+ */
+const chart = {
+  grid: colors.border.subtle,
+  tick: { fill: colors.text.muted, fontSize: 10 },
+  accent: colors.accent[500],
+  negative: colors.status.LOST,
+  tooltip: {
+    background: colors.bg.raised,
+    border: `1px solid ${colors.border.default}`,
+    borderRadius: 12,
+    fontSize: 12,
+  },
+  tooltipLabel: { color: colors.text.secondary },
+} as const;
 
 const WINDOWS: StatsWindow[] = ['D7', 'D30', 'D90', 'M6', 'M12', 'ALL'];
 const PRODUCTS: (ProductCode | 'ALL')[] = ['ALL', 'FREE', 'VIP', 'EXTRA', 'COMBO', 'FIX_ODDS'];
@@ -107,11 +127,12 @@ export default function StatisticsPage(): ReactNode {
                 label={t('stats.totalTips')}
                 value={numberFormat.format(stats.data.settledTips)}
               />
-              <StatTile
-                label={t('stats.winRate')}
-                value={`${stats.data.winRate.toFixed(1)}%`}
-                tone="gold"
-              />
+              {/*
+                Colour on this row means direction — green is a profit, red is
+                a loss. A win rate in gold said nothing about either and left
+                four different colours competing across eight tiles.
+              */}
+              <StatTile label={t('stats.winRate')} value={`${stats.data.winRate.toFixed(1)}%`} />
               <StatTile
                 label={t('stats.roi')}
                 value={`${stats.data.roi > 0 ? '+' : ''}${stats.data.roi.toFixed(2)}%`}
@@ -137,152 +158,138 @@ export default function StatisticsPage(): ReactNode {
               />
             </div>
 
-            <section className="card p-3">
-              <h2 className="mb-2 text-[13px] font-bold">{t('stats.cumulativeProfit')}</h2>
-              <div className="h-56 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart
-                    data={stats.data.byDay}
-                    margin={{ top: 4, right: 4, left: -18, bottom: 0 }}
-                  >
-                    <defs>
-                      <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#12E17F" stopOpacity={0.5} />
-                        <stop offset="100%" stopColor="#12E17F" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid stroke="#222834" vertical={false} />
-                    <XAxis
-                      dataKey="date"
-                      tick={{ fill: '#6C7688', fontSize: 10 }}
-                      tickLine={false}
-                      axisLine={false}
-                      minTickGap={28}
-                    />
-                    <YAxis
-                      tick={{ fill: '#6C7688', fontSize: 10 }}
-                      tickLine={false}
-                      axisLine={false}
-                      width={44}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        background: '#141821',
-                        border: '1px solid #2A3140',
-                        borderRadius: 12,
-                        fontSize: 12,
-                      }}
-                      labelStyle={{ color: '#9BA5B7' }}
-                    />
-                    <Area
-                      isAnimationActive={!stillCharts}
-                      type="monotone"
-                      dataKey="cumulativeProfit"
-                      name={t('stats.cumulativeProfit')}
-                      stroke="#12E17F"
-                      strokeWidth={2}
-                      fill="url(#profitGradient)"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </section>
-
-            <section className="card p-3">
-              <h2 className="mb-2 text-[13px] font-bold">{t('stats.dailyProfit')}</h2>
-              <div className="h-44 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={stats.data.byDay.slice(-30)}
-                    margin={{ top: 4, right: 4, left: -18, bottom: 0 }}
-                  >
-                    <CartesianGrid stroke="#222834" vertical={false} />
-                    <XAxis
-                      dataKey="date"
-                      tick={{ fill: '#6C7688', fontSize: 10 }}
-                      tickLine={false}
-                      axisLine={false}
-                      minTickGap={28}
-                    />
-                    <YAxis
-                      tick={{ fill: '#6C7688', fontSize: 10 }}
-                      tickLine={false}
-                      axisLine={false}
-                      width={44}
-                    />
-                    <Tooltip
-                      cursor={{ fill: '#1E2430' }}
-                      contentStyle={{
-                        background: '#141821',
-                        border: '1px solid #2A3140',
-                        borderRadius: 12,
-                        fontSize: 12,
-                      }}
-                    />
-                    <Bar
-                      isAnimationActive={!stillCharts}
-                      dataKey="profit"
-                      name={t('stats.profit')}
-                      radius={[3, 3, 0, 0]}
+            {/*
+              Two charts of the same record, one on top of the other, pushed the
+              league table below a second scroll. Side by side on a wide screen
+              they are read together, which is how they answer each other.
+            */}
+            <div className="grid gap-3 xl:grid-cols-2">
+              <section className="card p-3">
+                <h2 className="mb-2 text-[13px] font-bold">{t('stats.cumulativeProfit')}</h2>
+                <div className="h-56 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart
+                      data={stats.data.byDay}
+                      margin={{ top: 4, right: 4, left: -18, bottom: 0 }}
                     >
-                      {stats.data.byDay.slice(-30).map((point) => (
-                        <Cell key={point.date} fill={point.profit >= 0 ? '#12E17F' : '#FF4D5E'} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </section>
+                      <defs>
+                        <linearGradient id="profitGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor={chart.accent} stopOpacity={0.5} />
+                          <stop offset="100%" stopColor={chart.accent} stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid stroke={chart.grid} vertical={false} />
+                      <XAxis
+                        dataKey="date"
+                        tick={chart.tick}
+                        tickLine={false}
+                        axisLine={false}
+                        minTickGap={28}
+                      />
+                      <YAxis tick={chart.tick} tickLine={false} axisLine={false} width={44} />
+                      <Tooltip contentStyle={chart.tooltip} labelStyle={chart.tooltipLabel} />
+                      <Area
+                        isAnimationActive={!stillCharts}
+                        type="monotone"
+                        dataKey="cumulativeProfit"
+                        name={t('stats.cumulativeProfit')}
+                        stroke={chart.accent}
+                        strokeWidth={2}
+                        fill="url(#profitGradient)"
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </section>
 
-            <section className="card overflow-hidden">
-              <h2 className="border-b border-line-subtle px-3 py-2.5 text-[13px] font-bold">
-                {t('stats.byLeague')}
-              </h2>
-              <ul className="divide-y divide-line-subtle">
-                {stats.data.byLeague.slice(0, 10).map((bucket) => (
-                  <li key={bucket.key} className="flex items-center gap-3 px-3 py-2.5">
-                    <span className="min-w-0 flex-1 truncate text-[12.5px]">{bucket.label}</span>
-                    <span className="tabular shrink-0 text-[11px] text-ink-dim">
-                      {bucket.tips} · {bucket.winRate.toFixed(0)}%
-                    </span>
-                    <span
-                      className={clsx(
-                        'tabular w-16 shrink-0 text-right text-[12.5px] font-bold',
-                        bucket.profit >= 0 ? 'text-won' : 'text-lost',
-                      )}
+              <section className="card p-3">
+                <h2 className="mb-2 text-[13px] font-bold">{t('stats.dailyProfit')}</h2>
+                <div className="h-44 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={stats.data.byDay.slice(-30)}
+                      margin={{ top: 4, right: 4, left: -18, bottom: 0 }}
                     >
-                      {bucket.profit > 0 ? '+' : ''}
-                      {bucket.profit.toFixed(1)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </section>
+                      <CartesianGrid stroke={chart.grid} vertical={false} />
+                      <XAxis
+                        dataKey="date"
+                        tick={chart.tick}
+                        tickLine={false}
+                        axisLine={false}
+                        minTickGap={28}
+                      />
+                      <YAxis tick={chart.tick} tickLine={false} axisLine={false} width={44} />
+                      <Tooltip cursor={{ fill: '#1E2637' }} contentStyle={chart.tooltip} />
+                      <Bar
+                        isAnimationActive={!stillCharts}
+                        dataKey="profit"
+                        name={t('stats.profit')}
+                        radius={[3, 3, 0, 0]}
+                      >
+                        {stats.data.byDay.slice(-30).map((point) => (
+                          <Cell
+                            key={point.date}
+                            fill={point.profit >= 0 ? chart.accent : chart.negative}
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </section>
+            </div>
 
-            <section className="card overflow-hidden">
-              <h2 className="border-b border-line-subtle px-3 py-2.5 text-[13px] font-bold">
-                {t('stats.byMarket')}
-              </h2>
-              <ul className="divide-y divide-line-subtle">
-                {stats.data.byMarket.slice(0, 10).map((bucket) => (
-                  <li key={bucket.key} className="flex items-center gap-3 px-3 py-2.5">
-                    <span className="min-w-0 flex-1 truncate text-[12.5px]">{bucket.label}</span>
-                    <span className="tabular shrink-0 text-[11px] text-ink-dim">
-                      {bucket.tips} · {bucket.avgOdds.toFixed(2)}
-                    </span>
-                    <span
-                      className={clsx(
-                        'tabular w-16 shrink-0 text-right text-[12.5px] font-bold',
-                        bucket.profit >= 0 ? 'text-won' : 'text-lost',
-                      )}
-                    >
-                      {bucket.profit > 0 ? '+' : ''}
-                      {bucket.profit.toFixed(1)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            <div className="grid gap-3 xl:grid-cols-2 xl:items-start">
+              <section className="card overflow-hidden">
+                <h2 className="border-b border-line-subtle px-3 py-2.5 text-[13px] font-bold">
+                  {t('stats.byLeague')}
+                </h2>
+                <ul className="divide-y divide-line-subtle">
+                  {stats.data.byLeague.slice(0, 10).map((bucket) => (
+                    <li key={bucket.key} className="flex items-center gap-3 px-3 py-2.5">
+                      <span className="min-w-0 flex-1 truncate text-[12.5px]">{bucket.label}</span>
+                      <span className="tabular shrink-0 text-[11px] text-ink-dim">
+                        {bucket.tips} · {bucket.winRate.toFixed(0)}%
+                      </span>
+                      <span
+                        className={clsx(
+                          'tabular w-16 shrink-0 text-right text-[12.5px] font-bold',
+                          bucket.profit >= 0 ? 'text-won' : 'text-lost',
+                        )}
+                      >
+                        {bucket.profit > 0 ? '+' : ''}
+                        {bucket.profit.toFixed(1)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+
+              <section className="card overflow-hidden">
+                <h2 className="border-b border-line-subtle px-3 py-2.5 text-[13px] font-bold">
+                  {t('stats.byMarket')}
+                </h2>
+                <ul className="divide-y divide-line-subtle">
+                  {stats.data.byMarket.slice(0, 10).map((bucket) => (
+                    <li key={bucket.key} className="flex items-center gap-3 px-3 py-2.5">
+                      <span className="min-w-0 flex-1 truncate text-[12.5px]">{bucket.label}</span>
+                      <span className="tabular shrink-0 text-[11px] text-ink-dim">
+                        {bucket.tips} · {bucket.avgOdds.toFixed(2)}
+                      </span>
+                      <span
+                        className={clsx(
+                          'tabular w-16 shrink-0 text-right text-[12.5px] font-bold',
+                          bucket.profit >= 0 ? 'text-won' : 'text-lost',
+                        )}
+                      >
+                        {bucket.profit > 0 ? '+' : ''}
+                        {bucket.profit.toFixed(1)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            </div>
           </>
         )}
 

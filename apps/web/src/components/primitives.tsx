@@ -50,9 +50,9 @@ export function TeamCrest({
       style={{
         width: size,
         height: size,
-        backgroundColor: color ?? '#2A3140',
+        backgroundColor: color ?? '#303A4D',
         fontSize: size * 0.42,
-        color: color ? contrastOn(color) : '#9BA5B7',
+        color: color ? contrastOn(color) : '#A6B0C2',
       }}
     >
       {initials || '?'}
@@ -63,11 +63,11 @@ export function TeamCrest({
 /** Picks black or white text for a background colour (WCAG relative luminance). */
 function contrastOn(hex: string): string {
   const value = hex.replace('#', '');
-  if (value.length < 6) return '#0A0C10';
+  if (value.length < 6) return '#070A12';
   const [r, g, b] = [0, 2, 4].map((offset) => parseInt(value.slice(offset, offset + 2), 16) / 255);
   const channel = (c: number): number => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
   const luminance = 0.2126 * channel(r!) + 0.7152 * channel(g!) + 0.0722 * channel(b!);
-  return luminance > 0.45 ? '#0A0C10' : '#FFFFFF';
+  return luminance > 0.45 ? '#070A12' : '#FFFFFF';
 }
 
 /* ── country flag ──────────────────────────────────────────────────────────── */

@@ -56,12 +56,12 @@ function Kpi({
 
 const CHART_TOOLTIP = {
   contentStyle: {
-    background: '#141821',
-    border: '1px solid #2A3140',
+    background: '#121826',
+    border: '1px solid #303A4D',
     borderRadius: 12,
     fontSize: 12,
   },
-  labelStyle: { color: '#9BA5B7' },
+  labelStyle: { color: '#A6B0C2' },
 };
 
 export default function DashboardPage(): ReactNode {
@@ -153,16 +153,16 @@ export default function DashboardPage(): ReactNode {
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data.charts.revenueByDay} margin={{ top: 4, right: 4, left: -16 }}>
-                <CartesianGrid stroke="#222834" vertical={false} />
+                <CartesianGrid stroke="#242C3C" vertical={false} />
                 <XAxis
                   dataKey="date"
-                  tick={{ fill: '#6C7688', fontSize: 10 }}
+                  tick={{ fill: '#7B8699', fontSize: 10 }}
                   tickLine={false}
                   axisLine={false}
                   minTickGap={24}
                 />
                 <YAxis
-                  tick={{ fill: '#6C7688', fontSize: 10 }}
+                  tick={{ fill: '#7B8699', fontSize: 10 }}
                   tickLine={false}
                   axisLine={false}
                   width={46}
@@ -171,7 +171,7 @@ export default function DashboardPage(): ReactNode {
                 <Tooltip
                   {...CHART_TOOLTIP}
                   formatter={(value) => [`€${(Number(value ?? 0) / 100).toFixed(2)}`, 'Revenue']}
-                  cursor={{ fill: '#1E2430' }}
+                  cursor={{ fill: '#1E2637' }}
                 />
                 <Bar
                   isAnimationActive={!stillCharts}
@@ -189,16 +189,16 @@ export default function DashboardPage(): ReactNode {
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data.charts.signupsByDay} margin={{ top: 4, right: 4, left: -16 }}>
-                <CartesianGrid stroke="#222834" vertical={false} />
+                <CartesianGrid stroke="#242C3C" vertical={false} />
                 <XAxis
                   dataKey="date"
-                  tick={{ fill: '#6C7688', fontSize: 10 }}
+                  tick={{ fill: '#7B8699', fontSize: 10 }}
                   tickLine={false}
                   axisLine={false}
                   minTickGap={24}
                 />
                 <YAxis
-                  tick={{ fill: '#6C7688', fontSize: 10 }}
+                  tick={{ fill: '#7B8699', fontSize: 10 }}
                   tickLine={false}
                   axisLine={false}
                   width={36}
@@ -231,16 +231,16 @@ export default function DashboardPage(): ReactNode {
                     <stop offset="100%" stopColor="#12E17F" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid stroke="#222834" vertical={false} />
+                <CartesianGrid stroke="#242C3C" vertical={false} />
                 <XAxis
                   dataKey="date"
-                  tick={{ fill: '#6C7688', fontSize: 10 }}
+                  tick={{ fill: '#7B8699', fontSize: 10 }}
                   tickLine={false}
                   axisLine={false}
                   minTickGap={24}
                 />
                 <YAxis
-                  tick={{ fill: '#6C7688', fontSize: 10 }}
+                  tick={{ fill: '#7B8699', fontSize: 10 }}
                   tickLine={false}
                   axisLine={false}
                   width={46}
@@ -270,21 +270,21 @@ export default function DashboardPage(): ReactNode {
                   .map(([product, count]) => ({ product, count }))}
                 margin={{ top: 4, right: 4, left: -16 }}
               >
-                <CartesianGrid stroke="#222834" vertical={false} />
+                <CartesianGrid stroke="#242C3C" vertical={false} />
                 <XAxis
                   dataKey="product"
-                  tick={{ fill: '#9BA5B7', fontSize: 11 }}
+                  tick={{ fill: '#A6B0C2', fontSize: 11 }}
                   tickLine={false}
                   axisLine={false}
                 />
                 <YAxis
-                  tick={{ fill: '#6C7688', fontSize: 10 }}
+                  tick={{ fill: '#7B8699', fontSize: 10 }}
                   tickLine={false}
                   axisLine={false}
                   width={36}
                   allowDecimals={false}
                 />
-                <Tooltip {...CHART_TOOLTIP} cursor={{ fill: '#1E2430' }} />
+                <Tooltip {...CHART_TOOLTIP} cursor={{ fill: '#1E2637' }} />
                 <Bar dataKey="count" name="Subscribers" radius={[3, 3, 0, 0]}>
                   {['VIP', 'EXTRA', 'COMBO', 'FIX_ODDS'].map((product) => (
                     <Cell

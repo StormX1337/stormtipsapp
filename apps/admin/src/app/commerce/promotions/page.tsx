@@ -81,8 +81,8 @@ export default function PromotionsPage(): ReactNode {
             aria-hidden
             className="h-8 w-8 shrink-0 rounded-sm"
             style={{
-              background: `linear-gradient(135deg, ${promotion.gradientFrom ?? '#2A3140'}, ${
-                promotion.gradientTo ?? '#141821'
+              background: `linear-gradient(135deg, ${promotion.gradientFrom ?? '#303A4D'}, ${
+                promotion.gradientTo ?? '#121826'
               })`,
             }}
           />

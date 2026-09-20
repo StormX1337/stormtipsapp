@@ -33,7 +33,7 @@ export function LeagueHeader({ group }: { group: TipFeedGroupDTO }): ReactNode {
       {bookmaker ? (
         <span
           className="shrink-0 rounded-sm bg-bg-card-alt px-1.5 py-0.5 text-[10.5px] font-semibold tracking-wide"
-          style={{ color: bookmaker.color ?? '#9BA5B7' }}
+          style={{ color: bookmaker.color ?? '#A6B0C2' }}
         >
           {bookmaker.name}
         </span>

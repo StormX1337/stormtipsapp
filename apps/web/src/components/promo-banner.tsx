@@ -46,7 +46,7 @@ export function PromoBanner({ promotion }: { promotion: PromotionDTO }): ReactNo
         viewBox="0 0 100 100"
         className="absolute -right-4 bottom-[-10px] h-20 w-20 opacity-90 md:right-2 md:bottom-[-6px] md:h-28 md:w-28"
       >
-        <circle cx="50" cy="50" r="34" fill="#0E1117" stroke="#12E17F" strokeWidth="2.5" />
+        <circle cx="50" cy="50" r="34" fill="#0C101A" stroke="#12E17F" strokeWidth="2.5" />
         <path
           d="M50 28l10 7-4 12H44l-4-12z M50 72l-10-7 4-12h12l4 12z M28 50l7-10 12 4v12l-12 4z M72 50l-7 10-12-4V44l12-4z"
           fill="#12E17F"

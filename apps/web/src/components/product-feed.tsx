@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, type ReactNode } from 'react';
+import clsx from 'clsx';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { Lock, Volleyball } from 'lucide-react';
@@ -139,7 +140,17 @@ export function ProductFeed({
             <NoResults />
           </div>
         ) : (
-          <div className="flex flex-col lg:block lg:columns-2 lg:gap-x-5">
+          /*
+           * Two columns only once there is something to put in both. A single
+           * league in a masonry column left half the page empty and made the
+           * card look like it had failed to load.
+           */
+          <div
+            className={clsx(
+              'flex flex-col',
+              feed.data.groups.length > 1 && 'lg:block lg:columns-2 lg:gap-x-5',
+            )}
+          >
             {feed.data.groups.map((group, index) => (
               <TipGroup key={group.league.id} group={group} index={index} />
             ))}

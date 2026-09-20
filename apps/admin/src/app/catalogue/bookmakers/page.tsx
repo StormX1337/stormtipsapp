@@ -67,7 +67,7 @@ export default function BookmakersPage(): ReactNode {
       key: 'name',
       header: 'Bookmaker',
       render: (row) => (
-        <span className="font-black italic" style={{ color: row.color ?? '#9BA5B7' }}>
+        <span className="font-black italic" style={{ color: row.color ?? '#A6B0C2' }}>
           {row.name}
         </span>
       ),

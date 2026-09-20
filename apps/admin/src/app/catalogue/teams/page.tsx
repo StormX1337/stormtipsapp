@@ -53,7 +53,7 @@ function Crest({ team }: { team: TeamRow }): ReactNode {
     <span
       aria-hidden
       className="grid h-6 w-6 place-items-center rounded-full text-[10px] font-bold text-ink-inverse"
-      style={{ background: team.colorPrimary ?? '#2A3140' }}
+      style={{ background: team.colorPrimary ?? '#303A4D' }}
     >
       {team.code ?? team.name.slice(0, 2).toUpperCase()}
     </span>
@@ -127,8 +127,8 @@ export default function TeamsPage(): ReactNode {
               shortName: team.shortName ?? '',
               code: team.code ?? '',
               logoUrl: team.logoUrl ?? '',
-              colorPrimary: team.colorPrimary ?? '#2A3140',
-              colorSecondary: team.colorSecondary ?? '#141821',
+              colorPrimary: team.colorPrimary ?? '#303A4D',
+              colorSecondary: team.colorSecondary ?? '#121826',
             })
           }
         >
