@@ -76,6 +76,22 @@ receiving another account's notifications. A browser's token is a JSON object
 rather than a string and cannot travel in a path segment, so it is turned off
 with `POST /me/devices/deactivate` and the token in the body instead.
 
+## Favourites
+
+A reader can mark leagues in Favourites and turn on "only my favourite leagues
+and teams" in notification settings. New-analysis notifications then carry what
+they are about (`audience.about`: the league and both teams), and a reader with
+that setting is left out of anything they did not mark.
+
+Two deliberate limits: a notification with no `about` — a subscription
+reminder, a promotion — never filters anyone, because it is about their account
+rather than a match; and the setting is inert until something is actually
+marked, since "only my favourites" with no favourites would mean silence, which
+is never what anyone meant by it.
+
+Favourites never change the feed. Everything published stays in it; this only
+decides what is worth interrupting someone for.
+
 ## Browsers
 
 `GET /api/v1/push/config` returns `{ enabled, publicKey }`. The public half of

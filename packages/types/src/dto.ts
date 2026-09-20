@@ -420,6 +420,13 @@ export interface NotificationPreferences {
   subscription: boolean;
   promotions: boolean;
   polls: boolean;
+  /**
+   * Narrows new-tip alerts to the reader's favourite leagues and teams.
+   *
+   * Off by default: someone who has never opened the favourites screen has no
+   * favourites, and turning this on for them would silence the product.
+   */
+  onlyFavourites: boolean;
 }
 
 export const DEFAULT_NOTIFICATION_PREFERENCES: NotificationPreferences = {
@@ -433,6 +440,7 @@ export const DEFAULT_NOTIFICATION_PREFERENCES: NotificationPreferences = {
   subscription: true,
   promotions: false,
   polls: false,
+  onlyFavourites: false,
 };
 
 export interface UserDTO {

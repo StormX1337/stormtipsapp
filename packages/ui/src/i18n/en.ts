@@ -147,6 +147,16 @@ export const en = {
     'This browser is blocking notifications. Allow them for this site in its settings, then try again.',
   'push.unsupported': 'This browser cannot show notifications.',
 
+  // favourites
+  'favourites.title': 'Favourites',
+  'favourites.intro':
+    'Mark the leagues you care about. With “only my favourites” on, new analyses from anything else stay out of your notifications — they are all still in the feed.',
+  'favourites.leagues': 'Leagues',
+  'favourites.search': 'Search leagues',
+  'favourites.none': 'No leagues marked yet.',
+  'favourites.saved': 'Saved',
+  'favourites.empty': 'No league matches that search.',
+
   // paywall
   'paywall.getVip': 'GET VIP',
   'paywall.getCombo': 'GET COMBO',
@@ -252,6 +262,7 @@ export const en = {
   'notifications.subscription': 'Subscription updates',
   'notifications.promotions': 'Offers and promotions',
   'notifications.polls': 'Polls',
+  'notifications.onlyFavourites': 'Only my favourite leagues and teams',
   'notifications.empty': 'No notifications yet.',
   'notifications.markAllRead': 'Mark all as read',
 

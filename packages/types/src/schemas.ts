@@ -127,6 +127,7 @@ export const notificationPrefsSchema = z.object({
   subscription: z.boolean(),
   promotions: z.boolean(),
   polls: z.boolean(),
+  onlyFavourites: z.boolean(),
 });
 
 export const updateProfileSchema = z.object({

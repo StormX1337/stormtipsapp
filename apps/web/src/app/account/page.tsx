@@ -11,6 +11,7 @@ import {
   Gift,
   LogOut,
   ShieldQuestion,
+  Star,
   Trash2,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
@@ -103,6 +104,11 @@ export default function AccountPage(): ReactNode {
                   href="/account/subscription"
                   icon={<CreditCard size={18} aria-hidden />}
                   label={t('subscription.title')}
+                />
+                <Item
+                  href="/account/favourites"
+                  icon={<Star size={18} aria-hidden />}
+                  label={t('favourites.title')}
                 />
                 <Item
                   href="/account/notifications"

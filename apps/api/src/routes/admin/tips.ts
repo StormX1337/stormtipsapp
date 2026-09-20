@@ -603,7 +603,15 @@ async function announceTip(
       tipId: full.id,
     },
     deepLink: `stormtips://tips/${full.id}`,
-    audience: product === 'FREE' ? {} : { products: [product] },
+    audience: {
+      ...(product === 'FREE' ? {} : { products: [product] }),
+      // Lets readers who follow only certain leagues or teams be left out of
+      // the rest; it has no effect on anyone who has not asked for that.
+      about: {
+        leagueId: full.leagueId,
+        teamIds: [full.event.homeTeamId, full.event.awayTeamId],
+      },
+    },
     dedupeKey: `tip:${full.id}`,
   });
 }

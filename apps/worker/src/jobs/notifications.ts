@@ -49,6 +49,8 @@ export interface FanOutData {
     products?: string[];
     userIds?: string[];
     onlyFreeUsers?: boolean;
+    /** The match this is about, for readers who only want their favourites. */
+    about?: { leagueId?: string | null; teamIds?: string[] };
   };
 }
 

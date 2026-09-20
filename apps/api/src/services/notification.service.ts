@@ -8,6 +8,14 @@ export interface AudienceFilter {
   products?: ProductCode[];
   userIds?: string[];
   onlyFreeUsers?: boolean;
+  /**
+   * What this notification is about, so readers who asked to hear only about
+   * their favourites can be left out of the rest.
+   *
+   * Absent — a subscription reminder, a promotion — nobody is filtered: those
+   * are about the account, not about a match.
+   */
+  about?: { leagueId?: string | null; teamIds?: string[] };
 }
 
 /**
@@ -42,18 +50,37 @@ export class NotificationService {
 
     const candidates = await prisma.user.findMany({
       where,
-      select: { id: true, language: true, notificationPrefs: true },
+      select: {
+        id: true,
+        language: true,
+        notificationPrefs: true,
+        favoriteLeagueIds: true,
+        favoriteTeamIds: true,
+      },
       take: 50_000,
     });
 
     const preferenceKey = PREFERENCE_FOR_TYPE[type];
+    const about = filter.about;
+
     return candidates
       .filter((user) => {
         const prefs = mergePreferences(user.notificationPrefs) as unknown as Record<
           string,
           boolean
         >;
-        return prefs[preferenceKey] !== false;
+        if (prefs[preferenceKey] === false) return false;
+        if (!about || prefs.onlyFavourites !== true) return true;
+
+        // "Only my favourites" with nothing marked would mean silence, which is
+        // never what someone meant by it; it takes effect once there is a
+        // favourite to compare against.
+        const leagues = user.favoriteLeagueIds;
+        const teams = user.favoriteTeamIds;
+        if (leagues.length === 0 && teams.length === 0) return true;
+
+        if (about.leagueId && leagues.includes(about.leagueId)) return true;
+        return (about.teamIds ?? []).some((teamId) => teams.includes(teamId));
       })
       .map((user) => ({ id: user.id, language: user.language }));
   }
@@ -92,6 +119,7 @@ export class NotificationService {
         products: input.audience.products,
         userIds: input.audience.userIds,
         onlyFreeUsers: input.audience.onlyFreeUsers,
+        about: input.audience.about,
       },
       scheduledAt: input.scheduledAt?.toISOString() ?? null,
       dedupeKey: input.dedupeKey,

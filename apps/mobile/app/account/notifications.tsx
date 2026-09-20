@@ -32,6 +32,7 @@ const PREF_LABEL: Record<keyof NotificationPreferences, MessageKey> = {
   subscription: 'notifications.subscription',
   promotions: 'notifications.promotions',
   polls: 'notifications.polls',
+  onlyFavourites: 'notifications.onlyFavourites',
 };
 
 export default function NotificationsScreen(): ReactNode {

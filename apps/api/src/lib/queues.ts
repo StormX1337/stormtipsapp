@@ -109,6 +109,8 @@ export const jobs = {
       userIds?: string[];
       onlyFreeUsers?: boolean;
       locale?: string;
+      /** The match this is about, for readers who only want their favourites. */
+      about?: { leagueId?: string | null; teamIds?: string[] };
     };
     scheduledAt?: string | null;
     dedupeKey?: string;
